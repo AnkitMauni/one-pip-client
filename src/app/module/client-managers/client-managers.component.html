@@ -1,0 +1,425 @@
+<div class="pagebody">
+    <div class="container-fluid p-0">
+       <div class="tableOne">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Login</th>
+                <th>Name</th>
+                <th>Mailbox</th>
+                <th>Groups</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-4.png">4000</span></td>
+                <td>FX TRADE ADMIN ACCESS</td>
+                <td>FX TRADE ADMIN ACCESS</td>
+                <td>*</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-4.png">4000</span></td>
+                <td>FX TRADE ADMIN ACCESS</td>
+                <td>FX TRADE ADMIN ACCESS</td>
+                <td>*</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-4.png">4000</span></td>
+                <td>FX TRADE ADMIN ACCESS</td>
+                <td>FX TRADE ADMIN ACCESS</td>
+                <td>*</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-2.png">3100</span></td>
+                <td>Fxadmin</td>
+                <td></td>
+                <td>IB INVT SHR 05, IB INVT SHR 06, IB INVT SHR 07,18 INVT SHR 08</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-2.png">3100</span></td>
+                <td>Fxadmin</td>
+                <td></td>
+                <td>IB INVT SHR 05, IB INVT SHR 06, IB INVT SHR 07,18 INVT SHR 08</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-2.png">3100</span></td>
+                <td>Fxadmin</td>
+                <td></td>
+                <td>IB INVT SHR 05, IB INVT SHR 06, IB INVT SHR 07,18 INVT SHR 08</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-2.png">3100</span></td>
+                <td>Fxadmin</td>
+                <td></td>
+                <td>IB INVT SHR 05, IB INVT SHR 06, IB INVT SHR 07,18 INVT SHR 08</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-2.png">3100</span></td>
+                <td>Fxadmin</td>
+                <td></td>
+                <td>IB INVT SHR 05, IB INVT SHR 06, IB INVT SHR 07,18 INVT SHR 08</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <button class="btn btn-outline-primary mb-2 me-2" (click)="openXl(content)">Large modal</button> -->
+       </div>
+
+       <div class="row">
+        <div class="col-md-6">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Enter text" aria-label="Input box" [(ngModel)]="inputText">
+            <div ngbDropdown container="body" class="input-group-append">
+              <button class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle>Dropdown</button>
+              <div class="myddwith1" ngbDropdownMenu>
+                <div ngbDropdownItem >
+                  <ul class="chk-nesting-ul">
+                    <li *ngFor="let node of treeData">
+                      <div style="display: flex; align-items: center;">
+                        <span *ngIf="node.hasChild" (click)="toggleExpand(node)">
+                          <div class="plus-minuns">{{ node.expanded ? '-' : '+' }}</div>
+                        </span>
+                        <input type="checkbox" [(ngModel)]="node.checked" (change)="onCheckChange(node)">
+                        
+                        {{ node.name }}
+                      </div>
+                      <ul class="chk-nesting-ul2" *ngIf="node.children && node.children.length && node.expanded">
+                        <ng-container *ngFor="let child of node.children">
+                          <li>
+                            <div>
+                              <span *ngIf="child.hasChild" (click)="toggleExpand(child)">
+                                {{ child.expanded ? '-' : '+' }}
+                              </span>
+                              <input type="checkbox" [(ngModel)]="child.checked" (change)="onCheckChange(child)">
+                              
+                              {{ child.name }}
+                            </div>
+                            <ul *ngIf="child.children && child.children.length && child.expanded">
+                              <ng-container *ngFor="let subChild of child.children">
+                                <li>
+                                  <div>
+                                    <span *ngIf="subChild.hasChild" (click)="toggleExpand(subChild)">
+                                      {{ subChild.expanded ? '-' : '+' }}
+                                    </span>
+                                    <input type="checkbox" [(ngModel)]="subChild.checked" (change)="onCheckChange(subChild)">
+                                    
+                                    {{ subChild.name }}
+                                  </div>
+                                </li>
+                              </ng-container>
+                            </ul>
+                          </li>
+                        </ng-container>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+       </div>
+    </div>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Group Name</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body p-0">
+      <div class="pe-2 ps-2">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+          <li [ngbNavItem]="1">
+            <button ngbNavLink>Common</button>
+            <ng-template ngbNavContent>
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img6.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                            Managers control platform settings, accounts and trading operations. To add a manager, create a trading account in the 'managers' or 'administrators' group and specify its login in this tab. Then configure access to client groups.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <p class="lbl2 mb-0">Login:</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                              </div>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="lbl2 mb-0">Mailbox name:</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                              </div>
+                        </div>
+                    </div>
+                  <div class="row mb-2">
+                    <div class="col-md-2">
+                        <div class="btn-set-tp">
+                          <div class="top-buttons">
+                            <!-- <button type="button" class="btn btn-basic100 btn-sm">Up</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Down</button> -->
+                            <p class="text-end">Groups:</p>
+                          </div>
+                          <div class="bottom-buttons">
+                            <button type="button" class="btn btn-basic100 btn-sm">Add</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Edit</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Delete</button>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                      <div class="border-div">
+                        <div class="tableOne">
+                          <!-- <table class="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Name</th>
+                                  <th>Symbol</th>
+                                  <th>Type</th>
+                                  <th>Range</th>
+                                  <th>Charge</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td><span><img class="table-img me-1" src="assets/images/mod-img4.png">Agent </span></td>
+                                  <td>*</td>
+                                  <td>Agent</td>
+                                  <td>Volume</td>
+                                  <td>instant</td>
+                                  <td>0-1000 - 5.00 </td>
+                                </tr>
+                                <tr>
+                                  <td colspan="6"><span><img class="table-img me-1" src="assets/images/mod-img5.png">click to add.. </span></td>
+                                </tr>
+                              </tbody>
+                            </table> -->
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="2">
+            <button ngbNavLink>Permission</button>
+            <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                    <div class="col-md-12">
+                      <div class="d-flex align-items-center">
+                        <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img6.png"></div>
+                        <div class="">
+                            <p class="mb-0 f11">
+                                Managers control platform settings, accounts and trading operations. To add a manager, create a trading account in the 'managers' or 'administrators' group and specify its login in this tab. Then configure access to client groups.
+                            </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-11 m-auto">
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Available logs:</p>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="width100">
+                                    <select class="width100 c-input" id="sel1" name="sellist1">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                      </select>
+                                  </div>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="lbl2 mb-0">Available reports:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <select class="width100 c-input" id="sel1" name="sellist1">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                      </select>
+                                  </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Roles:</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="width100">
+                                    <select class="width100 c-input" id="sel1" name="sellist1">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                      </select>
+                                  </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-basic100 btn-sm p-0">Save as</button>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-basic100 btn-sm p-0">Delete</button>
+                            </div>
+                        </div>
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                            <div class="btn-set-tp">
+                              <div class="top-buttons">
+                                <!-- <button type="button" class="btn btn-basic100 btn-sm">Up</button>
+                                <button type="button" class="btn btn-basic100 btn-sm">Down</button> -->
+                                <p class="text-end">Permission:</p>
+                              </div>
+                              <!-- <div class="bottom-buttons">
+                                <button type="button" class="btn btn-basic100 btn-sm">Add</button>
+                                <button type="button" class="btn btn-basic100 btn-sm">Edit</button>
+                                <button type="button" class="btn btn-basic100 btn-sm">Delete</button>
+                              </div> -->
+                            </div>
+                        </div>
+                        <div class="col-md-10">
+                          <div class="border-div2" >
+                            <div class="tableOne" style="position:relative">
+                              <ul class="chk-nesting-ul">
+                                <li *ngFor="let node of treeData">
+                                  <div style="display: flex; align-items: center;">
+                                    <span *ngIf="node.hasChild" (click)="toggleExpand(node)">
+                                      <div class="plus-minuns">{{ node.expanded ? '-' : '+' }}</div>
+                                    </span>
+                                    <input type="checkbox" [(ngModel)]="node.checked" (change)="onCheckChange(node)">
+                                    
+                                    {{ node.name }}
+                                  </div>
+                                  <ul class="chk-nesting-ul2" *ngIf="node.children && node.children.length && node.expanded">
+                                    <ng-container *ngFor="let child of node.children">
+                                      <li>
+                                        <div>
+                                          <span *ngIf="child.hasChild" (click)="toggleExpand(child)">
+                                            {{ child.expanded ? '-' : '+' }}
+                                          </span>
+                                          <input type="checkbox" [(ngModel)]="child.checked" (change)="onCheckChange(child)">
+                                          
+                                          {{ child.name }}
+                                        </div>
+                                        <ul *ngIf="child.children && child.children.length && child.expanded">
+                                          <ng-container *ngFor="let subChild of child.children">
+                                            <li>
+                                              <div>
+                                                <span *ngIf="subChild.hasChild" (click)="toggleExpand(subChild)">
+                                                  {{ subChild.expanded ? '-' : '+' }}
+                                                </span>
+                                                <input type="checkbox" [(ngModel)]="subChild.checked" (change)="onCheckChange(subChild)">
+                                                
+                                                {{ subChild.name }}
+                                              </div>
+                                            </li>
+                                          </ng-container>
+                                        </ul>
+                                      </li>
+                                    </ng-container>
+                                  </ul>
+                                </li>
+                              </ul>
+                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="3">
+            <button ngbNavLink>IP Access List</button>
+            <ng-template ngbNavContent>
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img6.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          The adjustment of access list is intended for limitation of manager access to the system by IP addresses. Please specify the range of allowed addresses.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                    
+                    
+                  <div class="row mb-2">
+                    <div class="col-md-2">
+                        <div class="btn-set-tp">
+                          <div class="top-buttons">
+                            <!-- <button type="button" class="btn btn-basic100 btn-sm">Up</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Down</button> -->
+                            
+                          </div>
+                          <div class="bottom-buttons">
+                            <button type="button" class="btn btn-basic100 btn-sm">Add</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Edit</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Delete</button>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                      <div class="border-div3" >
+                        <div class="tableOne" style="position:relative">
+                         <table class="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>From</th>
+                                  <th>To</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td></td>
+                                  <td></td>
+                                 </tr>
+                                
+                              </tbody>
+                            </table>
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+          
+       
+        
+       
+       
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+      </div>
+       
+    </div>
+    <div class="modal-footer ">
+        <button type="button" class="btn btn-basic btn-sm">Ok</button>
+        <button type="button" class="btn btn-basic btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>

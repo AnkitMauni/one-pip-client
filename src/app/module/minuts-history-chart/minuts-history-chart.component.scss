@@ -1,0 +1,54 @@
+.cline-chart{
+    box-shadow: inset 2px 2px 0px 0px #bbb6b6;
+    text-align: center;
+    border-bottom: solid 1px #d3d3d3;
+    border-right: solid 1px #d3d3d3;
+    padding:8px;
+    background: #fff;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    .barleft{
+        width: 20px;
+        height: 3px;
+        background:#000;
+        border-radius: 50px 0px 0px 50px;
+    }
+    .barmid{
+        width: 3px;
+        height: 60px;
+        background:#000;
+        border-radius: 50px;
+    }
+    .barright{
+        width: 20px;
+        height: 3px;
+        background:#000;
+        border-radius: 0px 50px 50px 0px;
+    }
+}
+
+.bottom-filter{
+    background: rgb(255, 255, 255);
+    margin-left: 0px;
+    margin-right: 0px;
+    position: absolute;
+    width: 99.5%;
+    bottom: 0px;
+}
+
+.bot-dd1{
+    padding: 2px;
+    width: 25px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid 1px lightgrey;
+}
+.dropdown-toggle::after{
+    display: none;
+}
+.dropdown-item{
+    font-size: 12px;
+}

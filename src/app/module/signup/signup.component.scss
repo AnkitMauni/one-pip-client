@@ -1,0 +1,86 @@
+.login-card {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background: url(../../../assets/images/login_bg.jpg);
+    background-position: center;
+    padding: 30px 12px;
+}
+
+
+.login-card .login-main {
+   
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 37px rgba(8, 21, 66, 0.05);
+    margin: 0 auto;
+    background-color: #fff;
+}
+.col-form-label{
+
+}
+
+.login-card .login-main .theme-form input {
+    background-color: rgba(92, 97, 242, 0.1);
+    transition: all 0.3s ease;
+}
+.logo{
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+
+@media only screen and (max-width: 575.98px) {
+    .login-card {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+}
+
+@media only screen and (max-width: 1199.98px) {
+    .login-card {
+        background: transparent;
+                width: 404px;
+    }
+}
+
+.login-card .login-main .theme-form .form-group {
+    margin-bottom: 10px;
+    position: relative;
+}
+.login-card .login-main .theme-form label {
+    font-size: 14px;
+}
+.login-card .login-main .theme-form label {
+    font-size: 15px;
+    letter-spacing: 0.4px;
+}
+.col-form-label {
+    padding-bottom: 4px;
+}
+.login-card .btn-showcase .btn {
+    line-height: 1;
+    padding: 10px 12px;
+    margin: 0;
+}
+.txt-linkedin {
+    color: #0077B5 !important;
+}
+.txt-fb {
+    color: #0077B5 !important;
+}
+.login-card .btn-showcase .btn + .btn {
+    margin-left: 5px;
+}
+.btn-primary {
+    background-color: #6062f6 ;
+    border-color: #6062f6;
+}
+a {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color:  #6062f6;
+    transition: 0.5s all;
+}

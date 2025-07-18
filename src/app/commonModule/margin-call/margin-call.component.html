@@ -1,0 +1,90 @@
+<!-- height: 63.5vh; -->
+<div class="marketwatch-div"  [ngStyle]="{ height: (63.5/shareInputNav) +'vh'}">
+    <section>
+     
+     <div style="padding: 0px 2px;" class="tableOne" >
+         <div class="padding-b-for-footer">
+             <div class="lefttitle d-flex justify-content-between align-items-center">
+                 <p>Margin Call</p>
+                 <img style="width: 14px; height: 14px;" (click)="marginClose()" src="assets/images/icons8-close-50.png">
+                 <!-- <p (click)="marginClose()">close</p> -->
+             </div>
+          
+           <table class="table table-bordered">
+             <thead>
+               <tr>
+                 <th>Login</th>
+                 <th>Level</th>
+                
+               </tr>
+             </thead>
+             <!-- <tbody>
+               <tr class="nornal-tr">
+                 <td><span class="d-flex"><i class="fa-solid fa-arrow-up"></i> AUDUSTD</span></td>
+                 <td><span class="color-green">0.25412</span></td>
+                 <td><span class="color-red">0.25412</span></td>
+               </tr>
+               <tr class="nornal-tr">
+                 <td><span class="d-flex"><i class="fa-solid fa-arrow-down"></i> AUDUSTD</span></td>
+                 <td>0.25412</td>
+                 <td>0.25412</td>
+               </tr>
+               <tr class="tr-yellow">
+                 <td><span class="d-flex"><i class="fa-solid fa-arrow-down"></i> AUDUSTD</span></td>
+                 <td>0.25412</td>
+                 <td>0.25412</td>
+               </tr>
+             
+              
+             </tbody> -->
+           </table>
+         </div>
+     </div>
+     <div style="padding: 0px 2px;" class="tableOne" *ngIf="currentTab == 'tab2'">
+        <div class="padding-b-for-footer">
+            <div class="lefttitle">
+                <p>Queue</p>
+            </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Login</th>
+                <th>History</th>
+               
+              </tr>
+            </thead>
+            <!-- <tbody>
+              <tr class="nornal-tr">
+                <td><span class="d-flex"><i class="fa-solid fa-arrow-up"></i> AUDUSTD</span></td>
+                <td><span class="color-green">0.25412</span></td>
+                <td><span class="color-red">0.25412</span></td>
+              </tr>
+              <tr class="nornal-tr">
+                <td><span class="d-flex"><i class="fa-solid fa-arrow-down"></i> AUDUSTD</span></td>
+                <td>0.25412</td>
+                <td>0.25412</td>
+              </tr>
+              <tr class="tr-yellow">
+                <td><span class="d-flex"><i class="fa-solid fa-arrow-down"></i> AUDUSTD</span></td>
+                <td>0.25412</td>
+                <td>0.25412</td>
+              </tr>
+            
+             
+            </tbody> -->
+          </table>
+        </div>
+    </div>
+    
+    
+        
+ 
+   
+ 
+ 
+ 
+  
+    </section>
+  
+ </div>
+ 

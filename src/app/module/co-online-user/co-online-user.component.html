@@ -1,0 +1,1242 @@
+<div class="pagebody">
+    <section class="container-fluid0 ">
+        <div class="tableOne">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Login</th>
+                  <th>Group</th>
+                  <th>Name</th>
+                  <th class="text-end">Client</th>
+                  <th class="text-end">Version</th>
+                  <th class="text-end">IP</th>
+                  <th class="text-end">Equity </th>
+                  <th>Currency</th>
+               </tr>
+              </thead>
+              <tbody>
+                <tr (dblclick)="openXl(content)">
+                  <td><span><img class="table-img" src="assets/images/sideimg/mt-icons52.png">973 </span></td>
+                  <td>managers\dealers</td>
+                  <td>1004 FincFX</td>
+                  <td class="text-end">Manager</td>
+                  <td class="text-end">3802</td>
+                  <td class="text-end">49.36.137.178</td>
+                  <td class="text-end">0.00 </td>
+                  <td>USD</td>
+                 </tr>
+                 <tr (dblclick)="openXl(content)">
+                  <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-2.png">973 </span></td>
+                  <td>managers\dealers</td>
+                  <td>1004 FincFX</td>
+                  <td class="text-end">Manager</td>
+                  <td class="text-end">3802</td>
+                  <td class="text-end">49.36.137.178</td>
+                  <td class="text-end">0.00 </td>
+                  <td>USD</td>
+                 </tr>
+              </tbody>
+            </table>
+           </div>
+    </section>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Group Name</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body p-0">
+    <div class="pe-2 ps-2">
+      <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+        <li [ngbNavItem]="1">
+          <button ngbNavLink>Overview</button>
+          <ng-template ngbNavContent>
+           
+            <div class="row">
+              <div class="col-md-12 m-auto">
+                  <div class="row mb-2">
+                      <div class="col-md-12 ">
+                          <p class="mb-0">IB_2025, 2025, <a href="">managers\Manager,</a> 1: 100</p>
+                      </div>
+                  </div>
+                  <div class="row mb-2">
+                      <div class="col-md-2 ">
+                          <p class="mb-0" style="font-size: 11.5px;">Name:</p>
+                      </div>
+                      <div class="col-md-8 ">
+                          <p class="mb-0">IB_2025, 2025, </p>
+                      </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-12 ">
+                        <p class="mb-0 f-11">Registered: 2023.12.01 Last access: 2024.07.23 06:54 Last Address: 178.238.234.59</p>
+                    </div>
+                </div>
+                  
+                <div class="row mb-2">
+                  
+                  <div class="col-md-12">
+                    <div class="border-div">
+                      <div class="tableOne">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                              <tr>
+                                <th>Symbol</th>
+                                <th>Type</th>
+                                <th>Volume</th>
+                                <th>Price</th>
+                                <th>S / L</th>
+                                <th>T / P</th>
+                                <th>Price</th>
+                                <th>Swap</th>
+                                <th>Profit</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons37.png">eursek </span></td>
+                                <td>sell</td>
+                                <td>1</td>
+                                <td>1.08002</td>
+                                <td>0.00000</td>
+                                <td>0.00000</td>
+                                <td>1.08867</td>
+                                <td>-38.74</td>
+                                <td>865.00</td>
+                              </tr>
+                              <tr>
+                                <td><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons38.png">eursek </span></td>
+                                <td>sell</td>
+                                <td>1</td>
+                                <td>1.08002</td>
+                                <td>0.00000</td>
+                                <td>0.00000</td>
+                                <td>1.08867</td>
+                                <td>-38.74</td>
+                                <td>865.00</td>
+                              </tr>
+                              <tr>
+                                <td colspan="7" class="tbl-gray"><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons58.png">
+                                  <b>Balance: 941 925.47 USD Equity: 939 294.88 Margin: 1095.47 Free Margin: 938 199.41</b> </span>
+                                </td>
+                                <td class="tbl-gray"><b>-38.74</b></td>
+                                <td class="tbl-gray"><b>865.00</b></td>
+                              </tr>
+                            <tr>
+                              <td class="tbl-gray" colspan="9"><b>Margin Level: 85 743.55%</b></td>
+                            </tr>
+                            </tbody>
+                          </table> 
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+          <button ngbNavLink>Exposure</button>
+          <ng-template ngbNavContent>
+           <div class="tablediv-b">
+            <div class="row" style="--bs-gutter-x: 0.1rem !important;">
+              <div class="col-md-9 tableOne">
+                <table class="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Asset</th>
+                      <th class="text-end">Value</th>
+                     <th class="text-end">Rate</th>
+                      <th class="text-end">USD</th>
+                      <th colspan="2" class="text-center">Graph</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span><img class="table-img" src="assets/images/sideimg/mt-icons22.png"> CNH </span></td>
+                      <td class="text-end">-7.26835K</td>
+                      <td class="text-end">1.11148</td>
+                      <td class="text-end">-5.00</td>
+                      <td style="width:60px; padding-right: 0px;">
+                        <div class="rightside-fix">
+                          <div class="left-bar">
+                            <div class="green-bar"></div>
+                            <div class="blue-bar"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="width:60px; padding-left: 0px;">
+                       <div class="leftside-fix">
+                        <div class="right-bar">
+                          <div class="green-bar"></div>
+                          <div class="blue-bar"></div>
+                        </div>
+                       </div>
+                      </td>
+                      <td style="width:18px"><div class="colorbox box-blue"></div></td>
+                    </tr>
+                    <tr>
+                      <td><span><img class="table-img" src="assets/images/sideimg/mt-icons22.png"> CNH </span></td>
+                      <td class="text-end">-7.26835K</td>
+                      <td class="text-end">1.11148</td>
+                      <td class="text-end">-5.00</td>
+                      <td style="width:60px; padding-right: 0px;">
+                        <div class="rightside-fix">
+                          <div class="left-bar">
+                            <div class="green-bar"></div>
+                            <div class="blue-bar"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="width:60px; padding-left: 0px;">
+                       <div class="leftside-fix">
+                        <div class="right-bar">
+                          <div class="green-bar"></div>
+                          <div class="blue-bar"></div>
+                        </div>
+                       </div>
+                      </td>
+                      <td style="width:18px"><div class="colorbox box-aqua"></div></td>
+                    </tr>
+                    <tr>
+                      <td><span><img class="table-img" src="assets/images/sideimg/mt-icons22.png"> CNH </span></td>
+                      <td class="text-end">-7.26835K</td>
+                      <td class="text-end">1.11148</td>
+                      <td class="text-end">-5.00</td>
+                      <td style="width:60px; padding-right: 0px;">
+                        <div class="rightside-fix">
+                          <div class="left-bar">
+                            <div class="green-bar"></div>
+                            <div class="blue-bar"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="width:60px; padding-left: 0px;">
+                       <div class="leftside-fix">
+                        <div class="right-bar">
+                          <div class="green-bar"></div>
+                          <div class="blue-bar"></div>
+                        </div>
+                       </div>
+                      </td>
+                      <td style="width:18px"><div class="colorbox box-brown"></div></td>
+                    </tr>
+                    <tr>
+                      <td><span><img class="table-img" src="assets/images/sideimg/mt-icons22.png"> CNH </span></td>
+                      <td class="text-end">-7.26835K</td>
+                      <td class="text-end">1.11148</td>
+                      <td class="text-end">-5.00</td>
+                      <td style="width:60px; padding-right: 0px;">
+                        <div class="rightside-fix">
+                          <div class="left-bar">
+                            <div class="green-bar"></div>
+                            <div class="blue-bar"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td style="width:60px; padding-left: 0px;">
+                       <div class="leftside-fix">
+                        <div class="right-bar">
+                          <div class="green-bar"></div>
+                          <div class="blue-bar"></div>
+                        </div>
+                       </div>
+                      </td>
+                      <td style="width:18px"><div class="colorbox box-purple"></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-3">
+                <div>
+                  <img class="img-fluid" src="assets/images/fakechart-footer-1.png">
+                </div>
+              </div>
+            </div>
+           </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="3">
+          <button ngbNavLink>Personal</button>
+          <ng-template ngbNavContent>
+              
+                <div class="row">
+                  <div class="col-md-12 m-auto">
+                      <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Name:</p>
+                          </div>
+                          <div class="col-md-10">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Last name:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Middle name:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Company:</p>
+                          </div>
+                          <div class="col-md-10">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Registered:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="date" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Language:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <select class="width100 c-input" id="sel1" name="sellist1">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                    </select>
+                              </div>
+                          </div>
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Status:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <select class="width100 c-input" id="sel1" name="sellist1">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                    </select>
+                              </div>
+                          </div>
+                       </div>
+
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">ID number:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Lead campaign:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">MetaQuotes ID:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Lead source:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Email:</p>
+                          </div>
+                          <div class="col-md-10">
+                              <div class="width100">
+                                  <input  type="date" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Phone:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="date" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Country:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <select class="width100 c-input" id="sel1" name="sellist1">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                    </select>
+                              </div>
+                          </div>
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">State:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Cite:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Zip code:</p>
+                          </div>
+                          <div class="col-md-4">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Address:</p>
+                          </div>
+                          <div class="col-md-10">
+                              <div class="width100">
+                                  <input  type="text" id="email" name="email" class="width100 c-input">
+                              </div>
+                          </div>
+                       </div>
+                       <div class="row mb-2">
+                          <div class="col-md-2">
+                              <p class="lbl2 mb-0" style="font-size: 11.5px;">Comment:</p>
+                          </div>
+                          <div class="col-md-10">
+                              <div class="width100">
+                                  <!-- <input  type="text" id="email" name="email" class="width100 c-input"> -->
+                                  <select class="width100 c-input" id="sel1" name="sellist1">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                    </select>
+                              </div>
+                          </div>
+                       </div>
+                  </div>
+                </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="4">
+          <button ngbNavLink>Account</button>
+          <ng-template ngbNavContent>
+            
+            <div class="row">
+              <div class="col-md-12 m-auto">
+                  <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Group:</p>
+                      </div>
+                      <div class="col-md-10">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Color:</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Leverage:</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <select class="width100 c-input" id="sel1" name="sellist1">
+                                  <option>1</option>
+                                  <option>2</option>
+                                  <option>3</option>
+                                  <option>4</option>
+                                </select>
+                          </div>
+                      </div>
+                   </div>
+                   <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Bank Account:</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Agent account:</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                          </div>
+                      </div>
+                   </div>
+
+                   <div class="row mb-2">
+                      <div class="col-md-2">
+                        
+                      </div>
+                      <div class="col-md-10">
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable this account 
+                              </label>
+                          </div>
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable password change
+                              </label>
+                          </div>
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable one-time password
+                              </label>
+                          </div>
+                          <div  class="form-check ">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Change password at next login
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+                  
+                <div class="row mb-2">
+                  <div class="col-md-2">
+                      <div class="btn-set-tp">
+                        <div class="top-buttons">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Trade accounts:</p>
+                          <button type="button" class="btn btn-basic100 btn-sm">Synchronize</button>
+                          
+                        </div>
+                        <div class="bottom-buttons">
+                          <button type="button" class="btn btn-basic100 btn-sm">Add</button>
+                          <button type="button" class="btn btn-basic100 btn-sm">Edit</button>
+                          <button type="button" class="btn btn-basic100 btn-sm">Delete</button>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="border-div3" >
+                      <div class="tableOne" style="position:relative">
+                       <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Gateway ID</th>
+                                <th>Account</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td></td>
+                                <td></td>
+                               </tr>
+                              
+                            </tbody>
+                          </table>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="5">
+          <button ngbNavLink>Limits</button>
+          <ng-template ngbNavContent>
+            
+            <div class="row">
+              <div class="col-md-12 m-auto">
+                  
+                  <div class="row mb-2">
+                      
+                      <div class="col-md-6">
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Show to regular managers
+                              </label>
+                          </div>
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Include in server reports
+                              </label>
+                          </div>
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable reports
+                              </label>
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable trading 
+                              </label>
+                          </div>
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable algo trading by Expert Advisors
+                              </label>
+                          </div>
+                          <div  class="form-check mb-2">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable trailing stops
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="row mb-2">
+                      <div class="col-md-4">
+                          <div  class="form-check ">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable API connections
+                              </label>
+                          </div>
+                      </div>
+                      <div class="col-md-8">
+                          <div class="d-flex align-items-center">
+                              <p class="lbl2 mb-0 me-2" style="font-size: 11.5px;">Limit total value of positions:</p>
+                              <div class="width100 me-2" style="width:180px !important;">
+                                  <select class="width100 c-input" id="sel1" name="sellist1">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                    </select>
+                              </div>
+                              <p  class="lbl2 mb-0" >USD</p>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row mb-2">
+                      <div class="col-md-4">
+                          <div  class="form-check ">
+                              <label class="form-check-label">
+                                  <input  type="checkbox" name="remember" class="form-check-input"> Enable sponsored VPS hosting
+                              </label>
+                          </div>
+                      </div>
+                      <div class="col-md-8">
+                          <div class="d-flex align-items-center">
+                              <p class="lbl2 mb-0 me-2" style="font-size: 11.5px;">Limit number of active orders:</p>
+                              <div class="width100" style="width:180px !important;">
+                                  <select class="width100 c-input" id="sel1" name="sellist1">
+                                      <option>1</option>
+                                      <option>2</option>
+                                      <option>3</option>
+                                      <option>4</option>
+                                    </select>
+                              </div>
+                              <!-- <p>us</p> -->
+                          </div>
+                      </div>
+                  </div>
+                  
+                
+              </div>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="6">
+          <button ngbNavLink>Profile</button>
+          <ng-template ngbNavContent>
+            
+            <div class="row">
+              <div class="col-md-12 m-auto">
+                  
+                </div>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="7">
+          <button ngbNavLink>Subscriptions</button>
+          <ng-template ngbNavContent>
+              <div class="row">
+                  <div class="col-md-12 m-auto">
+                      
+                      
+                    <div class="row mb-2">
+                      <!-- <div class="col-md-2">
+                          <div class="btn-set-tp">
+                            <div class="top-buttons">
+                              <button type="button" class="btn btn-basic100 btn-sm">Up</button>
+                              <button type="button" class="btn btn-basic100 btn-sm">Down</button>
+                              <p class="text-end">Groups:</p>
+                            </div>
+                            <div class="bottom-buttons">
+                              <button type="button" class="btn btn-basic100 btn-sm">Add</button>
+                              <button type="button" class="btn btn-basic100 btn-sm">Edit</button>
+                              <button type="button" class="btn btn-basic100 btn-sm">Delete</button>
+                            </div>
+                          </div>
+                      </div> -->
+                      <div class="col-md-12">
+                        <div class="border-div4">
+                          <div class="tableOne">
+                            <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>ID</th>
+                                    <th>Subscription</th>
+                                    <th>Status</th>
+                                    <th>Subscription time</th>
+                                    <th>Renewal time</th>
+                                    <th>Expiration time</th>
+                                    <th>MQL5 account</th>
+                                    <th>Price</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                   
+                                  </tr>
+                                
+                                </tbody>
+                              </table> 
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="8">
+          <button ngbNavLink>Balance</button>
+          <ng-template ngbNavContent>
+            <div class="row">
+              <div class="col-md-12 m-auto">
+                  <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Operation:</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>Balance</option>
+                              <option>Credit</option>
+                              <option>Charge</option>
+                              <option>Correction</option>
+                              <option>Bonus</option>
+                              <option>Commission</option>
+                              <option>Dividend</option>
+                              <option>Franked Dividend</option>
+                              <option>Tax</option>
+                              <option>SO compensation</option>
+                              <option>SO Credit Compensation</option>
+                            </select>
+                          </div>
+                      </div>
+                   </div>
+                   <div class="row mb-2">
+                    <div class="col-md-2">
+                        <p class="lbl2 mb-0" style="font-size: 11.5px;">Amount:</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="width100">
+                          <select class="width100 c-input" id="sel1" name="sellist1">
+                            <option>941925.47</option>
+                            <option>900000</option>
+                            <option>500000</option>
+                            <option>100000</option>
+                            <option>50000</option>
+                            <option>10000</option>
+                            <option>5000</option>
+                            <option>1000</option>
+                            <option>500</option>
+                            <option>100</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="col-md-1"><p class="mb-0">USD</p></div>
+                 </div>
+                 <div class="row mb-2">
+                  <div class="col-md-2">
+                      <p class="lbl2 mb-0" style="font-size: 11.5px;">Comment:</p>
+                  </div>
+                  <div class="col-md-5">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                          <option>Deposit</option>
+                          <option>Withdrawal</option>
+                          <option>Deposit from #put your bank</option>
+                          <option>Withdraw to #put your bank</option>
+                          <option>Credit In</option>
+                          <option>Credit Out</option>
+                          <option>... put your comment here...</option>
+                        </select>
+                      </div>
+                  </div>
+               </div>
+               <div class="row mb-2">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                  <div class="form-check">
+                    <label class="form-check-label f11">
+                      <input  type="checkbox" name="remember" class="form-check-input"> Conduct balance operation without checking the free margin and the current balance on the account </label>
+                    </div>
+                </div>
+             </div>
+                <div class="row mb-2">
+                  <div class="col-md-2"></div>
+                  <div class="col-md-2"> <button type="button" class="btn btn-basic100 btn-sm">Deposit</button></div>
+                  <div class="col-md-2"> <button type="button" class="btn btn-basic100 btn-sm">Withdrawal</button></div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-md-12">
+                    <div class="border-div2" >
+                      <div class="tableOne" style="position:relative">
+                       <table class="table table-striped table-bordered">
+                            <thead>
+                              <tr>
+                                <th>Time</th>
+                                <th>Deal</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                               </tr>
+                               <tr>
+                                <td class="tbl-gray" colspan="4">
+                                  <span><img src="assets/images/sideimg/mt-icons58.png" class="table-img me-1">
+                                    <b>Balance: 941 925.47 USD Equity: 939 083.75 Margin: 1095.47 Free: 937 988.28 / 85 724.28%</b></span>
+                                </td>
+                               </tr>
+                              
+                            </tbody>
+                          </table>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-md-4"></div>
+                  <div class="col-md-8">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>Today</option>
+                              <option>Last 3 days</option>
+                              <option>Last week</option>
+                              <option>Last month</option>
+                              <option>Last 3 months</option>
+                              <option>Last 6 months</option>
+                              <option>All history</option>
+                           </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input  type="date" id="email" name="email" class="width100 c-input">
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input  type="date" id="email" name="email" class="width100 c-input">
+                        </div>
+                      </div>
+                      <div class="col-md-3"><button type="button" class="btn btn-basic100 btn-sm">Request</button></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="9">
+          <button ngbNavLink>Trade</button>
+          <ng-template ngbNavContent>
+              <div class="row">
+                  <div class="col-md-5">
+                    <div><img class="img-fluid" src="assets/images/Screenshot 2024-07-24 120505.png"></div>
+                  </div>
+                  <div class="col-md-7">
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Symbol:</p>
+                      </div>
+                      <div class="col-md-9">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                            </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Type:</p>
+                      </div>
+                      <div class="col-md-9">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                            </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Volume:</p>
+                      </div>
+                      <div class="col-md-5">
+                          <div class="width100">
+                            <input  type="number" id="email" name="email" class="width100 c-input">
+                          </div>
+                      </div>
+                      <div class="col-md-5">
+                        <p class="mb-0">0.25 AUS200.spot</p>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Fill Policy:</p>
+                      </div>
+                      <div class="col-md-9">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                            </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2 align-items-center">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">At Price:</p>
+                      </div>
+                      <div class="col-md-5">
+                          <div class="width100">
+                            <input  type="number" id="email" name="email" class="width100 c-input">
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="d-flex">
+                          <button type="button" class="btn btn-basic100 btn-sm me-2">Deposit</button>
+                          <div class="form-check mb-0">
+                            <label class="form-check-label f11 ">
+                              <input type="checkbox" name="remember" class="form-check-input"> Auto 
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Stop Loss:</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                            <input  type="number" id="email" name="email" class="width100 c-input">
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                        <p class="lbl2 mb-0" style="font-size: 11.5px;">Take Profit:</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="width100">
+                          <input  type="number" id="email" name="email" class="width100 c-input">
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Comment:</p>
+                      </div>
+                      <div class="col-md-9">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                            </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="text-center d-flex justify-content-center">
+                          <h2 class="color-red">7957</h2>
+                          <h2 class="me-2 ms-2">/</h2>
+                          <h2 class="color-blue">7969</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6"><button type="button" class="btn  btn-sm sellbtn-g">Sell at 7957</button></div>
+                      <div class="col-md-6"><button type="button" class="btn  btn-sm buybtn-g">Buy at 7969</button></div>
+                      <div class="col-md-12 mt-2"><button type="button" class="btn  btn-sm null-btn"></button></div>
+                    </div>
+                  </div>
+              </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="10">
+          <button ngbNavLink>History</button>
+          <ng-template ngbNavContent>
+              <div class="row">
+                  <div class="col-md-12 m-auto">
+                    <div class="row mb-2">
+                      <div class="col-md-12">
+                        <div class="border-div2" style="height:372px">
+                          <div class="tableOne" style="position:relative">
+                           <table class="table table-striped table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Time</th>
+                                    <th>Deal</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                   </tr>
+                                   <tr>
+                                    <td class="tbl-gray" colspan="4">
+                                      <span><img src="assets/images/sideimg/mt-icons58.png" class="table-img me-1">
+                                        <b>Balance: 941 925.47 USD Equity: 939 083.75 Margin: 1095.47 Free: 937 988.28 / 85 724.28%</b></span>
+                                    </td>
+                                   </tr>
+                                  
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-4"></div>
+                      <div class="col-md-8">
+                        <div class="row">
+                          <div class="col-md-3">
+                            <div class="width100">
+                              <select class="width100 c-input" id="sel1" name="sellist1">
+                                  <option>Today</option>
+                                  <option>Last 3 days</option>
+                                  <option>Last week</option>
+                                  <option>Last month</option>
+                                  <option>Last 3 months</option>
+                                  <option>Last 6 months</option>
+                                  <option>All history</option>
+                               </select>
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="width100">
+                              <input  type="date" id="email" name="email" class="width100 c-input">
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="width100">
+                              <input  type="date" id="email" name="email" class="width100 c-input">
+                            </div>
+                          </div>
+                          <div class="col-md-3"><button type="button" class="btn btn-basic100 btn-sm">Request</button></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="11">
+          <button ngbNavLink>Security</button>
+          <ng-template ngbNavContent>
+            
+            <div class="row">
+              <div class="col-md-12 m-auto">
+                  <div class="row mb-2">
+                      <div class="col-md-12">
+                          <p class="mb-1">Master password is used for full access to the trading account</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                              <p class="mb-0 erro-dis">minimum 8 characters</p>
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Check</button>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Change</button>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Generate</button>
+                      </div>
+                  </div>
+
+                  <div class="row mb-2">
+                      <div class="col-md-12">
+                          <p class="mb-1">Investor password is used for limited access to the trading account in read-only mode</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                              <p class="mb-0 erro-dis">minimum 8 characters</p>
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Check</button>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Change</button>
+                      </div>
+                      <!-- <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Generate</button>
+                      </div> -->
+                  </div>
+                  <div class="row mb-2">
+                      <div class="col-md-12">
+                          <p class="mb-1">API password is used for access to the server using Web API</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                              <p class="mb-0 erro-dis">minimum 8 characters</p>
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Check</button>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Change</button>
+                      </div>
+                      <!-- <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Generate</button>
+                      </div> -->
+                  </div>
+
+                  <div class="row mb-2">
+                      <div class="col-md-12">
+                          <p class="mb-1">Phone password allows to identify the account owner when performing trade operations by phone</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                              <p class="mb-0 erro-dis">to view password set focus to field</p>
+                          </div>
+                      </div>
+                      <!-- <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Check</button>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Change</button>
+                      </div> -->
+                      <!-- <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Generate</button>
+                      </div> -->
+                  </div>
+                  <div class="row mb-2">
+                      <div class="col-md-12">
+                          <p class="mb-1">Shared secret key in combination with the current timestamp is used to generate one-time password<br> OTP secret key</p>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="width100">
+                              <input  type="text" id="email" name="email" class="width100 c-input">
+                              <!-- <p class="mb-0 erro-dis">minimum 8 characters</p> -->
+                          </div>
+                      </div>
+                      <!-- <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Check</button>
+                      </div>
+                      <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Change</button>
+                      </div> -->
+                      <!-- <div class="col-md-2">
+                          <button type="button" class="btn btn-basic100 btn-sm">Generate</button>
+                      </div> -->
+                  </div>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+       </ul>
+      <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    </div>
+     
+  </div>
+  <div class="modal-footer " style="justify-content: space-between;">
+      <div>
+          <button type="button" class="btn btn-basic btn-sm me-2">New Client</button>
+           <button type="button" class="btn btn-basic btn-sm" (click)="modal.close('Close click')">Edit Manager</button>
+      </div>
+      <div>
+          <button type="button" class="btn btn-basic btn-sm me-2">Update</button>
+           <button type="button" class="btn btn-basic btn-sm me-2" (click)="modal.close('Close click')">Cancel</button>
+           <button type="button" class="btn btn-basic btn-sm me-2" (click)="modal.close('Close click')">Help</button>
+      </div>
+     
+  </div>
+</ng-template>

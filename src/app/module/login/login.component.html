@@ -1,0 +1,378 @@
+<section class="login-card">
+    <div class="row m-0">
+        <div class="col-md-8 m-auto" style="width: 800px;">
+            <div class="xcard " >
+                <div class="xheader">
+                    <p *ngIf="libuysellTab== 'tab1'" style="color:#fff">Connect to account: {{brokersList[0]?.Broker}}</p>
+                    <p *ngIf="libuysellTab== 'tab2'" style="color:#fff">Open Demo account: {{brokersList[0]?.Broker}}</p>
+                </div>
+                <div class="xbody">
+                    <div class="row">
+                        <!-- <div class="col-md-4">
+                            <ul class="modtab">
+                                <li [ngClass]="{'active': libuysellTab == 'tab1'}" (click)="libuysell('tab1')">
+                                    <div><img class="nav-img" src="assets/images/clientimg/nv11.png"></div>
+                                    <p>Connect to account</p>
+                                </li>
+                                <li [ngClass]="{'active': libuysellTab == 'tab2'}" (click)="libuysell('tab2')">
+                                    <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
+                                    <p>Open Demo account</p>
+                                </li>
+                                <li style="border-bottom: none;" (click)="libuysell('tab3')" >
+                                  <ul class="innerul">
+                                    <li *ngFor="let lis of accountList; let i= index" (click)="showListAccount(lis);getSelectRow(i)"  [class.selected-row]="selectedRowIndex === i" >
+                                     
+                                        <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
+                                        <div  >
+                                            <p class="untxt">{{lis.name}}</p>
+                                            <p class="crdtxt">{{lis.account}}</p>
+                                        </div>
+                                      
+                                    </li>
+                                  </ul>
+                                
+                                  
+                                </li>
+                            </ul>
+                            
+                        </div> -->
+                       <!-- <p *ngIf="!connectAccountForm">Form not ready</p> -->
+                        <div class="col-md-12" >
+                            <!-- <div class="row" style="padding-right: 20px;" *ngIf="libuysellTab == 'tab1'">
+                                <div class="col-md-12">
+                                    <p><b>Connect to account</b></p>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-md-2"><p class="xlbl">Login</p></div>
+                                        <div class="col-md-10">
+                                            <div class="width100">
+                                                <input type="text" class="width100 c-input" id="email"  name="email">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-md-2"><p class="xlbl">Password</p></div>
+                                        <div class="col-md-5">
+                                            <div class="width100">
+                                                <input type="text" class="width100 c-input" id="email"  name="email">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div  class="form-check mb-0 " >
+                                                <label  class="form-check-label">
+                                                    <input  type="checkbox" name="remember" checked class="form-check-input">Save password </label>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-md-2"><p class="xlbl"></p></div>
+                                        <div class="col-md-10 d-flex">
+                                            
+                                            <p class="fongo ms-3">Forgot Password? <span>Contact company</span></p>
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="row">
+                                        <div class="col-md-2"><p class="xlbl">Server</p></div>
+                                        <div class="col-md-10">
+                                            <p class="">AdmiralsGroup-Demo</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-7"><p class="xlbl"></p></div>
+                                        <div class="col-md-5" style="text-align: end;">
+                                            <button class="btn btn-success" (click)="login()">Connect to account</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <form *ngIf="libuysellTab == 'tab1'" [formGroup]="connectAccountForm">
+                                <div class="row" style="padding-right: 20px;" >
+                                  <!-- <div class="col-md-12">
+                                    <p><b>Connect to account</b></p>
+                                  </div> -->
+                                  <div class="col-md-12">
+                                    <div class="row align-items-center mb-3">
+                                      <div class="col-md-2"><p class="xlbl">Login</p></div>
+                                      <div class="col-md-10">
+                                        <div class="width100">
+                                          <input type="text" class="width100 c-input" formControlName="login" autocomplete="off" (keypress)="numberOnly1($event)" readonly onfocus="this.removeAttribute('readonly');" >
+                                       <div class="text-danger" *ngIf="connectAccountForm.get('login')?.touched && connectAccountForm.get('login')?.invalid">
+                                       <span *ngIf="connectAccountForm.get('login')?.errors?.['required']">Login is required.</span>
+                                       <span *ngIf="connectAccountForm.get('login')?.errors?.['minlength']">Minimum 4 digits required.</span>
+                                       <span *ngIf="connectAccountForm.get('login')?.errors?.['maxlength']">Maximum 16 digits allowed.</span>
+                                       <span *ngIf="connectAccountForm.get('login')?.errors?.['pattern']">Only numeric digits allowed.</span>
+                                     </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="row align-items-center mb-3">
+                                      <div class="col-md-2"><p class="xlbl">Password</p></div>
+                                      <div class="col-md-5">
+                                        <div class="width100">
+                                          <input type="password" class="width100 c-input" readonly onfocus="this.removeAttribute('readonly');" formControlName="password">
+                                        <div class="text-danger" *ngIf="connectAccountForm.get('password')?.touched && connectAccountForm.get('password')?.invalid">
+                                       <span *ngIf="connectAccountForm.get('password')?.errors?.['required']">Password is required.</span>
+                                       <span *ngIf="connectAccountForm.get('password')?.errors?.['minlength']">Minimum 8 characters required.</span>
+                                       <span *ngIf="connectAccountForm.get('password')?.errors?.['pattern']">
+                                         Password must include uppercase, lowercase, number, and special character (#$"&#64;"%!*-?&^).
+                                       </span>
+                                     </div>
+                                        </div>
+                                      </div>
+                                      <div class="col-md-5">
+                                        <div class="form-check mb-0">
+                                          <label class="form-check-label">
+                                            <input type="checkbox" formControlName="remember" class="form-check-input"> Save password
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="row align-items-center mb-3">
+                                      <div class="col-md-2"><p class="xlbl"></p></div>
+                                      <div class="col-md-10 d-flex">
+                                        <!-- <p class="fongo ms-3">Forgot Password? <span>Contact company</span></p> -->
+                                      </div>
+                                    </div>
+                                   <div class="row">
+                               <div class="col-md-2">
+                                 <p class="xlbl">Server</p>
+                               </div>
+                               <div class="col-md-10">
+                                 <select class="width100 c-input" formControlName="server">
+                                   <!-- Show "Please Select" only if no brokers are available -->
+                                   <option *ngIf="!brokersList || brokersList.length === 0" value="0" disabled selected>Please Select</option>
+
+                                   <!-- List available brokers -->
+                                   <option *ngFor="let broker of brokersList" [value]="broker.BrokerID">{{ broker.Broker }}</option>
+                                 </select>
+
+                                 <div class="text-danger" *ngIf="connectAccountForm.get('server')?.touched && connectAccountForm.get('server')?.errors?.['invalidSelect']">
+                                   Please select a valid server.
+                                 </div>
+                               </div>
+                             </div>
+                                    <div class="row">
+                                      <div class="col-md-7"><p class="xlbl"></p></div>
+                                     
+                                      <div class="col-md-12 mb-3" style="text-align: end;">
+                                          
+                                        <button class="btn btn-success" (click)="loginSend()" [disabled]="connectAccountForm.invalid">Connect to account</button>
+                                       
+                                      </div>
+                                       <div class="col-md-12 text-center">
+                                          <a (click)="libuysell('tab2')" style="color: #007bff; font-size: 12px;">
+                                         Open Demo Account
+                                       </a>
+                                        </div>
+                                      
+                                    </div>
+                                  
+                                  </div>
+                                </div>
+                              </form>
+                            <div >
+                              <form [formGroup]="openDemoAccountForm" *ngIf="libuysellTab == 'tab2'">
+                                <div class="row" style="padding-right: 20px;" >
+                                    <!-- <div class="col-md-12">
+                                        <p><b>Open Demo account</b></p>
+                                    </div> -->
+                                    <div class="col-md-12">
+                                        <!-- <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Company</p></div>
+                                            <div class="col-md-9">
+                                                <p class="xlbl text-primary">Company</p>
+                                            </div>
+                                        </div> -->
+                                        <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Server</p></div>
+                                            <div class="col-md-9">
+                                                 <select class="width100 c-input" formControlName="server">
+                                   <!-- Show "Please Select" only if no brokers are available -->
+                                   <option *ngIf="!brokersList || brokersList.length === 0" value="0" disabled selected>Please Select</option>
+
+                                   <!-- List available brokers -->
+                                   <option *ngFor="let broker of brokersList" [value]="broker.BrokerID">{{ broker.Broker }}</option>
+                                 </select>
+
+                                 <div class="text-danger" *ngIf="openDemoAccountForm.get('server')?.touched && openDemoAccountForm.get('server')?.errors?.['invalidSelect']">
+                                   Please select a valid server.
+                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Your Name</p></div>
+                                            <div class="col-md-5">
+                                              <div class="width100">
+                                                <input type="text" class="width100 c-input" formControlName="firstName">
+                                              </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <div class="width100">
+                                                <input type="text" class="width100 c-input" formControlName="lastName">
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Email</p></div>
+                                            <div class="col-md-5">
+                                              <div class="width100">
+                                                <input type="email" class="width100 c-input" formControlName="email">
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Mobile phone</p></div>
+                                            <div class="col-md-5">
+                                              <div class="width100">
+                                                <input type="text" class="width100 c-input" formControlName="phone">
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <!-- <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Account type</p></div>
+                                            <div class="col-md-9">
+                                              <div class="width100">
+                                                <select formControlName="accountType" class="width100 c-input">
+                                                  <option>Trade MT5 USD</option>
+                                                </select>
+                                              </div>
+                                            </div>
+                                          </div> -->
+                                          <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Deposit</p></div>
+                                            <div class="col-md-3">
+                                              <div class="width100">
+                                                <select formControlName="deposit"  class="width100 c-input">
+                                                    <option value="0">5000 USD</option>
+                                                    <option value="1">2000 USD</option>
+                                                    <option value="2">1000 USD</option>
+                                                    <option value="3">500 USD</option>
+                                                    <option value="4">300 USD</option>
+                                                    <option value="5">100 USD</option>
+                                                  </select>
+                                                <!-- <input type="text" class="width100 c-input" formControlName="deposit"> -->
+                                              </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                              <span class="me-2">USD </span>
+                                              <span>Leverage</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                              <div class="width100">
+                                                <select formControlName="leverage" class="width100 c-input">
+                                                  <option value="0">1:500</option>
+                                                  <option value="1">1:200</option>
+                                                  <option value="2">1:100</option>
+                                                  <option value="3">1:50</option>
+                                                  <option value="4">1:30</option>
+                                                  <option value="5">1:10</option>
+                                                </select>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-md-12">
+                                              <div class="form-check mb-0">
+                                                <label class="form-check-label">
+                                                  <input type="checkbox" formControlName="agreeTerms" class="form-check-input">I agree with the terms and conditions for opening an account and the data protection policy
+                                                </label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        <div class="row">
+                                            <div class="col-md-7"><p class="xlbl"></p></div>
+                                            <div class="col-md-5" style="text-align: end;">
+                                                <button class="btn btn-success"  (click)="openDemoAccount()" [disabled]="openDemoAccountForm.invalid">Open Demo account</button>
+                                            </div>
+                                             <div class="col-md-12 text-center">
+                                          <a (click)="libuysell('tab1')" style="color: #007bff; font-size: 12px;">
+                                         Connect to Account
+                                       </a>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                              </form>
+                            </div>
+                            <div>
+                               <div class="row" style="padding-right: 20px;" *ngIf="libuysellTab == 'tab9'">
+                                    <div class="col-md-12">
+                                        <p><b>Demo Account Details</b></p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Account</p></div>
+                                            <div class="col-md-9">
+                                                <p class="xlbl text-primary">{{demoAccount}}</p>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                        <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Password</p></div>
+                                            <div class="col-md-9">
+                                                <p class="xlbl text-primary">{{demoPass}}</p>
+                                            </div>
+                                        </div>
+                                        </div>
+                                         <div class="col-md-12 text-center">
+                                          <a (click)="libuysell('tab1')" style="color: #007bff; font-size: 12px;">
+                                         Connect to Account
+                                       </a>
+                                        </div>
+                                        </div>
+                            </div>
+                            <div class="row" style="padding-right: 20px;" *ngIf="libuysellTab == 'tab3'">
+                                <div class="col-md-12 mb-4">
+                                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div>
+                                      {{getAccount(listOb.account)}}
+                                        <p class="mb-0"><b>{{listOb.name}}</b></p>
+                                        <p style="font-size: 12px;">{{listOb.account}} - AdmiralsGroup-Demo - Hedge</p>
+                                    </div>
+                                    <div>
+                                        <p><b>{{listOb.balance}} USD</b></p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center mb-1">
+                                        <div class="col-md-2"><p class="xlbl">Name</p></div>
+                                        <div class="col-md-10">
+                                            <p class="xlbl">{{listOb.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mb-1">
+                                        <div class="col-md-2"><p class="xlbl">Server</p></div>
+                                        <div class="col-md-10">
+                                            <p class="xlbl">AdmiralsGroup-Demo</p>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mb-4">
+                                        <div class="col-md-2"><p class="xlbl">Login</p></div>
+                                        <div class="col-md-10">
+                                            <p class="xlbl">{{listOb.account}} </p>
+                                        </div>
+                                    </div>
+                           
+                                    <div class="row">
+                                        <div class="col-md-5"><p class="xlbl"></p></div>
+                                        <div class="col-md-7" style="text-align: end;">
+                                            <button class="btn btn-success me-2" (click)="autoConnectLogin()" >Connect to account</button>
+                                            <button class="btn btn-outline-danger" style="font-size: 14px; border-radius: 0px;"(click)="DeleteAcc( this.getAcc)">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</section>

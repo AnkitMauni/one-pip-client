@@ -1,0 +1,458 @@
+
+var chartData = []
+var seriesDataVal = []
+var chart;
+function myFunction(data, newLiveData, val1, symbol, symbolInfo) {
+    // console.log("Symbol", symbolInfo.symbol, symbol)
+
+
+    var chartSericesData = [
+        //     {
+        //     type: 'candlestick',
+        //     id: 'aapl',
+        //     name: symbolInfo.symbol,
+
+        // }
+        {
+            type: 'candlestick',
+            id: 'aapl',
+            name:symbol,
+
+            color: '#FF7F7F',
+            upColor: '#90EE90',
+            lastPrice: {
+                enabled: true,
+                label: {
+                    enabled: true,
+                    backgroundColor: '#FF7F7F',
+                    padding: 2,
+                    shape: 'rect',
+                    borderRadius: 0
+                },
+
+            }
+
+        }
+
+    ]
+    chartData = data
+    chartSericesData[0].data = chartData
+    if (val1 === undefined || val1 === null) {
+
+    }
+    else {
+        for (i = 0; i < val1.length; i++) {
+            chartSericesData[i + 1] = val1[i]
+
+
+        }
+    }
+    const options = {
+
+
+        chart: {
+
+            className: 'sunny'
+        },
+
+
+        xAxis: {
+            overscroll: 500000,
+            range: 4 * 200000,
+            gridLineWidth: 1,
+
+
+        },
+        yAxis: {
+            labels: {
+                format: '{value:.2f}'
+            },
+
+        },
+
+        credits: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        accessibility: {
+            enabled: false
+        },
+        rangeSelector: {
+            buttons: [{
+                text: 'M1',
+                // title: 'Set timeframe to 1 minute',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['minute', [1]]
+                    ]
+                }
+            }, {
+                text: 'M5',
+                // title: 'Set timeframe to 5 minutes',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['minute', [5]]
+                    ]
+                }
+            }, {
+                text: 'M15',
+                // title: 'Set timeframe to 15 minutes',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['minute', [15]]
+                    ]
+                }
+            }, {
+                text: 'M30',
+                // title: 'Set timeframe to 30 minutes',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['minute', [30]]
+                    ]
+                }
+            }, {
+                text: 'H1',
+                // title: 'Set timeframe to 1 hour',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['hour', [1]]
+                    ]
+                }
+            }, {
+                text: 'H4',
+                // title: 'Set timeframe to 4 hours',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['hour', [4]]
+                    ]
+                }
+            }, {
+                text: 'D1',
+                // title: 'Set timeframe to 1 day',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['day', [1]]
+                    ]
+                }
+            }, {
+                text: 'W1',
+                // title: 'Set timeframe to 1 week',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['week', [1]]
+                    ]
+                }
+            }, {
+                text: 'MN',
+                // title: 'Set timeframe to 1 month',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['month', [1]]
+                    ]
+                }
+            }],
+            selected: 4,
+            inputEnabled: false
+        },
+
+        navigator: {
+
+            series: {
+                color: '#000000'
+            }
+        },
+        scrollbar: {
+
+            enabled: false,
+            display: 'none',
+        },
+
+        series: chartSericesData,
+
+        tooltip: {
+            valueDecimals: 2,
+            positioner: function () {
+                return {
+                    x: 10,
+                    y: 0
+                };
+            },
+            format: `${symbol}` + ' {point.open:.2f} {point.high:.2f} ' +
+                '{point.low:.2f} {point.close:.2f}'
+        },
+        xAxis: {
+            gridLineColor: '#21323f',
+            gridLineWidth: 1,
+            lineColor: '#999999',
+            tickColor: '#999999',
+            tickLength: 5,
+            labels: {
+                style: {
+                    color: '#c5c7c9'
+                }
+            }
+        },
+        // xAxis: {
+        //     crosshair: {
+        //         snap: false,
+        //         label: {
+        //             enabled: true,
+        //             format: '{value:%d %b %k:%M}'
+        //         }
+        //     },
+
+        //     startOnTick: true,
+        //     labels: {
+        //         distance: 4,
+        //         formatter() {
+        //             const isAboveD1 =
+        //                 this.chart.series[0].currentDataGrouping.unitRange >=
+        //                 86400000;
+
+        //             if (this.isFirst || isAboveD1) {
+        //                 return this.chart.time.dateFormat(
+        //                     '%d %b %Y', this.value
+        //                 );
+        //             }
+        //             return this.chart.time.dateFormat(
+        //                 '%d %b %k:%M', this.value
+        //             );
+        //         }
+        //     }
+        // },
+        // yAxis: {
+        //     crosshair: {
+        //         snap: false,
+        //         label: {
+        //             enabled: true,
+        //             format: '{value:.2f}'
+        //         }
+        //     },
+        //     left: 40,
+        //     title: {
+        //         text: 'Price'
+        //     }
+        // }
+        yAxis: {
+            crosshair: {
+                label: {
+                    backgroundColor: '#fbfbfb',
+                    borderRadius: 0,
+                    enabled: true,
+                    padding: 3,
+                    style: {
+                        color: '#000'
+                    }
+                }
+            },
+            gridLineColor: '#21323f',
+            lineColor: '#999999',
+            lineWidth: 1,
+            labels: {
+                align: 'left',
+                style: {
+                    color: '#c5c7c9'
+                }
+            }
+        }
+    };
+
+
+    options.chart = {
+        events: {
+            load() {
+                chart = this,
+                    series = chart.series[0];
+
+                let i = 0;
+                setInterval(() => {
+                    const data = series.options.data;
+                    // console.log("getNewPoint(i, series.options.data)", getNewPoint(i, series.options.data))
+                    newPoint = getNewPoint(i, series.options.data),
+                        lastPoint = data[data.length - 1];
+
+                    if (lastPoint[0] !== newPoint[0]) {
+                        series.addPoint(newPoint);
+                    } else {
+                        series.options.data[data.length - 1] = newPoint;
+                        series.setData(data);
+                    }
+                    i++;
+                }, 1);
+            }
+        }
+    };
+
+    // Apply the data to the options
+
+    options.series[0].data = data
+    if (chart) {
+        chart.destroy();
+    }
+
+    // Create the chart
+    Highcharts.stockChart('container', options,
+
+
+    );
+
+    // liveData(1)
+
+
+
+
+
+    const buttons = document.querySelectorAll(".myButton");
+
+    const buttonss = document.querySelectorAll(".myButtons");
+
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function (e) {
+            const series = options.chart.get('oscillator');
+
+            // Assuming chart is defined elsewhere
+            series.remove(false);
+            chart.addSeries({
+                type: e.target.value,
+                linkedTo: 'aapl',
+                id: 'oscillator',
+                yAxis: 2
+            });
+        });
+    });
+
+    buttonss.forEach(function (button) {
+        button.addEventListener('click', function (e) {
+            const series = options.chart.get('overlay');
+            // Assuming chart is defined elsewhere
+            series.remove(false);
+            chart.addSeries({
+                type: e.target.value,
+                linkedTo: 'aapl',
+                id: 'overlay',
+
+            });
+        });
+    });
+    function getNewPoint(i, data) {
+        // console.log("getValue", getValue())
+        const lastPoint = data[data.length - 1];
+
+
+        if (i === 0 || i % 10 === 0) {
+            return [
+                lastPoint[0] + 60000,
+                lastPoint[4],
+                lastPoint[4],
+                lastPoint[4],
+                lastPoint[4]
+            ];
+        }
+        const updatedLastPoint = data[data.length - 1];
+
+        const ChangeData = getValue();
+        ChangeData[0] = lastPoint[0]
+        return ChangeData;
+    }
+}
+
+var newDataLiveData = []
+function setupDataUpdateInterval(val) {
+
+    if (val.length == 0) {
+        // console.log("testing", val);
+
+    } else {
+
+
+        newDataLiveData = val
+        setValue(val)
+        // console.log("newDataLiveData", newDataLiveData)
+
+
+    }
+
+
+}
+var setChartData = []
+function setValue(val) {
+    setChartData = val
+}
+function getValue() {
+    return setChartData
+}
+
+
+
+
+
+Highcharts.setOptions({
+    chart: {
+        height:620,
+        className: 'okok',
+    },
+
+    navigator: {
+        maskInside: false,
+        maskFill: 'rgba(0, 0, 0, 0.3)',
+        height: 30,
+        margin: 10,
+        handles: {
+            backgroundColor: '#000000'
+        },
+        xAxis: {
+            labels: {
+                enabled: false
+            },
+            gridLineWidth: 0
+        }
+    },
+    scrollbar: {
+        height: 0
+    },
+    tooltip: {
+        shadow: false,
+        borderWidth: 0,
+        backgroundColor: 'transparent'
+    },
+    xAxis: {
+        gridLineWidth: 1,
+        gridLineColor: '#c0c0c0',
+        gridLineDashStyle: 'Dash',
+        tickLength: 5,
+        crosshair: {
+            label: {
+                backgroundColor: '#000000',
+                padding: 2,
+                shape: 'rect',
+                borderRadius: 0
+            }
+        }
+    },
+    yAxis: {
+        gridLineWidth: 1,
+        gridLineColor: '#c0c0c0',
+        gridLineDashStyle: 'Dash',
+        tickInterval: 5,
+        crosshair: {
+            label: {
+                backgroundColor: '#000000',
+                padding: 2,
+                shape: 'rect',
+                borderRadius: 0
+            }
+        }
+    }
+
+})

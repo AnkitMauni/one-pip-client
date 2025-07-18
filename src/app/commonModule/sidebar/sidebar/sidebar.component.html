@@ -1,0 +1,170 @@
+<div class="sidebar" [class.open]="isOpen">
+    <!-- @if (isLoggedIn() || (sideBarData === "true") ) { -->   
+    <!-- <div class="toggle-btn d-flex justify-content-end">
+      <i class="fa-solid fa-right-left"></i>
+    </div> -->
+    <nav class="nav-links navbar-main-ul" id="nav-links">
+
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="link_name">Dashboard</span></a>
+            </div>
+        </li>
+
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-envelope-open"></i>
+                    <span class="link_name">Account</span></a>
+            </div>
+        </li>
+        <li #itemE1 routerLinkActive="active">
+            <div class="dropdown-title" (click)="showSubmenu(itemE1)"><a>
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                    <span class="link_name">Finance </span></a>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+            <div class="border-line">
+                <ul class="sub-menu ms-3">
+                    <li><a (click)="navigate('user-list')">Deposit Funds</a></li>
+                    <li><a (click)="navigate('user-list')">Withdraw Funds</a></li>
+                    <li><a (click)="navigate('user-list')">Transfer Funds</a></li>
+                    <li><a (click)="navigate('user-list')">Ledger Overview</a></li>
+                </ul>
+
+            </div>
+        </li>
+
+        <li #itemE3>
+            <div class="dropdown-title" (click)="showSubmenu(itemE3)"><a>
+                    <i class="fa-solid fa-download"></i>
+                    <span class="link_name">Download</span></a>
+
+            </div>
+
+        </li>
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-photo-film"></i>
+                    <span class="link_name">KYC</span></a>
+            </div>
+
+        </li>
+
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-id-card"></i>
+                    <span class="link_name">Profile</span></a>
+            </div>
+
+        </li>
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-envelope-open"></i>
+                    <span class="link_name">Massage Center</span>
+                </a>
+            </div>
+        </li>
+
+        <li #itemE2>
+            <div class="dropdown-title" (click)="showSubmenu(itemE2)"><a>
+                    <i class="fa-solid fa-sliders"></i>
+                    <span class="link_name">Reports </span></a>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+            <ul class="sub-menu ms-3">
+                <li>
+                    <a (click)="navigate('manager')">Trades</a>
+                </li>
+            </ul>
+        </li>
+
+        <li #itemE5 routerLinkActive="active">
+            <div class="dropdown-title" (click)="showSubmenu(itemE5)"><a>
+                    <i class="fa-solid fa-photo-film"></i>
+                    <span class="link_name">Social Trade </span></a>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+            <ul class="sub-menu ms-3">
+                <li><a (click)="navigate('user-list')">Trade Wall</a></li>
+                <li><a (click)="navigate('user-list')">Subscriber</a></li>
+                <li><a (click)="navigate('user-list')">Investors</a></li>
+                <li><a (click)="navigate('user-list')">Trades</a></li>
+            </ul>
+
+        </li>
+
+        <li #itemE4>
+            <div class="dropdown-title" (click)="showSubmenu(itemE4)"><a>
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    <span class="link_name">Subscribe </span></a>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+            <ul class="sub-menu ms-3">
+                <li><a (click)="navigate('manager')">Algobot</a></li>
+            </ul>
+
+        </li>
+
+
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span class="link_name">Tickets</span></a>
+            </div>
+
+        </li>
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-people-arrows"></i>
+                    <span class="link_name">Promotion</span></a>
+            </div>
+
+        </li>
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span class="link_name">FAQ</span></a>
+            </div>
+
+        </li>
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-brands fa-square-pied-piper"></i>
+                    <span class="link_name">Logs</span></a>
+            </div>
+
+        </li>
+
+
+        <h4 style="font-size: 18PX; color: white; margin-left: 15PX; text-decoration:underline ;">IB AREA </h4>
+        <li>
+            <div class="dropdown-title">
+                <a routerLink="/p2p-dash">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span class="link_name">IB & IB List</span></a>
+            </div>
+
+        </li>
+    </nav>
+    <!-- } -->
+
+</div>
+
+
+
+
+
+
+
+
+

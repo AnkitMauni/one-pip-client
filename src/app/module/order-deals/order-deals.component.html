@@ -1,0 +1,29 @@
+
+<div class="pagebody">
+    <div class="container-fluid p-0">
+       <div class="tableOne">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="navigate('position')">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons30.png"> Positions </span></td>
+                <td>Manage open positions of clients</td>
+              </tr>
+              <tr (dblclick)="navigate('orders')">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons30.png"> Orders </span></td>
+                <td>Manage all client orders: executed, pending, as well as the ones awaiting execution</td>
+              </tr>
+              <tr (dblclick)="navigate('deals')">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons30.png"> Deals </span></td>
+                <td>Manage balance operations and deals executed by orders</td>
+              </tr>
+            </tbody>
+          </table>
+       </div>
+    </div>
+    </div>

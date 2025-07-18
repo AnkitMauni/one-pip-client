@@ -1,0 +1,717 @@
+<div class="set-footer">
+  <div class="container-fluid p-0">
+    <div>
+      <div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab1'">
+          
+          <div class="padding-b-for-footer">
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th class="text-end">Ticket</th>
+                  <th class="text-end">Time</th>
+                  <th class="text-end">Type</th>
+                  <th class="text-end">Volume</th>
+                  <th class="text-end">Price</th>
+                  <th class="text-end">S / L</th>
+                  <th class="text-end">T / P</th>
+                  <th class="text-end">Price</th>
+                  <th class="text-end">Profit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let openP of listOpen let i=index" (click)="openXl2(content2,openP)">
+                  <td ><span *ngIf="openP?.BS == 1"><img  src="assets/images/sideimg/mt-icons56.png"></span>
+                    <span *ngIf="openP?.BS == 0"><img  src="assets/images/sideimg/mt-icons57.png"></span>
+                    <span>{{openP?.Sy}}</span></td>
+                  <td class="text-end">{{openP?.Pos}}</td>
+                  <td class="text-end">{{trimTime(openP?.TmO)}}</td>
+                  <td class="text-end">
+                    <span class="red-class" *ngIf="openP?.BS == 1">sell</span>
+                    <span class="blue-class" *ngIf="openP?.BS == 0">buy</span>
+                  </td>
+                  <td class="text-end">{{openP?.V/10000}}</td>
+                  <td class="text-end">{{openP?.PC}}</td>
+                  <td class="text-end">{{openP?.SL}}</td>
+                  <td class="text-end">{{openP?.TP}}</td>
+                  <td class="text-end">{{getCurrent(openP?.Sy,openP.BS)}}</td>
+                  <!-- <td class="text-end" *ngIf="getValue(getCurrent(openP?.Sy,openP.BS),openP?.PC,openP?.V/10000,openP) !='-Infinity || Infinity'">{{getValue(getCurrent(openP?.Sy,openP.BS),openP?.PC,openP?.V/10000,openP)}}</td>
+                  <td class="text-end" *ngIf="getValue(getCurrent(openP?.Sy,openP.BS),openP?.PC,openP?.V/10000,openP) =='-Infinity || Infinity || NaN'">0.00</td> -->
+                  <td class="text-end" >
+  {{ getProfitUSD(openP) }} 
+  <!-- <span class="text-muted">USD</span> -->
+</td>
+              
+                </tr>
+          
+
+                <!-- <tr *ngFor="let openP of positionListData let i=index" (click)="openXl2(content2,openP)">
+                  <td ><span>{{openP?.Symbol}}</span></td>
+                  <td class="text-end">{{openP?.Ticket}}</td>
+                  <td>{{(openP?.Timestamp)}}</td>
+            
+                  <td class="text-end">
+                    <span *ngIf="openP?.oBuySell == 1">sell</span>
+                    <span *ngIf="openP?.oBuySell == 0">buy</span>
+                    <span  *ngIf="openP?.oBuySell == 2">buy limit </span>
+                    <span *ngIf="openP?.oBuySell == 3">sell limit </span>
+                    <span  *ngIf="openP?.oBuySell == 4">Buy Stop </span>
+                    <span  *ngIf="openP?.oBuySell == 5">Sell Stop </span>
+                    <span  *ngIf="openP?.oBuySell == 6">Buy Stop Limit </span>
+                    <span  *ngIf="openP?.oBuySell == 7">Sell Stop Limit </span>
+                
+                  </td>
+                  <td class="text-end">{{openP?.Lot}}</td>
+                  <td class="text-end">{{openP?.Price}}</td>
+                  <td class="text-end" [ngClass]="{'bg-blue': openP?.SL > 0}">{{openP?.SL}}</td>
+                  <td class="text-end" [ngClass]="{'bg-yellow': openP?.TL > 0}">{{openP?.TL}}</td>
+               
+                  <td class="text-end">{{getCurrent(openP?.Symbol,openP.oBuySell)}}</td>
+                  <td class="text-end" *ngIf="openP?.oBuySell <= 1 || openP?.oBuySell == 0">-</td>
+                  <td class="text-end" *ngIf="openP?.oBuySell > 1">Placed</td>
+                  
+              
+                </tr> -->
+                <tr>
+                  <td colspan="10"><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons39.png"> <b>Balance:{{this.allGetTrade?.Balance | number: '1.2-2'}} USD Equity:{{this.allGetTrade?.Equity | number: '1.2-2'}} Margin:{{this.allGetTrade?.Margin | number: '1.2-2'}} Free Margin: {{this.allGetTrade?.FreeMargin | number: '1.2-2'}} Margin Level: {{this.allGetTrade?.Margin_Level | number: '1.2-2'}}</b> </span></td>
+                
+                </tr>
+                  <tr *ngFor="let openP of listPending let i=index" (click)="openXl2(content2,openP)">
+                  <td ><span>{{openP?.Sy}}</span></td>
+                  <td class="text-end">{{openP?.Ord}}</td>
+                  <td class="text-end">{{trimTime(openP?.TmO)}}</td>
+                  <td class="text-end">
+                    <!-- <span *ngIf="openP?.BS == 1">sell</span>
+                    <span *ngIf="openP?.BS == 0">buy</span> -->
+                     <span  *ngIf="openP?.BS == 2">buy limit </span>
+                    <span *ngIf="openP?.BS == 3">sell limit </span>
+                    <span  *ngIf="openP?.BS == 4">Buy Stop </span>
+                    <span  *ngIf="openP?.BS == 5">Sell Stop </span>
+                    <span  *ngIf="openP?.BS == 6">Buy Stop Limit </span>
+                    <span  *ngIf="openP?.BS == 7">Sell Stop Limit </span>
+                  </td>
+                  <td class="text-end">{{openP?.V/10000}}</td>
+                  <td class="text-end">{{openP?.P}}</td>
+                  <td class="text-end">{{openP?.SL}}</td>
+                  <td class="text-end">{{openP?.TP}}</td>
+                  <td class="text-end">{{getCurrent(openP?.Sy,openP.BS)}}</td>
+                   <td class="text-end" *ngIf="openP?.BS == 2 || 3 || 4 || 5 || 6 || 7">Placed</td>
+                 
+              
+                </tr>
+                
+              </tbody>
+            </table>
+          </div>
+      </div>
+
+      <div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab2'">
+          
+        <div class="padding-b-for-footer">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Assets</th>
+                <th class="text-end">Volume</th>
+                <th class="text-end">Rate</th>
+                <th class="text-end">USD</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons22.png"> AUS </span></td>
+                <td class="text-end">-31M</td>
+                <td class="text-end">0.2024</td>
+                <td class="text-end">-4 025.24</td>
+              </tr>
+              
+              <tr>
+                <td colspan="4"><span><img class="table-img me-1" src="assets/images/sideimg/mod-img3.png"> <b>Balance: 21 575.17 USD Equity: 21 703.79 Margin: 4 043.49 Free Margin: 17 531.68 Margin Level: 536.76%</b> </span></td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+    </div>
+
+    <div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab3'">
+          
+      <div class="padding-b-for-footer">
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th> Open Time</th>
+              <th class="text-end">Symbol</th>
+              <th class="text-end">Ticket</th>
+              <th class="text-end">Type</th>
+              <th class="text-end">Volume</th>
+              <th class="text-end">Open Price</th>
+              <th class="text-end">S / L</th>
+              <th class="text-end">T / P</th>
+             <th class="text-end">Closing Time</th>
+              <th class="text-end">Price</th>
+              
+              <th class="text-end">Profit</th>
+              <!-- <th class="text-end">Charge</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let pos of positionHitory; let i = index">
+  <tr *ngIf="!( (pos?.BS === 0 || pos?.BS === 1) && !pos?.TmC )">
+    <td><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons39.png"> {{trimTime(pos?.TmO)}} </span></td>
+    <td class="text-end">
+      <span *ngIf="pos?.BS == 1"><img  src="assets/images/sideimg/mt-icons56.png"></span>
+       <span *ngIf="pos?.BS == 0"><img  src="assets/images/sideimg/mt-icons57.png"></span>
+      {{pos.Sy}}</td>
+    <td class="text-end">
+      <span *ngIf="pos?.BS === 1 || pos?.BS === 0">{{ pos.Ord }}</span>
+      <span *ngIf="pos?.BS === 2 || pos?.BS === 3">{{ pos.Del }}</span>
+    </td>
+    <td class="text-end">
+      
+      <p class="mb-0 blue-class" *ngIf="pos?.BS === 0">buy</p>
+      <p class="mb-0 red-class" *ngIf="pos?.BS === 1">sell</p>
+      <p class="mb-0" *ngIf="pos?.BS === 2">balance</p>
+      <p class="mb-0" *ngIf="pos?.BS === 3">credit</p>
+    </td>
+    <td class="text-end"><span *ngIf="pos?.BS === 1 || pos?.BS === 0">{{ pos?.V / 10000 }}</span>
+                           <span *ngIf="pos?.BS === 2 || pos?.BS === 3"></span>
+    </td>
+    <td class="text-end">
+      <span *ngIf="pos?.BS === 1 || pos?.BS === 0">{{ pos?.P }}</span>
+                           <span *ngIf="pos?.BS === 2 || pos?.BS === 3"></span>
+    </td>
+    <td class="text-end">
+ <span *ngIf="pos?.BS === 1 || pos?.BS === 0">{{ pos?.SL }}</span>
+                           <span *ngIf="pos?.BS === 2 || pos?.BS === 3"></span>
+
+    </td>
+    <td class="text-end">
+      <span *ngIf="pos?.BS === 1 || pos?.BS === 0">{{ pos?.TP }}</span>
+                           <span *ngIf="pos?.BS === 2 || pos?.BS === 3"></span>
+    </td>
+     <td class="text-end">{{ trimTime(pos?.TmC) }}</td>
+    <td class="text-end">
+       <span *ngIf="pos?.BS === 1 || pos?.BS === 0">{{ pos?.PC }}</span>
+                           <span *ngIf="pos?.BS === 2 || pos?.BS === 3"></span>
+    </td>
+   
+    <td class="text-end">{{ pos?.Pr | number: '1.2-2' }}</td>
+  </tr>
+</ng-container>
+
+            
+            <tr>
+              <td colspan="11"><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons39.png"> <b>Profit:{{this.historyRow?.Profit | number: '1.2-2'}} Credit:{{this.historyRow?.Credit | number: '1.2-2'}} Deposit:{{this.historyRow?.Deposit | number: '1.2-2'}} Withdraw: {{this.historyRow?.Withdraw | number: '1.2-2'}} Balance: {{this.historyRow?.Balance | number: '1.2-2'}}</b> </span></td>
+              <!-- <td class="text-end"><b>3254</b></td> -->
+            </tr>
+
+
+
+
+ 
+            
+            
+          </tbody>
+        </table>
+      </div>
+  </div>
+
+  <div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab4'">
+    <div class="padding-b-for-footer">
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th class="text-end">Category</th>
+            <th class="text-end">Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab5'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th class="text-end">From</th>
+          <th class="text-end">To</th>
+          <th class="text-end">Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons26.png"> <b>Built-in Virtual Hosting -trading robots and signlas now working 24/7 </b> </span></td>
+          <td><b>Trading Platform</b></td>
+          <td><span>FX TRADE ADMIN ACCESS</span></td>
+          <td>20.06.27 13:14</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab6'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Currency</th>
+          <th>Event</th>
+         
+          <th>Actual</th>
+          <th>Forecast</th>
+          <th>Privous</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="6">
+            <span style="font-weight: 600; color:rgb(134, 4, 4)">{{rangeValue?.start}}</span>
+          </td>
+        </tr>
+        <tr *ngFor="let signal of calendars">
+          <td>
+            <div class="currency-container">
+      
+              <p style="margin-top: 0px; margin-bottom: 2px;" class="currency-flag currency-flag-{{ getCurrency(signal.country) }} size"></p>
+              <p>{{signal.time}} </p>
+            </div>
+       </td>
+          <td>
+            <div class="currency-container">
+      
+              <!-- <p style="margin-top: 0px; margin-bottom: 2px;" class="currency-flag currency-flag-{{ getCurrency(signal.country) }} size"></p> -->
+              <p class="mpp1">{{ getCurrency(signal.country).toUpperCase() }}</p>
+            </div>
+        
+          <td>
+            <p>{{signal.name}}</p>
+          </td>
+          
+          <td>
+            <p class="mpp0 color-sky" *ngIf="signal.actual ==null">--</p>
+         <p class="mpp0 color-sky" *ngIf="signal.actual != null" [ngClass]="(signal.actual?.substring(0,1) == '-' || signal.actual?.substring(0,1) == ' ')?'negativeValue':'positiveValue'">{{signal.actual}}</p>
+          </td>
+          <td>
+            <p class="mpp0 color-sky"  *ngIf="signal.forecast !='' " [ngClass]="(signal.forecast?.substring(0,1) == '-' || signal.forecast?.substring(0,1) == ' ')?'negativeValue':'positiveValue'">{{signal.forecast}}</p>
+            <p class="mpp0 color-sky" *ngIf="signal.forecast =='' ">--</p>
+          </td>
+          <td>
+            <p class="mpp0 color-red80"  *ngIf="signal.previous !='' " style="padding-right: 15px!important;" [ngClass]="(signal.actual?.substring(0,1) == '-' || signal.actual?.substring(0,1) == ' ')?'negativeValue':'positiveValue'">{{signal.previous}}</p>
+         <p class="mpp0 color-sky" *ngIf="signal.previous =='' ">--</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6">
+            <span style="font-weight: 600; color:rgb(134, 4, 4)">{{rangeValue?.end}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div> 
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab7'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th class="text-end">Company</th>
+          <th class="text-end">Company</th>
+          <th class="text-end">Company</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Company</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab8'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th class="text-end">Condition</th>
+          <th class="text-end">Counter</th>
+          <th class="text-end">Limit</th>
+          <th class="text-end">Timeout</th>
+          <th class="text-end">Expiration</th>
+          <th class="text-end">Event</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab9'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th class="text-end">Category</th>
+          <th class="text-end">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab10'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th class="text-end">Description</th>
+          <th class="text-end">Rating</th>
+          <th class="text-end">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab11'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th class="text-end">Source</th>
+          <th class="text-end">Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="padding: 2px;" class="tableOne" *ngIf="currentTab == 'tab12'">
+  <div class="padding-b-for-footer">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th class="text-end">Source</th>
+          <th class="text-end">Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+    
+    
+    
+    
+   
+  
+   
+    
+
+
+
+
+  <ul class="tabnavc-ul ps-0">
+      <li [ngClass]="{'active': currentTab == 'tab1'}" (click)="nvatabc ('tab1')" >
+          <div class="tabnavc-a">
+              <div><span class="tabnavc-txt">Trade</span></div>
+          </div>
+      </li>
+      <li [ngClass]="{'active': currentTab == 'tab2'}" (click)="nvatabc ('tab2')" >
+          <div class="tabnavc-a">
+              <div><span class="tabnavc-txt">Exposure  </span></div>
+          </div>
+      </li>
+      <li [ngClass]="{'active': currentTab == 'tab3'}" (click)="nvatabc ('tab3')" >
+        <div class="tabnavc-a">
+            <div><span class="tabnavc-txt">History   </span></div>
+        </div>
+    </li>
+    <!-- <li [ngClass]="{'active': currentTab == 'tab4'}" (click)="nvatabc ('tab4')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">News  </span></div>
+      </div>
+    </li>
+    <li [ngClass]="{'active': currentTab == 'tab5'}" (click)="nvatabc ('tab5')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Mailbox </span></div>
+      </div>
+    </li> -->
+    <li [ngClass]="{'active': currentTab == 'tab6'}" (click)="nvatabc ('tab6')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Calendar  </span></div>
+      </div>
+    </li>
+    <!-- <li [ngClass]="{'active': currentTab == 'tab7'}" (click)="nvatabc ('tab7')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Company   </span></div>
+      </div>
+    </li> -->
+    <li [ngClass]="{'active': currentTab == 'tab8'}" (click)="nvatabc ('tab8')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Alerts  </span></div>
+      </div>
+    </li>
+    <!-- <li [ngClass]="{'active': currentTab == 'tab9'}" (click)="nvatabc ('tab9')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Articles   </span></div>
+      </div>
+    </li>
+    <li [ngClass]="{'active': currentTab == 'tab10'}" (click)="nvatabc ('tab10')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Code Base   </span></div>
+      </div>
+    </li>
+    <li [ngClass]="{'active': currentTab == 'tab11'}" (click)="nvatabc ('tab11')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Experts  </span></div>
+      </div>
+    </li> -->
+    <li [ngClass]="{'active': currentTab == 'tab12'}" (click)="nvatabc ('tab12')" >
+      <div class="tabnavc-a">
+          <div><span class="tabnavc-txt">Journal  </span></div>
+      </div>
+    </li>
+  </ul>
+  </div>
+  <div class="connection-footer">
+      
+        <div>For Help press F1</div>
+        <div class="d-flex aligen-items-center">
+          
+
+          <div ngbDropdown container="body">
+           <i class="fa-solid fa-signal me-2 my-top-mng dd-arrow-none" ngbDropdownToggle></i>
+            <div ngbDropdownMenu>
+              <button ngbDropdownItem><img  src="assets/images/topnav/navicon1.png" class="f-dd-img me-1">Disconnect</button>
+              <button ngbDropdownItem><img  src="assets/images/sideimg/mt-icons27.png" class="f-dd-img me-1">Network Rescan</button>
+            </div>
+          </div>
+
+          <div ngbDropdown container="body">
+            <i class="fa-solid fa-circle-minus me-2 my-top-mng dd-arrow-none" ngbDropdownToggle></i>
+             <div ngbDropdownMenu>
+               <button ngbDropdownItem><img  src="assets/images/topnav/top-dd4.png" class="f-dd-img me-1">Connect</button>
+               <button ngbDropdownItem><img  src="assets/images/sideimg/mt-icons27.png" class="f-dd-img me-1">Network Rescan</button>
+             </div>
+           </div>
+
+         
+          <div class="spinner-border spinner-border-sm text-primary me-2 my-top-mng" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <span>1574</span>
+          <span class="me-1 ms-1">/</span>
+          <span>58kb</span>
+        </div>
+      </div>
+  
+  
+  </div>
+</div>
+
+
+<ng-template #content2 let-modal>
+  
+  <div class="modal-header">
+      <h4 class="modal-title">#{{modelData.Ticket}} 
+        <span *ngIf="modelData?.oBuySell == 0">buy </span>
+        <span *ngIf="modelData?.oBuySell == 1">sell </span>
+        <span *ngIf="modelData?.oBuySell == 2">buy limit </span>
+        <span *ngIf="modelData?.oBuySell == 3">sell limit </span>
+        <span *ngIf="modelData?.oBuySell == 4">buy stop </span>
+        <span *ngIf="modelData?.oBuySell == 5">sell stop </span>
+        <span *ngIf="modelData?.oBuySell == 6">buy stop limit </span>
+        <span *ngIf="modelData?.oBuySell == 7">sell stop limit </span> <span>{{modelData.Lot}} </span> <span>{{modelData?.Symbol}} </span> at <span>{{modelData?.Price}}
+       </span>
+       </h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');refreshPosition()"></button>
+  </div>
+  <div class="modal-body mnginputgup">
+     <div class="row">
+      
+      <div class="col-md-12" *ngIf="showMassage == 1">
+          
+             <div class="row align-items-center">
+              <div class="col-md-12 mb-3">
+                <!-- /  <p class="text-primary">#48490455 buy 0.01 XAUUSD at 2470.94</p> -->
+                  <!-- <div class="width100">
+                      <select  class="width100 c-input" (change)="Ordertype1($event)">
+                        <option value="0">Market Execution</option>
+                        <option value="2">Buy Limit</option>
+                        <option value="3">Sell Limit</option>
+                        <option value="4">Buy Stop</option>
+                        <option value="5">Sell Stop</option>
+                       
+                      </select>
+                    </div> -->
+              </div>
+                  <div class="col-md-12 mb-3">
+                      <div style="display: flex; justify-content: space-between;">
+                          <p class="mb-0">Volume</p>
+                          <!-- <p class="mb-0">50.00 SILVER</p> -->
+                      </div>
+                      <div class="width100">
+                          <div class="input-group">
+                              <button class="btn btn-outline-secondary llbtn" (click)="subtractValue(1)">-</button>
+                              <input type="text" class="form-control" [(ngModel)]="inputLotValue" placeholder="" aria-label="Example text with button addon" >
+                              <button class="btn btn-outline-secondary rrbtn" (click)="addValue(1)">+</button>  
+                          </div>
+                      </div>
+                  </div>
+              
+                  <div class="row" [formGroup]="orderFrom">
+                      
+                      <div class="col-md-6 mb-3">
+                        <p class="mb-0">Stop Loss</p>
+                        <div class="width100">
+                          <div class="input-group">
+                            <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('stopLoss')?.value <= 0" (click)="SubSll(orderFrom.get('stopLoss')?.value)">-</button>
+                            <input type="text" class="form-control" formControlName="stopLoss" aria-label="Stop Loss input">
+                            <button class="btn btn-outline-secondary rrbtn" (click)="addSll(inputSl)">+</button>
+                          </div>
+                        </div>
+                      </div>
+                    
+                      <div class="col-md-6 mb-3">
+                        <p class="mb-0">Take Profit</p>
+                        <div class="width100">
+                          <div class="input-group">
+                            <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('takeProfit')?.value <= 0"  (click)="subTP(orderFrom.get('stopLoss')?.value)" >-</button>
+                            <input type="text" class="form-control" formControlName="takeProfit" aria-label="Take Profit input">
+                            <button class="btn btn-outline-secondary rrbtn" (click)="addTP(inputTPP)">+</button>
+                          </div>
+                        </div>
+                      </div>
+                    
+                      <!-- <div class="col-md-12 mb-3">
+                        <p class="mb-0">Comment</p>
+                        <div class="width100">
+                          <input type="text" class="form-control" formControlName="comment" aria-label="Comment input">
+                        </div>
+                      </div> -->
+                    </div>
+                  
+           </div>
+           <!-- <div class="row text-center me-1 ms-1 mb-3" style="background: #F2F9FF;">
+               <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Bid }}</p></div>
+              <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Ask }}</p></div>
+           </div> -->
+           <div class="row" >
+            <div class="col-md-12"><button  class="btn btn-primary btn-sm w-100 mb-2" (click)="modefyOrder()">Modify</button></div>
+              <div class="col-md-12 mb-3" ><button  class="btn btn-danger btn-sm w-100"  (click)="closeOrder(data[0]?.oInitial?.Ask, data[0]?.oInitial?.Bid)">
+               Close #{{modelData.Ticket}} 
+                  <span *ngIf="modelData?.oBuySell == 0">buy </span>
+                  <span *ngIf="modelData?.oBuySell == 1">sell </span>
+                  <span *ngIf="modelData?.oBuySell == 2">buy limit </span>
+                  <span *ngIf="modelData?.oBuySell == 3">sell limit </span>
+                  <span *ngIf="modelData?.oBuySell == 4">buy stop </span>
+                  <span *ngIf="modelData?.oBuySell == 5">sell stop </span>
+                  <span *ngIf="modelData?.oBuySell == 6">buy stop limit </span>
+                  <span *ngIf="modelData?.oBuySell == 7">sell stop limit </span> <span>{{modelData?.Lot}} </span> <span>{{modelData?.Symbol}} </span> at 
+                  <span>{{modelData?.Price}} 
+                    <!-- at with Profit {{getValue(getCurrent(modelData?.Sy,modelData.BS),modelData?.PC,modelData?.V/10000,modelData)}} --></span> 
+              </button>
+             
+            </div>
+              
+           </div>
+         
+
+      </div>
+
+      <div style="min-height: 498px; display: flex; align-items: center; justify-content: center;" class="col-md-12" *ngIf="showMassage == 2">
+        <div>
+            <button class="btn mb-3"  (click)="okReturn()"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="text-center" *ngIf="showErroMass == 1 && showMassage == 2">
+            
+            <p class="mb-1" style="font-size: 16px;"><b>#{{orderResData?.Ticket}} <span *ngIf="orderResData?.ordType == 0">buy </span>
+                <span *ngIf="orderResData?.ordType == 1">sell </span>
+                <span *ngIf="orderResData?.ordType == 2">buy limit </span>
+                <span *ngIf="orderResData?.ordType == 3">sell limit </span>
+                <span *ngIf="orderResData?.ordType == 4">buy stop </span>
+                <span *ngIf="orderResData?.ordType == 5">sell stop </span>
+                <span *ngIf="orderResData?.ordType == 6">buy stop limit </span>
+                <span *ngIf="orderResData?.ordType == 7">sell stop limit </span> <span>{{orderResData?.Lot}} </span> <span>{{orderResData?.Symbol}} </span> at <span>{{orderResData?.Price}} </span></b></p>
+              <p class="mb-1" style="font-size: 16px;"><b>sl:{{orderResData.SL}}, tp: {{orderResData.TL}}</b></p>
+              <p class="mb-1" style="font-size: 16px; color:rgb(16, 134, 16)"><b>Done</b></p>
+              <button class="btn btn-primary btn-sm ps-4 pe-4" (click)="okReturn()">Ok</button>
+        </div>
+        
+
+          <div  class="text-center" *ngIf="showErroMass == 2 && showMassage == 2">
+         
+            <p class="mb-1" style="font-size: 16px;"><b>{{orderResData?.ERR_MSG}}</b></p>
+                    
+            <div class="row">
+                <button class="btn btn-primary btn-sm ps-4 pe-4" (click)="okReturn()">OK</button>
+               
+              
+            </div>
+          </div>
+        </div>
+    </div>
+     </div>
+  </div>
+ 
+
+</ng-template>

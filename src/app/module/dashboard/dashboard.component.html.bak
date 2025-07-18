@@ -1,0 +1,62 @@
+
+  <!-- <highcharts-chart 
+    [Highcharts]="Highcharts"
+    [options]="chartOptions"
+    [(update)]="updateChart"
+    [callbackFunction]="chartCallback"
+    style="width: 100%; height: 100%; display: block;">
+  </highcharts-chart> -->
+  <div id="container" style="height: 70vh; margin-top: 2rem; position: relative;">
+    <div class="titlename">{{title}} </div>
+  <ejs-stockchart #stockChart    id="chart-container"
+ 
+  [annotations]="annotations" [tooltip]="tooltip" [periods]='periods' [enablePeriodSelector]="true" [crosshair]='crosshair'  (loaded)="onPeriodChange($event)">
+
+  <e-stockchart-series-collection>
+    <!-- Candlestick Series -->
+    <e-stockchart-series [enableSolidCandles]='enableSolidCandles'
+      [dataSource]="chartData"
+      type="Candle"
+      xName="x"
+      open="open"
+      high="high"
+      low="low"
+      close="close"
+      name="Live Market" >
+    </e-stockchart-series>
+
+    <!-- Bid Line Series -->
+    <!-- <e-stockchart-series
+      [dataSource]="bidSeriesData"
+      type="Line"
+      xName="x"
+      yName="y"
+      name="Bid"
+      [marker]="{ visible: false }"
+      [border]="{ color: 'blue' }"
+      [width]="2">
+    </e-stockchart-series> -->
+
+    <!-- Ask Line Series -->
+    <!-- <e-stockchart-series
+      [dataSource]="askSeriesData"
+      type="Line"
+      xName="x"
+      yName="y"
+      name="Ask"
+      [marker]="{ visible: false }"
+      [border]="{ color: 'orange' }"
+      [width]="2">
+    </e-stockchart-series> -->
+    
+  </e-stockchart-series-collection>
+</ejs-stockchart>
+</div>
+  
+
+<!----Trading View Chart-->
+
+<!-- <div style="position: relative; top:0px">
+    <div class="app-tv-chart-container" id="tv_chart_container"></div>
+  
+</div> -->

@@ -1,0 +1,313 @@
+<div class="pagebody">
+    <div class="container-fluid">
+        <div class="row bg-sky-blue-border-b">
+            <div class="col-md-12 pt-3">
+                <div class="flex-center-between">
+                    <div>
+                        <h5>Synchronization</h5>
+                        <p>Synchronize data with other MetaTrader 4 and MetaTrader 5 servers</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-white">Synchronize History</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+       <div class="row">
+        <div class="col-md-12 p-0">
+            <div class="tableOne">
+                <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Server</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Symbol</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr (dblclick)="openXl(content)">
+                        <td><span><img class="table-img img-disable" src="assets/images/sideimg/mt-icons4.png">192.254.00.36 </span></td>
+                        <td>0.91230</td>
+                        <td>601263</td>
+                        <td>601263</td>
+                      </tr>
+                      <tr (dblclick)="openXl(content)">
+                        <td><span><img class="table-img" src="assets/images/sideimg/mt-icons4.png">147.256.0.15 </span></td>
+                        <td>0.91230</td>
+                        <td>601263</td>
+                        <td>601263</td>
+                      </tr>
+                     
+                    </tbody>
+                  </table>
+                  <!-- <button class="btn btn-outline-primary mb-2 me-2" (click)="openXl(content)">Large modal</button> -->
+               </div>
+        </div>
+       </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Group Name</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body p-0">
+      <div class="pe-2 ps-2">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+          
+          <li [ngbNavItem]="1">
+            <button ngbNavLink>Common</button>
+            <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                    <div class="col-md-12">
+                      <div class="d-flex align-items-center">
+                        <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-syc.png"></div>
+                        <div class="">
+                            <p class="mb-0 f11">
+                                The synchronization is intended for updating the price data by symbols. Please specify server with<br> which to perform synchronization, type, mode, data for synchronization and time limits.
+                            </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 m-auto">
+                        <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;"></p>
+                            </div>
+                            <div class="col-md-10">
+                                <div  class="form-check ">
+                                    <label class="form-check-label">
+                                        <input  type="checkbox" name="remember" class="form-check-input"> Enable 
+                                    </label>
+                                </div>
+                            </div>
+                         </div>
+                         <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Server:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <input  type="text" id="email" name="email" class="width100 c-input">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Type:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <select class="width100 c-input" id="sel1" name="sellist1">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                      </select>
+                                </div>
+                            </div>
+                         </div>
+                         
+
+                         <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Login:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <input  type="text" id="email" name="email" class="width100 c-input">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Password:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <input  type="password" id="email" name="email" class="width100 c-input">
+                                </div>
+                            </div>
+                         </div>
+
+                         <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Mode:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <select class="width100 c-input" id="sel1" name="sellist1">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                      </select>
+                                </div>
+                            </div>
+                            
+                         </div>
+
+                         <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Synchronize:</p>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="width100">
+                                    <select class="width100 c-input" id="sel1" name="sellist1">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">Time zone correction:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <select class="width100 c-input" id="sel1" name="sellist1">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                      </select>
+                                </div>
+                            </div>
+                         </div>
+                         <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;"></p>
+                            </div>
+                            <div class="col-md-10">
+                                <div  class="form-check ">
+                                    <label class="form-check-label">
+                                        <input  type="checkbox" name="remember" class="form-check-input"> Limits 
+                                    </label>
+                                </div>
+                            </div>
+                         </div>
+
+                         <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">From:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <input  type="date" id="email" name="email" class="width100 c-input">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;">To:</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="width100">
+                                    <input  type="date" id="email" name="email" class="width100 c-input">
+                                </div>
+                            </div>
+                         </div>
+                         <div class="row mb-2">
+                            <div class="col-md-2">
+                                <p class="lbl2 mb-0" style="font-size: 11.5px;"></p>
+                            </div>
+                            <div class="col-md-10">
+                                <div  class="form-check ">
+                                    <label class="form-check-label">
+                                        <input  type="checkbox" name="remember" class="form-check-input"> Check quotation sessions 
+                                    </label>
+                                </div>
+                            </div>
+                         </div>
+                     </div>
+                  </div>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="2">
+            <button ngbNavLink>Symbols</button>
+            <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                    <div class="col-md-12">
+                      <div class="d-flex align-items-center">
+                        <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-syc.png"></div>
+                        <div class="">
+                            <p class="mb-0 f11">
+                                Please specify the symbols by which the synchronization of data should be performed.
+                            </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              <div class="row">
+                <div class="col-md-12 m-auto">
+                  
+                    
+                  <div class="row mb-2">
+                    <div class="col-md-2">
+                        <div class="btn-set-tp">
+                          <div class="top-buttons">
+                            <!-- <p class="lbl2 mb-0" style="font-size: 11.5px;">Trade accounts:</p>
+                            <button type="button" class="btn btn-basic100 btn-sm">Synchronize</button> -->
+                          </div>
+                          <div class="bottom-buttons">
+                            <button type="button" class="btn btn-basic100 btn-sm">Add</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Edit</button>
+                            <button type="button" class="btn btn-basic100 btn-sm">Delete</button>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                      <div class="border-div3" >
+                        <div class="tableOne" style="position:relative">
+                         <table class="table table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Gateway ID</th>
+                                  <th>Account</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td></td>
+                                  <td></td>
+                                 </tr>
+                                
+                              </tbody>
+                            </table>
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <div  class="form-check ">
+                            <label class="form-check-label">
+                                <input  type="checkbox" name="remember" class="form-check-input"> Synchronize symbols that use specified symbols as a source
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+         </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2" style="height: 320px;"></div>
+      </div>
+       
+    </div>
+    <div class="modal-footer " style="justify-content: space-between;">
+        <div>
+            <!-- <button type="button" class="btn btn-basic btn-sm me-2">New Client</button>
+             <button type="button" class="btn btn-basic btn-sm" (click)="modal.close('Close click')">Edit Manager</button> -->
+        </div>
+        <div>
+            <button type="button" class="btn btn-basic btn-sm me-2">Ok</button>
+             <button type="button" class="btn btn-basic btn-sm me-2" (click)="modal.close('Close click')">Cancel</button>
+             <button type="button" class="btn btn-basic btn-sm me-2" (click)="modal.close('Close click')">Help</button>
+        </div>
+       
+    </div>
+</ng-template>
+
+    

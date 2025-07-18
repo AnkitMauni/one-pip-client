@@ -1,0 +1,27 @@
+<div *ngIf="isLoader">
+  <app-loader ></app-loader>
+</div>
+<app-header [shareInputNav]=navigateNum  *ngIf="this.isLoggedIn"></app-header>
+
+<div style="width: 100%; height: 70vh; " *ngIf="this.isLoggedIn">
+  <as-split direction="horizontal">
+    <as-split-area [size]="100">
+      <as-split direction="horizontal">
+        <as-split-area [size]="85" style="box-shadow: inset 2px 2px 0px 0px #8f8f8f; background: #fff !important; overflow-y: hidden;">
+          <div class="cont">
+            <router-outlet></router-outlet>
+          </div>
+        </as-split-area>
+        <as-split-area [size]="15" style="background: #fff; box-shadow: inset 2px 2px 0px 0px #8f8f8f; overflow-y: hidden;">
+          <div class="cont">
+            <app-marketwatch></app-marketwatch>
+          </div>
+        </as-split-area>
+
+      </as-split>
+    </as-split-area>
+  </as-split>
+</div>
+
+<app-footer *ngIf="this.isLoggedIn"></app-footer>   
+<router-outlet  *ngIf="!this.isLoggedIn"></router-outlet>

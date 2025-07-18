@@ -1,0 +1,913 @@
+
+<div class="pagebody">
+    <div class="container-fluid p-0">
+       <div class="tableOne">
+        <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Server</th>
+                <th>Company</th>
+                <th>Type</th>
+                <th>Authentication</th>
+                <th>Description</th>
+                <th>Margin</th>
+                <th>Currency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="openXl(content)">
+                <td colspan="8"><span><img class="table-img" src="assets/images/sideimg/mt-icons12-1.png"> Avg </span></td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td colspan="8"><span><img class="table-img" src="assets/images/sideimg/mt-icons12-1.png"> Opj </span></td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td colspan="8"><span><img class="table-img" src="assets/images/sideimg/mt-icons12-1.png"> SHG </span></td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td colspan="8"><span><img class="table-img" src="assets/images/sideimg/mt-icons12-1.png"> SPREAD-RAHUL-1-CME/FX/METALCOMEX\Forex-02 Hedged </span></td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td colspan="8"><span><img class="table-img" src="assets/images/sideimg/mt-icons12-1.png"> RAH1-CME/FX/METALCOMEX\Forex-0 Hedge3 </span></td>
+               </tr>
+            </tbody>
+          </table>
+          <table class="table table-striped">
+            <!-- <thead>
+              <tr>
+                <th>Group</th>
+                <th>Server</th>
+                <th>Company</th>
+                <th>Type</th>
+                <th>Authentication</th>
+                <th>Description</th>
+                <th>Margin</th>
+                <th>Currency</th>
+              </tr>
+            </thead> -->
+            <tbody>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons12-3.png"> IB_1006_01 </span></td>
+                <td>Main Trade Server</td>
+                <td>Deccan FX Limited</td>
+                <td>Netting</td>
+                <td>Normal</td>
+                <td>50/ 30%</td>
+                <td>USD</td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons12-3.png"> IB_1006_02 </span></td>
+                <td>Main Trade Server</td>
+                <td>Deccan FX Limited</td>
+                <td>Hedged</td>
+                <td>Normal</td>
+                <td>40/ 30%</td>
+                <td>USD</td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons12-3.png"> IB_1006_03 </span></td>
+                <td>Main Trade Server</td>
+                <td>Deccan FX Limited</td>
+                <td>Hedged</td>
+                <td>Normal</td>
+                <td>50/ 30%</td>
+                <td>USD</td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons12-3.png"> IB_1006_04 </span></td>
+                <td>Main Trade Server</td>
+                <td>Deccan FX Limited</td>
+                <td>Hedged</td>
+                <td>Normal</td>
+                <td>50/ 30%</td>
+                <td>USD</td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons12-3.png"> IB_1006_05 </span></td>
+                <td>Main Trade Server</td>
+                <td>Deccan FX Limited</td>
+                <td>Hedged</td>
+                <td>Normal</td>
+                <td>50/ 30%</td>
+                <td>USD</td>
+               </tr>
+               <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons12-3.png"> IB_1006_06 </span></td>
+                <td>Main Trade Server</td>
+                <td>Deccan FX Limited</td>
+                <td>Netting</td>
+                <td>Normal</td>
+                <td>50/ 30%</td>
+                <td>USD</td>
+               </tr>
+            </tbody>
+          </table>
+       </div>
+    </div>
+    </div>
+
+    <ng-template #content let-modal>
+      <div class="modal-header">
+          <h4 class="modal-title">Group Name</h4>
+          <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="pe-2 ps-2">
+          <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+            <li [ngbNavItem]="1">
+              <button ngbNavLink>Common</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            The setting up of main parameters of the symbol. Please specify its name, description, and other parameters.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 m-auto">
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                        <p class="lbl2 mb-0">Symbol:</p>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                      <div class="col-md-2"><p class="lbl2">Description:</p></div>
+                      <div class="col-md-6">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Exchange:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                        <div class="col-md-2"><p class="lbl2">International:</p></div>
+                        <div class="col-md-6">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                      </div> -->
+
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">ISIN:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                        <div class="col-md-2"><p class="lbl2">Sector:</p></div>
+                        <div class="col-md-6">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                              </select>
+                          </div>
+                        </div>
+                      </div>
+
+                     
+
+                      
+
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Source:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                              </select>
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-2"><p class="lbl2">Category:</p></div>
+                        <div class="col-md-6">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div> -->
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Background:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <input type="color" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-2"><p class="lbl2">Page:</p></div>
+                        <div class="col-md-6">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div> -->
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Digits:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                              </select>
+                          </div>
+                        </div>
+                        <div class="col-md-2"><p class="lbl2">Market depth:</p></div>
+                        <div class="col-md-6">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                              </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Spread:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100 d-flex">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                            <p class="ms-1">pt</p>
+                          </div>
+                        </div>
+                        <div class="col-md-2"><p class="lbl2">Chart mode:</p></div>
+                        <div class="col-md-6">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                              </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0" style="font-size: 11.5px;">Spread balance:</p>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="width100 d-flex">
+                            <div class="c-range">
+                                <input type="range" min="1" max="100" value="50">
+                              </div>
+                            <p class="ms-1">0 bid / 0 ask</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+              <button ngbNavLink>Currency</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            The setting up of base, profit, and margin currencies of the symbol.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 m-auto">
+                    <div class="row mb-2">
+                      <div class="col-md-4">
+                        <p class="lbl2 mb-0">Base currency:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-4">
+                        <p class="lbl2 mb-0">Base currency digits:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-4">
+                        <p class="lbl2 mb-0">Profit currency:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-4">
+                        <p class="lbl2 mb-0">Profit currency digits:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-4">
+                        <p class="lbl2 mb-0">Margin currency:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4">
+                          <p class="lbl2 mb-0">Margin currency digits:</p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                      </div>
+                </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+              <button ngbNavLink>Trade</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            The setting up of symbol trading. Please specify the type of profit calculation, type of placed orders, allowed trade volumes, etc.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 m-auto">
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Contract size:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0" >Tick size:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Tick value:</p>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                      </div>
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                        <p class="lbl2 mb-0">Calculation:</p>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="width100">
+                          <select class="width100 c-input" id="sel1" name="sellist1">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Limit & stop level:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100 d-flex">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                            <p class="ms-1 mb-0">pt</p>
+                          </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Trade:</p>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <p class="lbl2 mb-0">Freeze level:</p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100 d-flex">
+                              <input type="text" class="width100 c-input" id="email"  name="email">
+                              <p class="ms-1 mb-0">pt</p>
+                            </div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">GTC:</p>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <p class="lbl2 mb-0">Max quote delay: </p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100 d-flex">
+                              <input type="text" class="width100 c-input" id="email"  name="email">
+                              <p class="ms-1 mb-0">sec</p>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Filling:</p>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                            </select>
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-3">
+                          <p class="lbl2 mb-0">Max quote delay: </p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100 d-flex">
+                              <input type="text" class="width100 c-input" id="email"  name="email">
+                              <p class="ms-1">sec</p>
+                            </div>
+                        </div> -->
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Expiration:</p>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                            </select>
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-3">
+                          <p class="lbl2 mb-0">Max quote delay: </p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100 d-flex">
+                              <input type="text" class="width100 c-input" id="email"  name="email">
+                              <p class="ms-1">sec</p>
+                            </div>
+                        </div> -->
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col-md-2">
+                          <p class="lbl2 mb-0">Orders:</p>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check text-end">
+                                <label class="form-check-label"> Enable Trading Signals
+                                     <input type="checkbox" name="remember" class="form-check-input">
+                                    </label>
+                                </div>
+                          </div>
+                        <!-- <div class="col-md-3">
+                          <p class="lbl2 mb-0">Max quote delay: </p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100 d-flex">
+                              <input type="text" class="width100 c-input" id="email"  name="email">
+                              <p class="ms-1">sec</p>
+                            </div>
+                        </div> -->
+                      </div>
+
+                      <div class="row mb-2 mt-3">
+                        <div class="col-md-12">
+                          <div class="legend">
+                            <p class="legend-txt">Volumes</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row mb-2">
+                                        <div class="col-md-3">
+                                          <p class="lbl2 mb-0">Minimum::</p>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <div class="width100">
+                                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                              </select>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <p class="lbl2 mb-0" >Step:</p>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <div class="width100">
+                                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                              </select>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="row mb-2">
+                                        <div class="col-md-3">
+                                          <p class="lbl2 mb-0">Maximum:</p>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <div class="width100">
+                                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                              </select>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <p class="lbl2 mb-0" >Limit:</p>
+                                        </div>
+                                        <div class="col-md-3">
+                                          <div class="width100">
+                                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                              </select>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </div>
+                            </div>
+                           
+                            
+                            
+                          </div>
+                        </div>
+                      </div>
+                   
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            
+            <li [ngbNavItem]="4">
+              <button ngbNavLink>Margin</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            The setting up of margin requirements for the symbol. Please specify the initial and maintenance margin and<br> multipliers for different types of trade operations.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 m-auto">
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Initial margin: </p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-3">
+                          <p class="lbl2 mb-0">Hedged margin: </p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col-md-3">
+                          <p class="lbl2 mb-0">Maintenance margin: </p>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" id="email"  name="email">
+                          </div>
+                        </div>
+                      </div>
+
+
+                    <div class="row mb-2">
+                      <div class="col-md-3"></div>
+                      <div class="col-md-9  ">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            Calculate hedged margin using larger leg  <input class="form-check-input" type="checkbox" name="remember"> 
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-3"></div>
+                      <div class="col-md-9  ">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            Exclude long position PnL from free margin and margin level  <input class="form-check-input" type="checkbox" name="remember"> 
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-3"></div>
+                      <div class="col-md-9  ">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            Recalculate margin exchange rate at the End of Day  <input class="form-check-input" type="checkbox" name="remember"> 
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0" style="font-size: 11.5px;">Additional margin checks:</p>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                              </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="5">
+              <button ngbNavLink>Swaps</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            The setting up of charging swaps by the symbol. Please specify swaps for long and short positions and swap multipliers for each day of the week.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 m-auto">
+                    <div class="row mb-2">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9  ">
+                          <div class="form-check">
+                            <label class="form-check-label">
+                                Enable swaps  <input class="form-check-input" type="checkbox" name="remember"> 
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col-md-3">
+                            <p class="lbl2 mb-0">Type: </p>
+                        </div>
+                        <div class="col-md-7  ">
+                            <div class="width100">
+                                <select class="width100 c-input" id="sel1" name="sellist1">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                  </select>
+                              </div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-3">
+                            <p class="lbl2 mb-0">Long positions: </p>
+                        </div>
+                        <div class="col-md-3 ">
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                              </div>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="lbl2 mb-0">Short positions: </p>
+                        </div>
+                        <div class="col-md-3 ">
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                              </div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-3">
+                            <p class="lbl2 mb-0">Days in year: </p>
+                        </div>
+                        <div class="col-md-3 ">
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                              </div>
+                        </div>
+                        
+                        <div class="col-md-6 text-end">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    Automatically consider holidays  <input class="form-check-input" type="checkbox" name="remember"> 
+                                </label>
+                              </div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2">
+                        <div class="col-md-3">
+                            <p class="lbl2 mb-0">Swap multipliers: </p>
+                        </div>
+                        <div class="col-md-5 ">
+                            <div class="borderbox">
+                                <div class="tableOne">
+                                    <table class="table table-striped mb-0">
+                                        <thead>
+                                          <tr>
+                                            <th>Day of week</th>
+                                            <th><span class="text-end">Multiplier</span></th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td> Sunday</td>
+                                                <td><span class="text-end">1</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td> Monday</td>
+                                                <td><span class="text-end">1</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td> Tuesday</td>
+                                                <td><span class="text-end">1</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td> Wednesday</td>
+                                                <td><span class="text-end">1</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td> Thursday</td>
+                                                <td><span class="text-end">1</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td> Friday</td>
+                                                <td><span class="text-end">1</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td> Saturday</td>
+                                                <td><span class="text-end">1</span></td>
+                                            </tr>
+                                        </tbody>
+                                      </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">Forex</button></div>
+                            <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">All week</button></div>
+                            <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">From symbol</button></div>
+                            <div class="width100">
+                                <select class="width100 c-input" id="sel1" name="sellist1">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                  </select>
+                              </div>
+                        </div>
+                        
+                      </div>
+
+
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+           
+         
+          </ul>
+          <div [ngbNavOutlet]="nav" class="mt-2" style="height: 400px !important; "></div>
+        </div>
+         
+      </div>
+      <div class="modal-footer ">
+          <button type="button" class="btn btn-basic btn-sm">Ok</button>
+          <button type="button" class="btn btn-basic btn-sm" (click)="modal.close('Close click')">Close</button>
+      </div>
+  </ng-template>

@@ -1,0 +1,25 @@
+.bottom-filter{
+    background: rgba(255, 0, 0, 0);
+    margin-left: 0px;
+    margin-right: 0px;
+    position: absolute;
+    width: 99.5%;
+    bottom: 0px;
+}
+
+.bot-dd1{
+    padding: 2px;
+    width: 25px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid 1px lightgrey;
+}
+.dropdown-toggle::after{
+    display: none;
+}
+.dropdown-item{
+    font-size: 12px;
+}
+

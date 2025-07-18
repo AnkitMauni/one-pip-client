@@ -1,0 +1,2083 @@
+
+<div class="pagebody">
+    <div class="container-fluid p-0">
+       <div class="tableOne">
+        <table class="table table-striped table-bordered mb-0">
+            <!-- <thead>
+              <tr>
+                <th>Group</th>
+                <th>Server</th>
+                <th>Company</th>
+                <th>Type</th>
+                <th>Authentication</th>
+                <th>Description</th>
+                <th>Margin</th>
+                <th>Currency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="openXl(content)">
+                <td colspan="8"><span><img class="table-img" src="assets/images/sideimg/mt-icons12-1.png"> Avg </span></td>
+               </tr>
+              
+            </tbody> -->
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Risk Management</th>
+              
+                <th>Margin</th>
+                <th>Currency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="openXl(content,list)" *ngFor="let list of listAllGroup">
+                <td>{{list.Group}}</td>
+                <td>{{list?.RiskMgr}}</td>
+                <td>{{list?.Margin}}</td>
+                <td>{{list?.Currency}}</td>
+              </tr>
+               <!-- <tr >
+               
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons12-3.png"> {{allGroups?.Group}} </span></td>
+                <td>{{allGroups?.Server}} </td>
+                <td>{{allGroups?.Company}}</td>
+               
+                <td>{{allGroups?.Type}}</td>
+                <td>{{allGroups?.Margin}}</td>
+                <td>{{allGroups?.Currency}}</td>
+               </tr> -->
+            </tbody>
+          </table>
+         
+       </div>
+    </div>
+    </div>
+
+    <ng-template #content let-modal>
+      <div class="modal-header">
+          <h4 class="modal-title">Group: {{modeAllData?.Group}}</h4>
+          <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="pe-2 ps-2">
+          <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+           
+            <li [ngbNavItem]="1">
+              <button ngbNavLink>Margin</button>
+              <ng-template ngbNavContent>
+                <form [formGroup]="modeMarginForm">
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img2.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            Please set up margin requirements.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-11 m-auto">
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Risk management: </p>
+                      </div>
+                      <div class="col-md-9">
+                        <div class="width100">
+                          <select class="width100 c-input" id="MarginMode"  formControlName="MarginMode" (change)="changeRisk($event)"  name="sellist1">
+                            <option value="0" disabled>for Retail Forex, CFD, Futures</option>
+                            <option value="2" disabled>for Retail Forex, CFD, Futures with hedged positions</option>
+                            <option value="1" disabled>for Stock Exchange, based on margin discount rates</option>
+                           
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="riskSelecet == 0|| riskSelecet == 2" >
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Margin call level:</p>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" formControlName="Margin" id="Margin"  name="email">
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <p class="lbl2 mb-0" style="font-size: 11px;">Stop out level:</p>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" formControlName="StopOut" id="StopOut"  name="email">
+                        </div>
+                      </div>
+                      <div class="col-md-1">
+                        <p class="lbl2 mb-0">in</p>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="width100">
+                          <select class="width100 c-input" id="SoMode" name="sellist1">
+                            <option value="0">% percent</option>
+                            <option value="1">$, money</option>
+                          1
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+  
+                    <div class="row mb-2">
+                      <!-- <div class="col-md-3"></div>
+                      <div class="col-md-9  ">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            Stop out fully hedged accounts 
+                              <input *ngIf="getALLGroupInfo?.SO_HEDGED == 1 " checked class="form-check-input" type="checkbox" formControlName="SO_HEDGED" (change)="onCheckboxChange1($event, 'SO_HEDGED')">
+                               <input *ngIf="getALLGroupInfo?.SO_HEDGED == 0 " class="form-check-input" type="checkbox" formControlName="SO_HEDGED" (change)="onCheckboxChange1($event, 'SO_HEDGED')">
+                          </label>
+                        </div>
+                      </div> -->
+                      <div class="col-md-3"></div>
+                      <div class="col-md-9  ">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            Compensate negative balance after stop out  
+                            <input *ngIf="getALLGroupInfo?.CO_NEG_BALANCE == 1" checked class="form-check-input" type="checkbox" formControlName="CO_NEG_BALANCE" (change)="onCheckboxChange1($event, 'CO_NEG_BALANCE')">
+                      
+                            <input *ngIf="getALLGroupInfo?.CO_NEG_BALANCE == 0" class="form-check-input" type="checkbox" formControlName="CO_NEG_BALANCE" (change)="onCheckboxChange1($event, 'CO_NEG_BALANCE')">
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-3"></div>
+                      <div class="col-md-9  ">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            Withdraw credit after negative balance compensation  
+                            <input *ngIf="getALLGroupInfo?.WD_CREDIT == 1" checked class="form-check-input" type="checkbox" formControlName="WD_CREDIT" (change)="onCheckboxChange1($event, 'WD_CREDIT')">
+                         
+                            <input *ngIf="getALLGroupInfo?.WD_CREDIT == 0"  class="form-check-input" type="checkbox" formControlName="WD_CREDIT" (change)="onCheckboxChange1($event, 'WD_CREDIT')">
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+  
+                    <!-- <div class="row mb-2">
+                      <div class="col-md-12">
+                        <div class="legend">
+                          <p class="legend-txt">Profit/loss in free margin</p>
+                          <div class="row mb-2">
+                            <div class="col-md-3">
+                              <p class="lbl2 mb-0">Unrealized profit: </p>
+                            </div>
+                            <div class="col-md-9">
+                              <div class="width100">
+                                <select class="width100 c-input" id="oMarginFreeMode" formControlName="oMarginFreeMode" name="sellist1">
+                                  <option value="0">do not use unrealized profit/loss</option>
+                                  <option value="1">use unrealized profit/loss</option>
+                                  <option value="2">use unrealized profit</option>
+                                  <option value="3">use unrealized profit</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row mb-2">
+                            <div class="col-md-3">
+                              <p class="lbl2 mb-0">Daily fixed profit: </p>
+                            </div>
+                            <div class="col-md-9">
+                              <div class="width100">
+                                <select class="width100 c-input" id="oMarginFreeModePL" formControlName="oMarginFreeModePL" name="sellist1">
+                                  <option value="0">use daily fixed profit/loss</option>
+                                  <option value="1">use daily fixed profit at the end of day</option>
+                                 
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row mb-2">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-9">
+                              <div class="form-check">
+                                <label class="form-check-label">
+                                  Release fixed profit at the end of day  <input class="form-check-input" type="checkbox" name="remember"> 
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div> -->
+                    
+  
+                    
+<!--   
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Virtual credit:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" id="email"  name="email">
+                        </div>
+                      </div>
+                      <div class="col-md-6 ps-0">
+                        <p class="f12 mb-0">(applies only to opening new positions)</p>
+                      </div>
+                    </div> -->
+                  </div>
+                </div>
+                </div>
+              </form>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+              <button ngbNavLink>Symbols</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img2.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            Please set up individual parameters of symbols trade for the group.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-11 m-auto">
+                    <div class="row mb-2">
+                      <!-- <div class="col-md-2">
+                          <div class="btn-set-tp">
+                            <div class="top-buttons">
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="sortSymbols('asc')">Up</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="sortSymbols('desc')">Down</button>
+                            </div>
+                            <div class="bottom-buttons" *ngIf="getsendSymbolIndex != null">
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="openXl2(content2,[], 1)">Add</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="openXl2(content2,senSymbol,2)">Edit</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="deleteSymbol(getsendSymbolIndex ,$event)">Delete</button>
+                            </div>
+                            <div class="bottom-buttons" *ngIf="getsendSymbolIndex == null">
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="openXl2(content2,[], 1)">Add</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" [disabled]="getsendSymbolIndex == null" >Edit</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" [disabled]="getsendSymbolIndex == null" >Delete</button>
+                            </div>
+                          </div>
+                      </div> -->
+                      <div class="col-md-12">
+                        <div class="border-div">
+                          <div class="tableOne">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Symbol</th>
+                                    <th>Spread</th>
+                                    <th>Trade</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  
+                                  <tr *ngFor="let row of getALLGroupInfo.lstSymbols ; let i = index "  [class.selected-row]="getsendSymbolIndex === i" (click)="sendSymbol(row, i)">
+                                    <td (dblclick)="openXl2(content2,row,2)"><span><img class="table-img me-1" src="assets/images/mod-img3.png">{{transform(row.Symbol,20)}}</span></td>
+                                    <td>{{row.SpreadDiff}}</td>
+                                    <td>
+                                      <span *ngIf="row.TradeMode == 0">Disabled</span>
+                                      <span *ngIf="row.TradeMode == 1">Long only</span>
+                                      <span *ngIf="row.TradeMode == 2">Short only</span>
+                                      <span *ngIf="row.TradeMode == 3">Close Only</span>
+                                      <span *ngIf="row.TradeMode == 4">Full access</span>
+                                    </td>
+                                  </tr>
+                                 
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+              <button ngbNavLink>Commission</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img2.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            Please set up commissions for accounts in the group.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-11 m-auto">
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <div class="btn-set-tp">
+                            <div class="top-buttons">
+                              <!-- <button type="button" class="btn btn-basic100 btn-sm" (click)="sortSymbols1('asc')">Up</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="sortSymbols1('desc')">Down</button> -->
+                            </div>
+                            <div class="bottom-buttons" *ngIf="getCommissionIndex != null">
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="openXl3(content3,[], 2)">Add</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="openXl3(content3,getCommission, 1)" >Edit</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="removeComm(getCommissionIndex)">Delete</button>
+                            </div>
+                            <div class="bottom-buttons" *ngIf="getCommissionIndex == null">
+                              <button type="button" class="btn btn-basic100 btn-sm" (click)="openXl3(content3,[], 2)">Add</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" disabled >Edit</button>
+                              <button type="button" class="btn btn-basic100 btn-sm" disabled >Delete</button>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="border-div">
+                          <div class="tableOne">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Name</th>
+                                    <th>Symbol</th>
+                                    <th>Type</th>
+                                    <th>Range</th>
+                                    <th>Charge</th>
+                                    <th></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr (dblclick)="openXl3(content3,dataCom, 1)" (click)="getAllComm(dataCom,i)"  [class.selected-row]="getCommissionIndex === i"  *ngFor="let dataCom of getALLGroupInfo.lstCommission ; let i = index">
+                                    <td><span><img class="table-img me-1" src="assets/images/mod-img4.png">{{transform(dataCom.Name, 5)}}</span></td>
+                                    <td>{{transform(dataCom.Symbol, 4)}}</td>
+                                    <td>
+                                      <span *ngIf="dataCom.CommType == 0 ">Standard</span>
+                                      <span *ngIf="dataCom.CommType == 1 ">Agent </span>
+                                      <span *ngIf="dataCom.CommType == 2 ">Fee</span>
+                                    </td>
+                                    <td>
+                                      <span *ngIf="dataCom.Range == 0">Volume</span>
+                                      <span *ngIf="dataCom.Range == 1">{{transform('Turnover Money', 4)}}</span>
+                                      <span *ngIf="dataCom.Range == 2">{{transform('Turnover Volume', 4)}}</span>
+                                      <span *ngIf="dataCom.Range == 3">Value</span>
+                                      <span *ngIf="dataCom.Range == 4">Profit</span>
+                                    </td>
+                                    <td>
+                                      <span *ngIf="dataCom.Charge ==2">Instant</span>
+                                      <span *ngIf="dataCom.Charge ==0">Daily</span>
+                                      <span *ngIf="dataCom.Charge ==1">Monthly</span>
+                                    </td>
+                                    <td>{{dataCom.lstCommTier[0].From}}-{{dataCom.lstCommTier[0].To}} - {{dataCom.lstCommTier[0].Commisison}}.00 -
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==0">deposit..</span>
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==1">base..</span>
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==2">profit..</span>
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==3">margin..</span>
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==4">points</span>
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==5">percents</span>
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==6">specified..</span>
+                                      <span *ngIf="dataCom.lstCommTier[0].Mode ==7">profit percent</span>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td colspan="6" (click)="openXl3(content3,[], 2)"><span><img class="table-img me-1" src="assets/images/mod-img5.png">click to add.. </span></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="8" style="display: none;">
+              <button ngbNavLink>Reports</button>
+              <ng-template ngbNavContent>
+                <div class="row d-flex align-items-center mb-3">
+                  <div class="col-md-12">
+                    <div class="d-flex align-items-center">
+                      <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img2.png"></div>
+                      <div class="">
+                          <p class="mb-0 f11">
+                            The platform can daily save the end-of-day state of accounts to a special database. That data is used for generating daily statements and various reports for managers.
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-11 m-auto">
+                    <div class="row mb-2" style="padding-right: 15px;">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-10">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-check ">
+                              <label class="form-check-label">
+                                Generate daily data  <input class="form-check-input" type="checkbox" name="remember"> 
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
+                            <div class="form-check ">
+                              <label class="form-check-label">
+                                Generate daily statements for clients  <input class="form-check-input" type="checkbox" name="remember"> 
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
+                            <div class="form-check ">
+                              <label class="form-check-label">
+                                Send daily statements by email  <input class="form-check-input" type="checkbox" name="remember"> 
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+  
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Mail server:</p>
+                      </div>
+                      <div class="col-md-9">
+                        <div class="width100">
+                          <select class="width100 c-input" id="sel1" name="sellist1">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+  
+                    <div class="row mb-2" style="padding-right: 15px;">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-10">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-check ">
+                              <label class="form-check-label">
+                                Send copies to support email <input class="form-check-input" type="checkbox" name="remember"> 
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        </div>
+         
+      </div>
+      <div class="modal-footer ">
+          <button type="button" class="btn btn-basic btn-sm" (click)="ADD_EDIT_ADM_GROUP_SYMBOLS()">Ok</button>
+          <button type="button" class="btn btn-basic btn-sm" (click)="openXlClose()">Close</button>
+      </div>
+  </ng-template>
+  
+  
+  
+  
+  
+  
+  <ng-template #content2 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Symbol: {{firstModelData}}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="openXl2Close()"></button>
+    </div>
+    <div class="modal-body p-0">
+      <div class="pe-2 ps-2">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active1" class="nav-tabs">
+          <li [ngbNavItem]="1">
+            <button ngbNavLink>Common</button>
+            <ng-template ngbNavContent>
+  
+              <form [formGroup]="SymbolCommForm">
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          Please set up main parameters of symbols for the group.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Symbol:</p>
+                    </div>
+                    <div class="col-md-9">
+                          <div class="width100">
+                        <div class="myinputdd" [class.open]="isOpen">
+                          <div class="btn-group" style="width:100%">
+                            <input style="width:99%" type="text" formControlName="Symbol" placeholder="*">
+                            <div class="btn-group" container="body" role="group" aria-label="Button group with nested dropdown">
+                              <button type="button" class="buttondd" (click)="toggleDropdown()">
+                                <i class="fa-solid fa-chevron-down"></i>
+                              </button>
+                              <div class="dropdown-menu myddwith3 .dropdown-menu-down1" [class.show]="isDropdownOpen">
+                                <ng-template #nodeTemplate let-nodes="nodes" let-tree="tree">
+                                  <ng-container *ngFor="let node of nodes">
+                                    <div class="menu-node" [ngClass]="{ 'menu-node-tree' : tree }">
+                                      <div (click)="toggleVisible(node)" class="menu-node-button" [ngClass]="{
+                                        'menu-node-button-show': node.submenu && node.submenu.length,
+                                        'menu-node-button-plus': !expand[node.index],
+                                        'menu-node-button-minus': expand[node.index]
+                                      }" role="button"></div>
+                                      <div class="menu-node-name" [ngClass]="{
+                                        'menu-node-name-selected': (node === selectedNode)
+                                      }" (click)="selectNode(node)">
+                                        <img class="sideimg-width" src="{{node.thumb}}">{{ node.title }} {{ node.icon }} 
+                                      </div>
+                                      <ng-container *ngIf="node.submenu && node.submenu.length && expand[node.index]">
+                                        <ng-template [ngTemplateOutlet]="nodeTemplate"
+                                                     [ngTemplateOutletContext]="{ nodes: node.submenu, tree: true }">
+                                        </ng-template>
+                                      </ng-container>
+                                    </div>
+                                  </ng-container>
+                                </ng-template>
+                                <ng-template [ngTemplateOutlet]="nodeTemplate" [ngTemplateOutletContext]="{ nodes: menu, tree: false }">
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- <select class="width100 c-input" formControlName="Symbol" name="symbol">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                        </select> -->
+                      </div>
+                    </div>
+                    
+                  </div>
+  
+                  <!-- <div class="row mb-2">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-4">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" checked class="form-check-input">Enable market depth </label>
+                      </div>
+                    </div>
+                    <div class="col-md-3"><p class="lbl2">Market depth limit:</p></div>
+                    <div class="col-md-2">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                            <option value="">umlimited</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                            <option value="">4</option>
+                            <option value="">6</option>
+                            <option value="">8</option>
+                            <option value="">10</option>
+                            <option value="">12</option>
+                            <option value="">16</option>
+                            <option value="">32</option>
+                          </select>
+                    </div>
+                    </div>
+                  </div> -->
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" class="form-check-input">Use default spread</label>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Spread difference:</p>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="d-flex">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" (keypress)="numberOnly($event)" formControlName="Spread" id="Spread"  name="Spread">
+                      </div>
+                      <p class="mb-0" style="padding-left: 4px;">pt</p>
+                      </div>
+                    </div>
+                    <div class="col-md-3"><p class="lbl2">Difference balance:</p></div>
+                    <div class="col-md-2">
+                      <div class="width100 c-range">
+                        <div class="c-range">
+                          <input type="range" (input)="onRangeInput($event)"  formControlName="SpreadDiff" min="1" max="100" value="50">
+                        </div>
+                   
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="ms-1">{{rangeLengthBid}} bid / {{rangeLengthAsk}} ask</p>
+                    </div>
+                  </div>
+  
+                  <!-- <div class="row mb-2">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" class="form-check-input">Use default volumes</label>
+                      </div>
+                    </div>
+                  </div> -->
+  
+                  <!-- <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Minimum:</p>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="input-container width100">
+                        <input type="text" 
+                               class="width100 c-input" 
+                               list="options" 
+                               (keypress)="numberOnly($event)" 
+                               formControlName="MinLot" 
+                               name="" 
+                               id=""
+                               (input)="onOptionSelect($event)">
+                      
+                        <datalist id="options">
+                          <option *ngFor="let opt of listOfOptions" [value]="opt.display"></option>
+                        </datalist>
+                      </div>
+                      <div class="width100">
+                        <input type="text" class="width100 c-input" (keypress)="numberOnly($event)" formControlName="MinLot" name="" id="">
+                    </div>
+                    </div>
+  
+                    <div class="col-md-1">
+                      <p class="lbl2 mb-0">Step:</p>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="input-container width100">
+                        <input type="text" 
+                               class="width100 c-input" 
+                               list="options1" 
+                               (keypress)="numberOnly($event)" 
+                               formControlName="StepLot" 
+                               name="" 
+                               id=""
+                               (input)="onOptionSelect1($event)">
+                      
+                        <datalist id="options1">
+                          <option *ngFor="let opt of listOfOptions" [value]="opt.display"></option>
+                        </datalist>
+                      </div>
+                      <div class="width100">
+                        <input type="text" class="width100" (keypress)="numberOnly($event)" formControlName="StepLot" name="" id="">
+                    </div>
+                    </div>
+  
+                    <div class="col-md-2">
+                      <p class="lbl2 mb-0">Maximum:</p>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="input-container width100">
+                        <input type="text" 
+                               class="width100 c-input" 
+                               list="options1" 
+                               (keypress)="numberOnly($event)" 
+                               formControlName="MaxLot" 
+                               name="" 
+                               id=""
+                               (input)="onOptionSelect2($event)">
+                      
+                        <datalist id="options1">
+                          <option *ngFor="let opt of listOfOptions" [value]="opt.display"></option>
+                        </datalist>
+                      </div>
+                      <div class="width100">
+                        <input type="text" class="width100" (keypress)="numberOnly($event)" formControlName="MaxLot" name="" id="">
+                    </div>
+                    </div>
+                    
+                  </div>
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" class="form-check-input">Use default limit</label>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Limit:</p>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="input-container width100">
+                        <input type="text" 
+                               class="width100 c-input" 
+                               list="options1" 
+                               (keypress)="numberOnly($event)" 
+                               formControlName="Limit" 
+                               name="" 
+                               id=""
+                               (input)="onOptionSelect3($event)">
+                      
+                        <datalist id="options1">
+                          <option *ngFor="let opt of listOfOptions" [value]="opt.display"></option>
+                        </datalist>
+                      </div>
+                      <div class="width100">
+                        <input type="text" class="width100" (keypress)="numberOnly($event)" formControlName="Limit" name="" id="">
+                    </div>
+                    </div>
+                   
+                  </div> -->
+  
+                  
+  
+                </div>
+              </div>
+            </form>
+            </ng-template>
+          </li>
+        
+          <!-- <li [ngbNavItem]="2">
+            <button ngbNavLink>Trade</button>
+            <ng-template ngbNavContent>
+              <form [formGroup]="SymbolTradeFrom">
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          The setting of symbol trading for the group. Please specify trade mode, filling and expiration modes, etc.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                  <div class="row mb-2">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" class="form-check-input">Use default trade settings</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Trade: </p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" formControlName="TradeMode" name="sellist1">
+                          <option value="0">Disabled</option>
+                          <option value="1">Long only</option>
+                          <option value="2">Short only</option>
+                          <option value="3">Close Only</option>
+                          <option value="4">Full access</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Filling: </p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" formControlName="FillFlags" name="sellist1">
+                          <option value="0">None</option>
+                          <option value="1">Fill or Kill</option>
+                          <option value="2">Immediate or Cancel</option>
+                          <option value="3">All</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Expiration: </p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" formControlName="ExpireFlags" name="sellist1">
+                          <option value="0">None</option>
+                          <option value="1">Good till cancel</option>
+                          <option value="2">Day</option>
+                          <option value="4">Specified time</option>
+                          <option value="8">Specified day</option>
+                          <option value="15">All</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Orders: </p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" formControlName="OrderFlag" name="sellist1">
+                          <option value="0">None</option>
+                          <option value="1">Market</option>
+                          <option value="2">Limit</option>
+                          <option value="4">Stop</option>
+                          <option value="8">Stop limit</option>
+                          <option value="16">Stop loss</option>
+                          <option value="32">Take profit</option>
+                          <option value="64">Close by</option>
+                          <option value="127">All</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" class="form-check-input">Use default trade level settings</label>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Limit & stop level: </p>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="d-flex">
+                        <input type="text" class="width100 c-input"  formControlName="StopsLevel"  >
+                      <p class="mb-0" style="padding-left: 4px;">pt</p>
+                      </div>
+                    </div>
+                    
+  
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Freeze level: </p>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="d-flex">
+                        <input type="text" class="width100 c-input"  formControlName="FreezeLevel" name="FreezeLevel">
+                      <p class="mb-0" style="padding-left: 4px;">pt</p>
+                      </div>
+                    </div>
+                    
+                  </div>
+  
+  
+                 
+                  
+  
+                  
+  
+                 
+                </div>
+              </div>
+            </form>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="3">
+            <button ngbNavLink>Execution</button>
+            <ng-template ngbNavContent>
+              <form  [formGroup]="SymbolExecutionFrom">
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          Please set up parameters of orders execution by symbols for the group.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                  <div class="row mb-2">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember"  class="form-check-input">Use default execution settings</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Execution: </p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" formControlName="ExecMode" name="sellist1">
+                          <option value="0">Request</option>
+                          <option value="1">Instant</option>
+                          <option value="2">Market</option>
+                          <option value="3">Exchange</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            </ng-template>
+          </li> -->
+          <li [ngbNavItem]="2">
+            <button ngbNavLink>Margin</button>
+            <ng-template ngbNavContent>
+              <form [formGroup]="Sym_marginForm">
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          Please specify margin requirements for the symbols group.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                  <div class="row mb-2">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" class="form-check-input">Use default margin values</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4">
+                      <p class="lbl2 mb-0">Initial margin: </p>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="width100">
+                        <input type="text" class="width100 c-input" (keypress)="numberOnly1($event)" formControlName="Margin_Initial" id="Margin_Initial"  name="">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4">
+                      <p class="lbl2 mb-0">Hedged margin:  </p>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="width100">
+                        <input type="text" class="width100 c-input" (keypress)="numberOnly($event)" formControlName="Margin_Hedged" id="Margin_Hedged"  name="">
+                      
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4">
+                      <p class="lbl2 mb-0">Maintenance margin:  </p>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="width100">
+                        <input type="text" class="width100 c-input" (keypress)="numberOnly1($event)" formControlName="Margin_Maintainence" id="Margin_Maintainence"  name="Margin_Maintainence">
+                        
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" class="form-check-input">Use default margin settings</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" disabled class="form-check-input">Calculate hedged margin using larger leg</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" name="remember" disabled class="form-check-input">Exclude long position PnL from free margin and margin level</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                      <div class="form-check mb-0">
+                        <label class="form-check-label">
+                        <input type="checkbox" disabled name="remember" class="form-check-input">Recalculate margin exchange rate at the End of Day</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-4">
+                      <p class="lbl2 mb-0">Additional margin checks: </p>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" disabled name="sellist1">
+                          <option selected value="0">None</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </ng-template>
+          </li>
+          <li [ngbNavItem]="3">
+            <button ngbNavLink>Margin Rates</button>
+            <ng-template ngbNavContent>
+              <form [formGroup]="Sym_marginForm">
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          Please specify margin rates for different types of trade operations.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                  <div class="row mb-2" style="padding-right: 15px;">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-check ">
+                            <label class="form-check-label">
+                              Use default margin rate settings  <input class="form-check-input" type="checkbox" name="remember"> 
+                            </label>
+                          </div>
+                        </div>
+                       
+                       
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Liquidity margin rate:</p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <input type="text" class="width100 c-input" formControlName="MarginRateLiquidity"   name="Liquidity">
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Currency margin rate:</p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <input type="text" class="width100 c-input" formControlName="MarginRateCurrency"   name="Currency">
+                      </div>
+                    </div>
+                  </div>
+  
+                  
+                </div>
+                <div class="col-md-12">
+                  <div class="border-div00" style="background: #fff;overflow: auto;border: solid 1px #d3d3d3;">
+                    <div class="tableOne">
+                      <table class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th></th>
+                              <th>Market Order</th>
+                              <th>Limit Order </th>
+                              <th>Stop Order</th>
+                              <th>Stop Limit Order </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td colspan="5"><b>Initial margin</b></td>
+                            </tr>
+                           
+                            <tr>
+                              <td>
+                                <span class="d-flex"><img  src="assets/images/sideimg/mt-icons38.png" class="table-img"> Buy </span>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                  <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                  <!-- <input type="text" class="width100 c-input" id="email"  name="email"> -->
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                             
+                            </tr>
+                            <tr>
+                              <td>
+                                <span class="d-flex"><img  src="assets/images/sideimg/mt-icons37.png" class="table-img"> Sell </span>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                             
+                            </tr>
+  
+                            <tr>
+                              <td colspan="5"><b>Maintenance margin</b></td>
+                            </tr>
+                           
+                            <tr>
+                              <td>
+                                <span class="d-flex"><img  src="assets/images/sideimg/mt-icons38.png" class="table-img"> Buy </span>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                             
+                            </tr>
+                            <tr>
+                              <td>
+                                <span class="d-flex"><img  src="assets/images/sideimg/mt-icons37.png" class="table-img"> Sell </span>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                              <td>
+                                <div class="width100">
+                                 <input type="text" class="width100 c-input" [value]="defaultValue" id="email"  name="email">
+                                </div>
+                              </td>
+                             
+                            </tr>
+                            
+                          </tbody>
+                        </table>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="4">
+            <button ngbNavLink>Swaps</button>
+            <!-- <ng-template ngbNavContent>
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          Please set up parameters of charging swaps by symbols for the group.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11 m-auto">
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Type:</p>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                          <option>Disabled</option>
+                          <option>in points</option>
+                          <option>in money, using base currency</option>
+                          <option>in money, using profit currency</option>
+                          <option>in money, using margin currency</option>
+                          <option>in money, using group currency</option>
+                          <option>in percentage terms, using current price</option>
+                          <option>in percentage terms, using open price</option>
+                          <option>in points, reopen position by close price</option>
+                          <option>in points, reopen position by bid price</option>
+                         </select>
+                      </div>
+                    </div>
+                  
+                  </div>
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Long positions:</p>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                          <option>Default</option>
+                          <option>-2.5</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Short positions:</p>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                          <option>Default</option>
+                          <option>-6.45</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Days in year:</p>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                          <option>Default</option>
+                          <option>360</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <p class="lbl2 mb-0">Consider holidays:</p>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                          <option>Default</option>
+                          <option>Disabled</option>
+                          <option>Automatically</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+  
+                 
+  
+                  
+                </div>
+                <div class="col-md-12">
+                  <div class="row mb-2">
+                    <div class="col-md-3">
+                        <p class="lbl2 mb-0">Swap multipliers: </p>
+                    </div>
+                    <div class="col-md-5 ">
+                        <div class="borderbox">
+                            <div class="tableOne">
+                                <table class="table table-striped mb-0">
+                                    <thead>
+                                      <tr>
+                                        <th>Day of week</th>
+                                        <th><span class="text-end">Multiplier</span></th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td> Sunday</td>
+                                            <td><span class="text-end"><input type="text"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td> Monday</td>
+                                            <td><span class="text-end"><input type="text"></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td> Tuesday</td>
+                                            <td><span class="text-end"><input type="text" ></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td> Wednesday</td>
+                                            <td><span class="text-end"><input type="text" ></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td> Thursday</td>
+                                            <td><span class="text-end"><input type="text" ></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td> Friday</td>
+                                            <td><span class="text-end"><input type="text" ></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td> Saturday</td>
+                                            <td><span class="text-end"><input type="text" ></span></td>
+                                        </tr>
+                                    </tbody>
+                                  </table>
+                            </div>
+                        </div>
+                        <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100%; padding-left: 0px; padding-right: 0px;">User default swap settings</button></div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                      <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">Default</button></div>
+                        <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">Forex</button></div>
+                        <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">All week</button></div>
+                        <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">From symbol</button></div>
+                       
+                        
+                        <div class="width100">
+                            <select class="width100 c-input" id="sel1" name="sellist1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                              </select>
+                          </div>
+                        
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </ng-template> -->
+            <ng-template ngbNavContent>
+              <form [formGroup]="swapForm">
+              <div class="row d-flex align-items-center mb-3">
+                <div class="col-md-12">
+                  <div class="d-flex align-items-center">
+                    <div class=" text-center me-3"><img style="width:50px" src="assets/images/mod-img-dallar.png"></div>
+                    <div class="">
+                        <p class="mb-0 f11">
+                          Please set up parameters of charging swaps by symbols for the group.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 m-auto">
+                  <!-- <div class="row mb-2">
+                      <div class="col-md-3"></div>
+                      <div class="col-md-9  ">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                              Enable swaps  <input class="form-check-input" type="checkbox"  [checked]="!EnableSw" name="remember"> 
+                          </label>
+                        </div>
+                      </div>
+                    </div> -->
+                  
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0">Type: </p>
+                      </div>
+                      <div class="col-md-7  ">
+                          <div class="width100">
+                            <select class="width100 c-input" id="sel1" formControlName="SwapMode" name="sellist1">
+                              <option value="0">Disabled</option>
+                              <option value="1">in points</option>
+                              <option value="2">in money, using base currency</option>
+                              <option value="3">in money, using profit currency</option>
+                              <option value="4">in money, using margin currency</option>
+                              <option value="5">in money, using group currency</option>
+                              <option value="6">in percentage terms, using current price</option>
+                              <option value="7">in percentage terms, using open price</option>
+                              <option value="8">in points, reopen position by close price</option>
+                              <option value="9">in points, reopen position by bid price</option>
+                             </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0">Long positions: </p>
+                      </div>
+                      <div class="col-md-3 ">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" (keypress)="numberOnly1($event)" formControlName="LongPos" id="LongPos"  name="LongPos">
+                            </div>
+                      </div>
+                      <div class="col-md-3">
+                          <p class="lbl2 mb-0">Short positions: </p>
+                      </div>
+                      <div class="col-md-3 ">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" (keypress)="numberOnly1($event)" formControlName="ShortPos" id="ShortPos"  name="ShortPos">
+                            </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-2">
+                      <div class="col-md-2">
+                          <p class="lbl2 mb-0">Days in year: </p>
+                      </div>
+                      <div class="col-md-3 ">
+                          <div class="width100">
+                            <input type="text" class="width100 c-input" (keypress)="numberOnly($event)" readonly formControlName="DayYear" id="DayYear"  name="DayYear">
+                            </div>
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Consider holidays: </p>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input"   name="DayYear">
+                          </div>
+                    </div>
+                    </div>
+  
+                    <!-- <div class="row mb-2">
+                      <div class="col-md-3">
+                          <p class="lbl2 mb-0">Long positions: </p>
+                      </div>
+                      <div class="col-md-3 ">
+                          <div class="width100">
+                              <input type="text" class="width100 c-input" (keypress)="numberOnly1($event)" formControlName="LongPos" id="LongPos"  name="LongPos">
+                            </div>
+                      </div>
+                      <div class="col-md-3">
+                          <p class="lbl2 mb-0">Short positions: </p>
+                      </div>
+                      <div class="col-md-3 ">
+                          <div class="width100">
+                              <input type="text" class="width100 c-input" (keypress)="numberOnly1($event)" formControlName="ShortPos" id="ShortPos"  name="ShortPos">
+                            </div>
+                      </div>
+                    </div>
+  
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                          <p class="lbl2 mb-0">Days in year: </p>
+                      </div>
+                      <div class="col-md-3 ">
+                          <div class="width100">
+                              <input type="text" class="width100 c-input" (keypress)="numberOnly($event)" readonly formControlName="DayYear" id="DayYear"  name="DayYear">
+                            </div>
+                      </div>
+                      
+                      <div class="col-md-6 text-end">
+                          <div class="form-check">
+                              <label class="form-check-label">
+                                  Automatically consider holidays  <input class="form-check-input" type="checkbox" name="remember"> 
+                              </label>
+                            </div>
+                      </div>
+                    </div> -->
+  
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                          <p class="lbl2 mb-0">Swap multipliers: </p>
+                      </div>
+                      <div class="col-md-5 ">
+                          <div class="borderbox" style="border: solid 1px #e3e3e3;">
+                              <div class="tableOne">
+                                  <table class="table table-striped table-bordered mb-0">
+                                      <thead>
+                                        <tr>
+                                          <th>Day of week</th>
+                                          <th><span class="text-end">Multiplier</span></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr>
+                                              <td> Sunday</td>
+                                              <td><span class="text-end"><input class="c-input18" (keypress)="numberOnly($event)" type="text"  formControlName="Swap_Sunday"></span></td>
+                                          </tr>
+                                          <tr>
+                                              <td> Monday</td>
+                                              <td><span class="text-end"><input class="c-input18" type="text" (keypress)="numberOnly($event)" formControlName="Swap_Monday"></span></td>
+                                          </tr>
+                                          <tr>
+                                              <td> Tuesday</td>
+                                              <td><span class="text-end"><input class="c-input18" type="text" (keypress)="numberOnly($event)" formControlName="Swap_Tuesday"></span></td>
+                                          </tr>
+                                          <tr>
+                                              <td> Wednesday</td>
+                                              <td><span class="text-end"><input class="c-input18" type="text" (keypress)="numberOnly($event)" formControlName="Swap_Wednesday"></span></td>
+                                          </tr>
+                                          <tr>
+                                              <td> Thursday</td>
+                                              <td><span class="text-end"><input class="c-input18" type="text" (keypress)="numberOnly($event)" formControlName="Swap_Thursday"></span></td>
+                                          </tr>
+                                          <tr>
+                                              <td> Friday</td>
+                                              <td><span class="text-end"><input class="c-input18" type="text" (keypress)="numberOnly($event)" formControlName="Swap_Friday"></span></td>
+                                          </tr>
+                                          <tr>
+                                              <td> Saturday</td>
+                                              <td><span class="text-end"><input class="c-input18" type="text" (keypress)="numberOnly($event)" formControlName="Swap_Saturday"></span></td>
+                                          </tr>
+                                      </tbody>
+                                    </table>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      <div class="col-md-4">
+                          <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">Forex</button></div>
+                          <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">All week</button></div>
+                          <div><button  type="button" class="btn btn-basic btn-sm mb-2" style="width: 100px; padding-left: 0px; padding-right: 0px;">From symbol</button></div>
+                         
+                          
+                          <div class="width100">
+                              <!-- <select class="width100 c-input" id="sel1" name="sellist1">
+                                  <option>1</option>
+                                  <option>2</option>
+                                  <option>3</option>
+                                  <option>4</option>
+                                </select> -->
+                            </div>
+                          
+                      </div>
+                      
+                    </div>
+  
+  
+                </div>
+              </div>
+            </form>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2" style="height: 392px;"></div>
+      </div>
+       
+    </div>
+    <div class="modal-footer ">
+        <button type="button" class="btn btn-basic btn-sm" *ngIf="actionSymbolType== 1" (click)="symbolSave()">Ok</button>
+        <button type="button" class="btn btn-basic btn-sm" *ngIf="actionSymbolType== 2" (click)="editSymbol()">Ok</button>
+        <button type="button" class="btn btn-basic btn-sm" *ngIf="actionSymbolType ==3">Ok</button>
+        <button type="button" class="btn btn-basic btn-sm" (click)="openXl2Close()">Close</button>
+    </div>
+  </ng-template>
+  
+  
+  
+  
+  
+  
+  
+  <ng-template #content3 let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Commission</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="openXl3Close()"></button>
+    </div>
+    <div class="modal-body p-0">
+      <div class="pe-2 ps-2">
+        <div class="notab-modal">
+          <div class="row d-flex align-items-center mb-3">
+            <div class="col-md-12">
+              <div class="d-flex align-items-center">
+                <div class="text-center me-3">
+                  <img style="width:50px" src="assets/images/mod-img-dallar.png">
+                </div>
+                <div>
+                  <p class="mb-0 f11">
+                    Adjustment of commissions parameters of the symbol.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 m-auto">
+              <form [formGroup]="commissionForm">
+                <div class="row">
+                  <div class="col-sm-8">
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Name:</p>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" formControlName="Name" name="name">
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <p class="lbl2">Description:</p>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" formControlName="Desc" name="desc">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Symbol:</p>
+                      </div>
+                      <div class="col-md-9">
+                        <div class="width100">
+                          <div class="myinputdd" [class.open]="isOpen">
+                            <div class="btn-group" style="width:100%">
+                              <input style="width:99%" type="text" formControlName="Symbol" placeholder="*">
+                              <div class="btn-group" container="body" role="group" aria-label="Button group with nested dropdown">
+                                <button type="button" class="buttondd" (click)="toggleDropdown()">
+                                  <i class="fa-solid fa-chevron-down"></i>
+                                </button>
+                                <div class="dropdown-menu myddwith3 .dropdown-menu-down1" [class.show]="isDropdownOpen">
+                                  <ng-template #nodeTemplate let-nodes="nodes" let-tree="tree">
+                                    <ng-container *ngFor="let node of nodes">
+                                      <div class="menu-node" [ngClass]="{ 'menu-node-tree' : tree }">
+                                        <div (click)="toggleVisible(node)" class="menu-node-button" [ngClass]="{
+                                          'menu-node-button-show': node.submenu && node.submenu.length,
+                                          'menu-node-button-plus': !expand[node.index],
+                                          'menu-node-button-minus': expand[node.index]
+                                        }" role="button"></div>
+                                        <div class="menu-node-name" [ngClass]="{
+                                          'menu-node-name-selected': (node === selectedNode)
+                                        }" (click)="selectNode(node)">
+                                          <img class="sideimg-width" src="{{node.thumb}}">{{ node.title }} {{ node.icon }}
+                                        </div>
+                                        <ng-container *ngIf="node.submenu && node.submenu.length && expand[node.index]">
+                                          <ng-template [ngTemplateOutlet]="nodeTemplate"
+                                                       [ngTemplateOutletContext]="{ nodes: node.submenu, tree: true }">
+                                          </ng-template>
+                                        </ng-container>
+                                      </div>
+                                    </ng-container>
+                                  </ng-template>
+                                  <ng-template [ngTemplateOutlet]="nodeTemplate" [ngTemplateOutletContext]="{ nodes: menu, tree: false }">
+                                  </ng-template>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- <select class="width100 c-input" formControlName="Symbol" name="symbol">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                          </select> -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-3 mb-2">
+                        <p class="lbl2 mb-0">Range:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <select class="width100 c-input" formControlName="Range" name="range">
+                            <option value="0">Volume</option>
+                            <option value="1">Turnover Money</option>
+                            <option value="2">Turnover Volume</option>
+                            <option value="3">Notional value</option>
+                            <option value="4">Profit</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3 mb-2">
+                        <p class="lbl2 mb-0">Charge:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <select class="width100 c-input" formControlName="Mode_Charge" name="charge">
+                            <option value="2">Instant</option>
+                            <option value="0">Daily</option>
+                            <option value="1">Monthly</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-3 mb-2">
+                        <p class="lbl2 mb-0">Turnover currency:</p>
+                      </div>
+                      <div class="col-md-3 mb-2">
+                        <div class="width100">
+                          <input type="text" class="width100 c-input" formControlName="TurnoverCurr" name="turnoverCurrency">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Deal entry:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <select class="width100 c-input" formControlName="Mode_Entry" name="dealEntry">
+                            <option value="0">All</option>
+                            <option value="1">In</option>
+                            <option value="2">Out</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Deal action:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <select class="width100 c-input" formControlName="Mode_Action" name="dealAction">
+                            <option value="0">All</option>
+                            <option value="1">Buy</option>
+                            <option value="2">Sell</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Deal profit:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <select class="width100 c-input" formControlName="Mode_Profit" name="dealProfit">
+                            <option value="0">All</option>
+                            <option value="1">Profit</option>
+                            <option value="2">Loss</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <p class="lbl2 mb-0">Deal reason:</p>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="width100">
+                          <select class="width100 c-input" formControlName="dealReason" name="dealReason">
+                            <option value="0">Client</option>
+                            <option value="1">Expert</option>
+                            <option value="2">Monthly</option>
+                            <option value="3">Dealer</option>
+                            <option value="4">External</option>
+                            <option value="5">Mobile</option>
+                            <option value="6">Web</option>
+                            <option value="7">Signal</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-check">
+                      <input type="radio" class="form-check-input" (change)="onCheckboxChange(0)" [checked]="commissionForm.get('CommType')!.value == 0" id="radio1">
+                      <label class="form-check-label" for="radio1">Standard commission</label>
+                    </div>
+                    <div class="form-check">
+                      <input type="radio" class="form-check-input" (change)="onCheckboxChange(1)" [checked]="commissionForm.get('CommType')!.value == 1" id="radio2">
+                      <label class="form-check-label" for="radio2">Agent commission</label>
+                    </div>
+                    <div class="form-check">
+                      <input type="radio" class="form-check-input" (change)="onCheckboxChange(2)" [checked]="commissionForm.get('CommType')!.value == 2" id="radio3">
+                      <label class="form-check-label" for="radio3">Fee</label>
+                    </div>
+                    <!-- <div class="form-check">
+                      <input type="radio" class="form-check-input" formControlName="CommType" value="0">Standard commission
+                      <label class="form-check-label" for="radio1"></label>
+                    </div>
+                    <div class="form-check">
+                      <input type="radio" class="form-check-input" formControlName="CommType" value="1">Agent commission
+                      <label class="form-check-label" for="radio2"></label>
+                    </div>
+                    <div class="form-check">
+                      <input type="radio" class="form-check-input" formControlName="CommType" value="2">Fee
+                      <label class="form-check-label" for="radio3"></label>
+                    </div> -->
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-md-2">
+                    <div class="btn-set-tp">
+                      <div class="top-buttons"></div>
+                      <div class="bottom-buttons">
+                        <button type="button" class="btn btn-basic100 btn-sm" (click)="addTier2()">Add</button>
+                        <button type="button" class="btn btn-basic100 btn-sm" (click)="editTier(indexValue)">Edit</button>
+                        <button type="button" class="btn btn-basic100 btn-sm" (click)="removeTier(indexValue)">Delete</button> 
+                        <!-- <button type="button" class="btn btn-basic100 btn-sm" (click)="addTier()">Add</button>
+                        
+                        -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-10" >
+                    <div class="border-div" style="background: #fff;">
+                      <div class="tableOne">
+                        <table class="table table-striped table-bordered">
+                          <thead>
+                            <tr>
+                              <th>From</th>
+                              <th>To</th>
+                              <th>Commission</th>
+                              <th>Minimal</th>
+                              <th>Maximal</th>
+                              <th>Mode</th>
+                              <th>Currency</th>                      
+                              <th>Type</th>
+                            </tr>
+                          </thead>
+                          <!-- <tbody formArrayName="lstCommTier">
+                       
+                           
+                              <tr *ngFor="let tier of lstCommTier.controls; let i = index" (click)="findIndex(i)" [class.selected-row]="selectedRowIndex === i" [formGroupName]="i">
+                                <td (dblclick)="editCell(i, 'From')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'From'; else displayFrom">
+                                    <input type="number" class="width100 c-input" formControlName="From">
+                                  </ng-container>
+                                  <ng-template #displayFrom>
+                                    {{ tier.value.From }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'To')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'To'; else displayTo">
+                                    <input type="number" class="width100 c-input" formControlName="To">
+                                  </ng-container>
+                                  <ng-template #displayTo>
+                                    {{ tier.value.To }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Commisison')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Commisison'; else displayCommission">
+                                    <input type="number" class="width100 c-input" formControlName="Commisison">
+                                  </ng-container>
+                                  <ng-template #displayCommission>
+                                    {{ tier.value.Commisison }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Min')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Min'; else displayMin">
+                                    <input type="number" class="width100 c-input" formControlName="Min">
+                                  </ng-container>
+                                  <ng-template #displayMin>
+                                    {{ tier.value.Min }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Max')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Max'; else displayMax">
+                                    <input type="number" class="width100 c-input" formControlName="Max">
+                                  </ng-container>
+                                  <ng-template #displayMax>
+                                    {{ tier.value.Max }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Mode')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Mode'; else displayMode">
+                                    <select class="width100 c-input" formControlName="Mode">
+                                      <option value="0">deposit ccy</option>
+                                      <option value="1">base ccy</option>
+                                      <option value="2">profit ccy</option>
+                                      <option value="3">margin ccy</option>
+                                      <option value="4">points</option>
+                                      <option value="5">percents</option>
+                                      <option value="6">specified ccy</option>
+                                      <option value="7">profit percent</option>
+                                    </select>
+                                  </ng-container>
+                                  <ng-template #displayMode>
+                                    {{ getModeName(tier.value.Mode) }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Currency')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Currency'; else displayCurrency">
+                                    <input type="text" class="width100 c-input" formControlName="Currency">
+                                  </ng-container>
+                                  <ng-template #displayCurrency>
+                                    {{ tier.value.Currency }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Type')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Type'; else displayType">
+                                    <select class="width100 c-input" formControlName="Type">
+                                      <option value="0">Per Trade</option>
+                                      <option value="1">Per Volume</option>
+                                    </select>
+                                  </ng-container>
+                                  <ng-template #displayType>
+                                    {{ getTypeName(tier.value.Type) }}
+                                  </ng-template>
+                                </td>
+                              </tr>
+                            </tbody> -->
+                            <tbody formArrayName="lstCommTier">
+                              <tr *ngFor="let tier of lstCommTier.controls; let i = index" (click)="findIndex(i)" [class.selected-row]="selectedRowIndex === i" [formGroupName]="i">
+                                <td (dblclick)="editCell(i, 'From')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'From'; else displayFrom">
+                                    <input type="number" class="width100 c-input" formControlName="From" #inputRef>
+                                  </ng-container>
+                                  <ng-template #displayFrom>
+                                    {{ tier.value.From }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'To')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'To'; else displayTo">
+                                    <input type="number" class="width100 c-input" formControlName="To" #inputRef>
+                                  </ng-container>
+                                  <ng-template #displayTo>
+                                    {{ tier.value.To }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Commisison')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Commisison'; else displayCommission">
+                                    <input type="number" class="width100 c-input" formControlName="Commisison" #inputRef>
+                                  </ng-container>
+                                  <ng-template #displayCommission>
+                                    {{ tier.value.Commisison }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Min')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Min'; else displayMin">
+                                    <input type="number" class="width100 c-input" formControlName="Min" #inputRef>
+                                  </ng-container>
+                                  <ng-template #displayMin>
+                                    {{ tier.value.Min }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Max')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Max'; else displayMax">
+                                    <input type="number" class="width100 c-input" formControlName="Max" #inputRef>
+                                  </ng-container>
+                                  <ng-template #displayMax>
+                                    {{ tier.value.Max }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Mode')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Mode'; else displayMode">
+                                    <select class="width100 c-input" formControlName="Mode" #inputRef>
+                                      <option value="0">deposit ccy</option>
+                                      <option value="1">base ccy</option>
+                                      <option value="2">profit ccy</option>
+                                      <option value="3">margin ccy</option>
+                                      <option value="4">points</option>
+                                      <option value="5">percents</option>
+                                      <option value="6">specified ccy</option>
+                                      <option value="7">profit percent</option>
+                                    </select>
+                                  </ng-container>
+                                  <ng-template #displayMode>
+                                    {{ getModeName(tier.value.Mode) }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Currency')">
+                                  <ng-container *ngIf="editingIndex === i && editingColumn === 'Currency'; else displayCurrency">
+                                    <input type="text" class="width100 c-input" formControlName="Currency" #inputRef>
+                                  </ng-container>
+                                  <ng-template #displayCurrency>
+                                    {{ tier.value.Currency }}
+                                  </ng-template>
+                                </td>
+                                <td (dblclick)="editCell(i, 'Type')">
+                                  <ng-container >
+                                    <select class="width100 c-input" formControlName="Type" *ngIf="editingIndex === i && editingColumn === 'Type'; else displayType">
+                                      <option value="0">Per Trade</option>
+                                      <option value="1">Per Volume</option>
+                                    </select>
+                                  </ng-container>
+                                  <ng-template #displayType>
+                                    {{ getTypeName(tier.value.Type) }}
+                                  </ng-template>
+                                </td>
+                              </tr>
+                            </tbody>
+                            
+                            
+                            
+                          </table>
+                    
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer ">
+                  <button type="button" class="btn btn-basic btn-sm" *ngIf="typeModelButton == 2" (click)="addCommission()">Ok</button>
+                  <button type="button" class="btn btn-basic btn-sm" *ngIf="typeModelButton == 1" (click)="editCommission()">Ok</button>
+                  <button type="button" class="btn btn-basic btn-sm" *ngIf="typeModelButton == 0" >Ok</button>
+                  <button type="button" class="btn btn-basic btn-sm" (click)="openXl3Close()">Close</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  

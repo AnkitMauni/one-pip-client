@@ -1,0 +1,29 @@
+
+<div class="pagebody">
+    <div class="container-fluid p-0">
+       <div class="tableOne">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="navigate('firewall')">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-1.png"> Clients </span></td>
+                <td>Manage client data on the server: contacts, documents, client and trading status</td>
+              </tr>
+              <tr (dblclick)="navigate('client-managers')">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-2.png"> Manager </span></td>
+                <td>Configure manager's rights</td>
+              </tr>
+              <tr (dblclick)="navigate('firewall')">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons13-3.png"> Trading Accounts </span></td>
+                <td>Manage accounts on the server: trading status, personal data, trading settings and security</td>
+              </tr>
+            </tbody>
+          </table>
+       </div>
+    </div>
+    </div>

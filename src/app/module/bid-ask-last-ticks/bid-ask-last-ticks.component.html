@@ -1,0 +1,178 @@
+
+<div class="pagebody">
+    <section class="container-fluid0 ">
+       <div class="tableOne">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Bid</th>
+                <th>Ask</th>
+                <th>Last</th>
+                <th>Volume</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" style="width:12px; height: 12px;" src="assets/images/sideimg/accept-tick-icon-12.png">2024.07.20 00.00.00.254 </span></td>
+                <td>0.91230</td>
+                <td>601263</td>
+                <td>601263</td>
+                <td>601263</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" style="width:12px; height: 12px;" src="assets/images/sideimg/accept-tick-icon-12.png">2024.07.20 00.00.00.254 </span></td>
+                <td>0.91230</td>
+                <td>601263</td>
+                <td>601263</td>
+                <td>601263</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" style="width:12px; height: 12px;" src="assets/images/sideimg/accept-tick-icon-12.png">2024.07.20 00.00.00.254 </span></td>
+                <td>0.91230</td>
+                <td>601263</td>
+                <td>601263</td>
+                <td>601263</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <button class="btn btn-outline-primary mb-2 me-2" (click)="openXl(content)">Large modal</button> -->
+       </div>
+         
+       <div class="row bottom-filter">
+        <div class="col-sm-8 ps-1 pe-1">
+            <div class="row">
+                <div class="col-sm-10  pe-1">
+                    <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                          </select>
+                      </div>
+                </div>
+                <div class="col-sm-2  pe-1">
+                    <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                          </select>
+                      </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-sm-4  ">
+            <div class="row">
+                <div class="col-sm-3  pe-1">
+                    <div class="width100">
+                        <select class="width100 c-input" id="sel1" name="sellist1">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                          </select>
+                    </div>
+                </div>
+                <div class="col-sm-3  pe-1">
+                    <div class="width100">
+                        <input  type="date" id="email" name="email" class="width100 c-input">
+                    </div>
+                </div>
+                <div class="col-sm-3 ps-1 pe-1">
+                    <div class="width100">
+                        <input  type="date" id="email" name="email" class="width100 c-input">
+                    </div>
+                </div>
+                
+                <div class="col-sm-3 ps-1">
+                    <button  type="button" class="btn btn-basic100 btn-sm" style="font-size: 10px;">Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Tick</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+       <!-- <div class="row align-items-center mb-3">
+        <div class="col-sm-2 text-center"><img class="img-fluid" src="assets/images/mod-img1.png"></div>
+        <div class="col-sm-10 ps-0">
+            <p class="mb-0 f11">Firewall is used for controlling of access to the server. Please specify the range of IP addresses and the action to be applied to it.</p>
+        </div>
+       </div> -->
+       <div class="row align-items-center0">
+            <!-- <div class="col-sm-2 text-center">
+                <div class="cline-chart">
+                    <div class="barleft" style="margin-top: 10px;"></div>
+                    <div class="barmid"></div>
+                    <div class="barright" style="margin-top: 40px;"></div>
+                </div> 
+            </div> -->
+            <div class="col-sm-12">
+                <div class="row mb-2">
+                    <div class="col-md-7">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">Date:</p></div>
+                            <div class="width100">
+                                <input type="date" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">Bid:</p></div>
+                            <div class="width100">
+                                <input type="number" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">Ask:</p></div>
+                            <div class="width100">
+                                <input type="number" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">Last:</p></div>
+                            <div class="width100">
+                                <input type="number" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">Volume:</p></div>
+                            <div class="width100">
+                                <input type="number" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+       </div>
+    </div>
+    <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-basic btn-sm">Ok</button>
+        <button type="button" class="btn btn-basic btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>

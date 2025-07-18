@@ -1,0 +1,697 @@
+<div class="container-fluid header_container set-nav-bg ps-0">
+    <div class="row demo">
+       
+        <nav style="padding-top: 2px; padding-bottom: 2px;" class="navbar navbar-expand-md navbar-light bg-body-tertiary border-t-b">
+            <div class="container-fluid">
+                
+                <div class="navbar-collapse justify-content-between" id="navbarContent">
+                    
+                    <ul class="navbar-nav">
+                       
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle id="navbarDropdown1" role="button"> 
+                                <img class="nav-img" src="assets/images/clientimg/ci-0.png"> 
+                            </a>
+                            <div ngbDropdownMenu aria-labelledby="navbarDropdown1" class="dropdown-menu" style="margin-left: 35px; margin-top: -28px; width:260px">
+                                <!-- (click)="openXl(content)" -->
+                                <div class="unpanel" *ngIf="accountActiveList && accountActiveList.length > 0" >
+                                    <div class="d-flex aligen-items-center justify-content-between">
+                                      <div>
+                                        <p class="untxt">{{accountActiveList[0]?.Company}}</p>
+                                  
+                                    <p class="crdtxt00">{{accountActiveList[0]?.account}} - {{accountActiveList[0]?.name}}</p>
+                                      </div>
+                                      <div>
+                                         <i style="font-size: 16px;" class="fa-solid fa-power-off me-1 pt-2" href="#" ngbTooltip="Logout"  placement="bottom" (click)="logout()"></i>
+                                      </div>
+                                    </div>
+                                    
+                                </div>
+                               
+                                <!-- Add Server with Submenu -->
+                                <div class="dropdown-submenu" ngbDropdown>
+                                    <a ngbDropdownItem href="#" ngbDropdownToggle (click)="$event.preventDefault()">
+                                        <img class="topnav-dd" src="assets/images/clientimg/nv0.png">Trading accounts
+                                    </a>
+                                    <div ngbDropdownMenu class="dropdown-menu">
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault();openXl(content)"><img class="topnav-dd" src="assets/images/clientimg/nv11.png" >Connect to account</a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault();openXl(content)"><img class="topnav-dd" src="assets/images/clientimg/nv12.png">Open Demo account</a>
+                                        <!-- <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv13.png">Open Real account</a> -->
+                                    </div>
+                                </div>
+                                <div class="dropdown-submenu" ngbDropdown>
+                                    <a ngbDropdownItem href="#" ngbDropdownToggle (click)="$event.preventDefault()">
+                                        <img class="topnav-dd" src="assets/images/clientimg/nv1.png">Chart settings
+                                    </a>
+                                    <div ngbDropdownMenu class="dropdown-menu">
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv14.png">Grid</a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv15.png">Trade Orders</a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv16.png">Trade Positions</a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv17.png">Trade History </a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv16.png">SL/TP Levels </a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv16.png">Ask Price </a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv2.png">Chart Controls </a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv18.png">Trade Notification </a>
+                                        <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv19.png">Show OHLC </a>
+                                    </div>
+                                </div>
+                               
+                                <!-- <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv2.png">One Click Trading
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv3.png">Color Templates
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv4.png">MQL5.com 
+                                </a>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv5.png">MetaTrader 5 
+                                </a>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/topnav/top-dd3.png">Economic Calendar 
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv6.png">Language 
+                                </a>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv7.png">Shortcuts 
+                                </a>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv8.png">Contact us 
+                                </a>
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault()">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv9.png">About program 
+                                </a> -->
+                                <a ngbDropdownItem href="#" (click)="$event.preventDefault();openXl3(content3)">
+                                    <img class="topnav-dd" src="assets/images/clientimg/nv9.png">Change Password 
+                                </a>
+                               <!-- <a ngbDropdownItem >
+                                Logout
+                               </a> -->
+                                
+                                
+                            </div>
+                        </li>
+                        
+                        <!-- <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <img class="nav-img" src="assets/images/clientimg/ci-8.png"> </a>
+                        </li> -->
+                        <!-- <li class="nav-item"><div class="nav-vline"></div></li> -->
+                        <!-- <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">M1 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">M5 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">M15 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">M30 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">H1 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">H4 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">D1 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">W1 </span> </a>
+                        </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <span class="nvtxt">DN </span> </a>
+                        </li> -->
+                        <!-- <li class="nav-item"><div class="nav-vline"></div></li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <img class="nav-img" src="assets/images/clientimg/ci-9.png"> </a>
+                        </li> -->
+                        <!-- <li class="nav-item"><div class="nav-vline"></div></li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"> <img class="nav-img" src="assets/images/clientimg/ci-1.png"> </a>
+                        </li> -->
+                        <!-- <li class="nav-item"><div class="nav-vline"></div></li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"><img class="nav-img" src="assets/images/clientimg/ci-2.png">  </a>
+                        </li> -->
+                        <!-- <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"><img class="nav-img" src="assets/images/clientimg/ci-3.png">  </a>
+                        </li> -->
+                        <!-- <li class="nav-item"><div class="nav-vline"></div></li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"><img class="nav-img" src="assets/images/clientimg/ci-4.png">  </a>
+                        </li> -->
+                        <li class="nav-item"><div class="nav-vline"></div></li>
+                       
+<!--                         
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button"><img class="nav-img" src="assets/images/clientimg/ci-6.png">  </a>
+                        </li> -->
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button" (click)="openXl2(content2)"><img class="nav-img" src="assets/images/clientimg/ci-5.png">  </a>
+                            </li>
+                        <li class="nav-item" ngbDropdown>
+                            <a class="nav-link aft-arw" tabindex="0" ngbDropdownToggle role="button" (click)="openXl2(content2)">New order </a>
+                        </li>
+                   
+                    </ul>
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <p class="nvsmall mb-0">Account ID</p>
+                            <p class="nvtt mb-0">{{id}}</p>
+                        </div>
+                        <div>
+                            <p class="nvsmall mb-0">Balance</p>
+                            <p class="nvtt mb-0">{{this.Blance}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+
+
+
+<ng-template #content let-modal>
+    <!-- <form [formGroup]="loginForm">
+ 
+    <div class="modal-header">
+        <h4 class="modal-title">Trading accounts: Admirals Group </h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+       <div class="row">
+        <div class="col-md-4">
+            <ul class="modtab">
+                <li>
+                    <div><img class="nav-img" src="assets/images/clientimg/nv11.png"></div>
+                    <p>Connect to account</p>
+                </li>
+                <li>
+                    <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
+                    <p>Open Demo account</p>
+                </li>
+                <li>
+                    <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
+                    <div>
+                        <p class="untxt">Anurag singh</p>
+                                    <p class="crdtxt">4265959642659596</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-8" style="border-left:solid 1px #646363">
+            
+               <div class="row align-items-center">
+                    <div class="col-sm-2 text-center"></div>
+                    <div class="col-sm-10">
+                        <div class="row mb-2">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center">
+                                    <div><p class="lbl mb-0 me-2">Server:</p></div>
+                                    <div class="width100">
+                                        <input type="text" readonly   value="UnityFX" class="width100 c-input" id="email"  name="email">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div><p class="lbl mb-0 me-2">Login:</p></div>
+                                    <div class="width100">
+                                        <input type="text" (keypress)="numberOnly1($event)" readonly onfocus="this.removeAttribute('readonly');" formControlName="ac" class="width100 c-input" id="email"  name="email">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div><p class="lbl mb-0 me-2">Password:</p></div>
+                                    <div class="width100">
+                                        <input type="password" formControlName="pass" class="width100 c-input" id="email"  name="email">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div  class="form-check mb-0">
+                                        <label  class="form-check-label">
+                                            <input  type="checkbox" name="remember" checked class="form-check-input">Save password </label>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+               </div>
+        </div>
+       </div>
+    </div>
+    <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-basic btn-sm" (click)="login()">Login</button>
+        <button type="button" class="btn btn-basic btn-sm" (click)="closeModel()">Cancel</button>
+    </div>
+</form> -->
+<div class="modal-header">
+    <h4 class="modal-title">Trading accounts: Admirals Group </h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+<section class="login-card">
+    <div class="row m-0">
+        <div class="col-md-8 m-auto" style="width: 800px;">
+            <div class="xcard " >
+                <div class="xheader">
+                    <p style="color:#fff">Trading accounts: Admirals Group AS</p>
+                </div>
+                <div class="xbody">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="modtab">
+                                <li [ngClass]="{'active': libuysellTab == 'tab1'}" (click)="libuysell('tab1')">
+                                    <div><img class="nav-img" src="assets/images/clientimg/nv11.png"></div>
+                                    <p>Connect to account</p>
+                                </li>
+                                <li [ngClass]="{'active': libuysellTab == 'tab2'}" (click)="libuysell('tab2')">
+                                    <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
+                                    <p>Open Demo account</p>
+                                </li>
+                                <li style="border-bottom: none;" (click)="libuysell('tab3')" >
+                                  <ul class="innerul">
+                                    <li *ngFor="let lis of accountList; let i= index" (click)="showListAccount(lis);getSelectRow(i)"  [class.selected-row]="selectedRowIndex === i" >
+                                     
+                                        <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
+                                        <div  >
+                                            <p class="untxt">{{lis.name}}</p>
+                                            <p class="crdtxt">{{lis.account}}</p>
+                                        </div>
+                                      
+                                    </li>
+                                  </ul>
+                                
+                                  
+                                </li>
+                            </ul>
+                            
+                        </div>
+                       
+                        <div class="col-md-8" style="border-left: solid 1px #646363;">
+                          
+                            <form [formGroup]="connectAccountForm">
+                                <div class="row" style="padding-right: 20px;" *ngIf="libuysellTab == 'tab1'">
+                                  <div class="col-md-12">
+                                    <p><b>Connect to account</b></p>
+                                  </div>
+                                  <div class="col-md-12">
+                                    <div class="row align-items-center mb-3">
+                                      <div class="col-md-2"><p class="xlbl">Login</p></div>
+                                      <div class="col-md-10">
+                                        <div class="width100">
+                                          <input type="text" class="width100 c-input" formControlName="login" autocomplete="off" (keypress)="numberOnly1($event)" readonly onfocus="this.removeAttribute('readonly');" >
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="row align-items-center mb-3">
+                                      <div class="col-md-2"><p class="xlbl">Password</p></div>
+                                      <div class="col-md-5">
+                                        <div class="width100">
+                                          <input type="password" class="width100 c-input" readonly onfocus="this.removeAttribute('readonly');" formControlName="password">
+                                        </div>
+                                      </div>
+                                      <div class="col-md-5">
+                                        <div class="form-check mb-0">
+                                          <label class="form-check-label">
+                                            <input type="checkbox" formControlName="remember" class="form-check-input"> Save password
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="row align-items-center mb-3">
+                                      <div class="col-md-2"><p class="xlbl"></p></div>
+                                      <div class="col-md-10 d-flex">
+                                        <p class="fongo ms-3">Forgot Password? <span>Contact company</span></p>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-2"><p class="xlbl">Server</p></div>
+                                      <div class="col-md-10">
+                                        <p>AdmiralsGroup-Demo</p>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-7"><p class="xlbl"></p></div>
+                                      <div class="col-md-5" style="text-align: end;">
+                                        <button class="btn btn-success" (click)="loginSend()">Connect to account</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            <div >
+                              <form [formGroup]="openDemoAccountForm">
+                                <div class="row" style="padding-right: 20px;" *ngIf="libuysellTab == 'tab2'">
+                                    <div class="col-md-12">
+                                        <p><b>Open Demo account</b></p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Company</p></div>
+                                            <div class="col-md-9">
+                                                <p class="xlbl text-primary">Company</p>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Server</p></div>
+                                            <div class="col-md-9">
+                                                <p class="xlbl text-primary">AdmiralsGroup-Demo</p>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Your Name</p></div>
+                                            <div class="col-md-5">
+                                              <div class="width100">
+                                                <input type="text" class="width100 c-input" formControlName="firstName">
+                                              </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                              <div class="width100">
+                                                <input type="text" class="width100 c-input" formControlName="lastName">
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Email</p></div>
+                                            <div class="col-md-5">
+                                              <div class="width100">
+                                                <input type="email" class="width100 c-input" formControlName="email">
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Mobile phone</p></div>
+                                            <div class="col-md-5">
+                                              <div class="width100">
+                                                <input type="text" class="width100 c-input" formControlName="phone">
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Account type</p></div>
+                                            <div class="col-md-9">
+                                              <div class="width100">
+                                                <select formControlName="accountType" class="width100 c-input">
+                                                  <option>Trade MT5 USD</option>
+                                                </select>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row align-items-center mb-3">
+                                            <div class="col-md-3"><p class="xlbl">Deposit</p></div>
+                                            <div class="col-md-3">
+                                              <div class="width100">
+                                                <select formControlName="deposit"  class="width100 c-input">
+                                                    <option value="0">5000 USD</option>
+                                                    <option value="1">2000 USD</option>
+                                                    <option value="2">1000 USD</option>
+                                                    <option value="3">500 USD</option>
+                                                    <option value="4">300 USD</option>
+                                                    <option value="5">100 USD</option>
+                                                  </select>
+                                                <!-- <input type="text" class="width100 c-input" formControlName="deposit"> -->
+                                              </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                              <span class="me-2">USD </span>
+                                              <span>Leverage</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                              <div class="width100">
+                                                <select formControlName="leverage" class="width100 c-input">
+                                                  <option value="0">1:500</option>
+                                                  <option value="1">1:200</option>
+                                                  <option value="2">1:100</option>
+                                                  <option value="3">1:50</option>
+                                                  <option value="4">1:30</option>
+                                                  <option value="5">1:10</option>
+                                                </select>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            <div class="col-md-12">
+                                              <div class="form-check mb-0">
+                                                <label class="form-check-label">
+                                                  <input type="checkbox" formControlName="agreeTerms" class="form-check-input">I agree with the terms and conditions for opening an account and the data protection policy
+                                                </label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        <div class="row">
+                                            <div class="col-md-7"><p class="xlbl"></p></div>
+                                            <div class="col-md-5" style="text-align: end;">
+                                                <button class="btn btn-success"  (click)="openDemoAccount()">Open Demo account</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                              </form>
+                            </div>
+                            <div class="row" style="padding-right: 20px;" *ngIf="libuysellTab == 'tab3'">
+                                <div class="col-md-12 mb-4">
+                                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div>
+                                        <p class="mb-0"><b>{{listOb.name}}</b></p>
+                                        <p style="font-size: 12px;">{{listOb.account}} - AdmiralsGroup-Demo - Hedge</p>
+                                    </div>
+                                    <div>
+                                        <p><b>{{listOb.balance}} USD</b></p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-center mb-1">
+                                        <div class="col-md-2"><p class="xlbl">Name</p></div>
+                                        <div class="col-md-10">
+                                            <p class="xlbl">{{listOb.name}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mb-1">
+                                        <div class="col-md-2"><p class="xlbl">Server</p></div>
+                                        <div class="col-md-10">
+                                            <p class="xlbl">AdmiralsGroup-Demo</p>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mb-4">
+                                        <div class="col-md-2"><p class="xlbl">Login</p></div>
+                                        <div class="col-md-10">
+                                            <p class="xlbl">{{listOb.account}} </p>
+                                        </div>
+                                    </div>
+                           
+                                    <div class="row">
+                                        <div class="col-md-5"><p class="xlbl"></p></div>
+                                        <div class="col-md-7" style="text-align: end;">
+                                            <button class="btn btn-success me-2" (click)="autoConnectLogin()" >Connect to account</button>
+                                            <button class="btn btn-outline-danger" style="font-size: 14px; border-radius: 0px;"(click)="DeleteAcc(listOb)">Remove</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</section>
+</div>
+</ng-template>
+
+<ng-template #content2 let-modal>
+  
+    <div class="modal-header">
+        <h4 class="modal-title">Order ({{symShow }})</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body mnginputgup">
+       <div class="row">
+        
+        <div class="col-md-12" *ngIf="showMassage == 1">
+            
+               <div class="row align-items-center">
+                <div class="col-md-12 mb-3">
+                    <!-- <p class="mb-0">Server:</p> -->
+                    <div class="width100">
+                        <select  class="width100 c-input" (change)="Ordertype1($event)">
+                          <option value="0">Market Execution</option>
+                          <option value="2">Buy Limit</option>
+                          <option value="3">Sell Limit</option>
+                          <option value="4">Buy Stop</option>
+                          <option value="5">Sell Stop</option>
+                         
+                        </select>
+                      </div>
+                </div>
+                    <div class="col-md-12 mb-3">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p class="mb-0">Volume</p>
+                            <!-- <p class="mb-0">50.00 SILVER</p> -->
+                        </div>
+                        <div class="width100">
+                            <div class="input-group">
+                                <button class="btn btn-outline-secondary llbtn" (click)="subtractValue(1)">-</button>
+                                <input type="text" class="form-control" [(ngModel)]="inputLotValue" placeholder="" aria-label="Example text with button addon" >
+                                <button class="btn btn-outline-secondary rrbtn" (click)="addValue(1)">+</button>  
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div [formGroup]="orderFrom">
+                        <div class="col-md-12 mb-3" *ngIf="orderty1 !=0">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p class="mb-0">Price</p>
+                               
+                            </div>
+                            <div class="width100">
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary llbtn" (click)="subPricee(orderFrom.get('price')?.value)" [disabled]="orderFrom.get('price')?.value <= 0">-</button>
+                                    <input type="text" class="form-control" (keypress)="numberOnly2($event)" formControlName="price" maria-label="Example text with button addon" >
+                                    <button class="btn btn-outline-secondary rrbtn" (click)="addPricee(currentAddP)" >+</button>  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                          <p class="mb-0">Stop Loss</p>
+                          <div class="width100">
+                            <div class="input-group">
+                              <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('stopLoss')?.value <= 0" (click)="SubSll(orderFrom.get('stopLoss')?.value)">-</button>
+                              <input type="text" class="form-control" (keypress)="numberOnly2($event)" formControlName="stopLoss" aria-label="Stop Loss input">
+                              <button class="btn btn-outline-secondary rrbtn" (click)="addSll(inputSl)">+</button>
+                            </div>
+                          </div>
+                        </div>
+                      
+                        <div class="col-md-12 mb-3">
+                          <p class="mb-0">Take Profit</p>
+                          <div class="width100">
+                            <div class="input-group">
+                              <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('takeProfit')?.value <= 0"  (click)="subTP(orderFrom.get('stopLoss')?.value)">-</button>
+                              <input type="text" class="form-control" (keypress)="numberOnly2($event)" formControlName="takeProfit" aria-label="Take Profit input">
+                              <button class="btn btn-outline-secondary rrbtn" (click)="addTP(this.inputTPP)">+</button>
+                            </div>
+                          </div>
+                        </div>
+                      
+                        <div class="col-md-12 mb-3">
+                          <p class="mb-0">Comment</p>
+                          <div class="width100">
+                            <input type="text" class="form-control" formControlName="comment" aria-label="Comment input">
+                          </div>
+                        </div>
+                      </div>
+                    
+             </div>
+             <div class="row text-center me-1 ms-1 mb-3" style="background: #F2F9FF;">
+                 <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Bid }}</p></div>
+                <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Ask }}</p></div>
+             </div>
+             <div class="row"  *ngIf="orderty1 == 0">
+                <div class="col-md-6" ><button  class="btn btn-danger btn-sm w-100" [disabled]="!orderFrom.get('stopLoss')?.value || !orderFrom.get('takeProfit')?.value || !orderFrom.get('price')?.value" (click)="MAKE_NEW_ORDER_Market(1, data[0]?.oInitial?.Ask)">Sell by Market</button></div>
+                <div class="col-md-6"><button  class="btn btn-primary btn-sm w-100" [disabled]="!orderFrom.get('stopLoss')?.value || !orderFrom.get('takeProfit')?.value || !orderFrom.get('price')?.value" (click)="MAKE_NEW_ORDER_Market(0, data[0]?.oInitial?.Bid)">Buy by Market</button></div>
+             </div>
+             <div class="row"  *ngIf="orderty1 != 0">
+                <div class="col-md-12" ><button  class="btn btn-danger btn-sm w-100" [disabled]="!orderFrom.get('stopLoss')?.value || !orderFrom.get('takeProfit')?.value || !orderFrom.get('price')?.value || orderFrom.get('price')?.value <= 0" (click)="MAKE_NEW_ORDER(orderty1)">Place</button></div>
+               
+             </div>
+        </div>
+
+        <div style="min-height: 498px; display: flex; align-items: center; justify-content: center;" class="col-md-12" *ngIf="showMassage == 2">
+            <div>
+                <button class="btn mb-3"  (click)="okReturn()"><i class="fa-solid fa-arrow-left"></i></button>
+            <div class="text-center" *ngIf="showErroMass == 1 && showMassage == 2">
+                
+                <p class="mb-1" style="font-size: 16px;"><b>#{{orderResData?.Ticket}} <span *ngIf="orderResData?.ordType == 0">buy </span>
+                    <span *ngIf="orderResData?.ordType == 1">sell </span>
+                    <span *ngIf="orderResData?.ordType == 2">buy limit </span>
+                    <span *ngIf="orderResData?.ordType == 3">sell limit </span>
+                    <span *ngIf="orderResData?.ordType == 4">buy stop </span>
+                    <span *ngIf="orderResData?.ordType == 5">sell stop </span>
+                    <span *ngIf="orderResData?.ordType == 6">buy stop limit </span>
+                    <span *ngIf="orderResData?.ordType == 7">sell stop limit </span> <span>{{orderResData?.Lot}} </span> <span>{{orderResData?.Symbol}} </span> at <span>{{orderResData?.Price}} </span></b></p>
+                  <p class="mb-1" style="font-size: 16px;"><b>sl:{{orderResData.SL}}, tp: {{orderResData.TL}}</b></p>
+                  <p class="mb-1" style="font-size: 16px; color:rgb(16, 134, 16)"><b>Done</b></p>
+                  <button class="btn btn-primary btn-sm ps-4 pe-4" (click)="okReturn()">Ok</button>
+            </div>
+            
+
+              <div  class="text-center" *ngIf="showErroMass == 2 && showMassage == 2">
+             
+                <p class="mb-1" style="font-size: 16px;"><b>{{orderResData?.ERR_MSG}}</b></p>
+                        
+                <div class="row">
+                    <button class="btn btn-primary btn-sm ps-4 pe-4" (click)="okReturn()">OK</button>
+                   
+                  
+                </div>
+              </div>
+            </div>
+        </div>
+       </div>
+    </div>
+   
+
+</ng-template>
+
+<ng-template #content3 let-modal>
+    <form [formGroup]="passForm">
+ 
+    <div class="modal-header">
+        <h4 class="modal-title">Change Password </h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closePassForm()"></button>
+    </div>
+    <div class="modal-body">
+       <div class="row">
+       
+        <div class="col-md-10 m-auto" >
+            
+              <div class="row mb-2">
+                            <div class="col-md-12">
+                                <div class="">
+                                    <div><p class="lbl mb-0 me-2">Password:</p></div>
+                                    <div class="width100">
+                                       <input type="password" formControlName="pass" class="width100 c-input" id="pass" name="pass">
+                                      <div class="text-danger" *ngIf="passForm.get('pass')?.touched && passForm.get('pass')?.invalid">
+                                       <span *ngIf="passForm.get('pass')?.errors?.['required']">Password is required.</span>
+                                       <span *ngIf="passForm.get('pass')?.errors?.['minlength']">Minimum 8 characters required.</span>
+                                       <span *ngIf="passForm.get('pass')?.errors?.['pattern']">
+                                         Password must include uppercase, lowercase, number, and special character (#$"&#64;"%!*-?&^).
+                                       </span>
+                                     </div>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+        </div>
+       </div>
+    </div>
+    <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-basic btn-sm" (click)="changePass()" [disabled]="!passForm.valid">Change Password</button>
+        <!-- <button type="button" class="btn btn-basic btn-sm" (click)="closeModel()">Cancel</button> -->
+    </div>
+</form>
+
+</ng-template>

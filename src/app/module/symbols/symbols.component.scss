@@ -1,0 +1,38 @@
+.legend{
+    position: relative;
+    border:solid 1px #d3d3d3;
+    padding:15px 15px 0px 15px;
+
+}
+.legend-txt{
+    position: absolute;
+    margin-top: -24px;
+    width: fit-content;
+    padding: 0px 6px;
+    background: #fff;
+}
+
+.border-div{
+    border:solid 1px #d3d3d3;
+    padding:6px 2px 2px 2px;
+    height: 280px;
+    overflow: auto;
+}
+
+.btn-set-tp{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Adjust as needed to fit your layout */
+}
+
+.top-buttons,
+.bottom-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Optional: Adjust the gap between buttons as needed */
+}
+
+.borderbox{
+    border:solid 1px #d3d3d3
+}

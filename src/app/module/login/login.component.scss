@@ -1,0 +1,138 @@
+.login-card {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    background: #fff;
+    background-position: center;
+    padding: 30px 12px;
+}
+
+.login-card .login-main {
+
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 37px rgba(8, 21, 66, 0.05);
+    margin: 0 auto;
+    background-color: #fff;
+}
+
+.logo{
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.selected-row {
+    background: rgba(82, 133, 255, 0.1215686275);
+    
+  }
+
+
+@media only screen and (max-width: 1199.98px) {
+    .login-card {
+        background: transparent;
+    }
+}
+
+@media only screen and (max-width: 575.98px) {
+    .login-card {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+}
+
+.login-card .login-main .theme-form label {
+    font-size: 14px;
+}
+.login-card .login-main .theme-form label {
+    font-size: 15px;
+    letter-spacing: 0.4px;
+}
+.col-form-label {
+    padding-bottom: 4px;
+}
+.login-card .login-main .theme-form input {
+    background-color: rgba(92, 97, 242, 0.1);
+    transition: all 0.3s ease;
+}
+
+.login-card .btn-showcase .btn {
+    line-height: 1;
+    padding: 10px 12px;
+    margin: 0;
+}
+.txt-linkedin {
+    color: #0077B5 !important;
+}
+.txt-fb {
+    color: #0077B5 !important;
+}
+.login-card .btn-showcase .btn + .btn {
+    margin-left: 10px;
+}
+.btn-primary {
+    background-color:#6062f6;
+    border-color: #6062f6;
+}
+
+a {
+    font-size: 0.875rem;
+    text-decoration: none;
+    color:  #6062f6;
+    transition: 0.5s all;
+}
+
+.modtab{
+    list-style: none;
+    padding-left: 10px;
+    li{
+        display: flex;
+        align-items: center;
+        padding:8px 2px;
+        border-bottom: solid 1px #e3e3e3;
+        p{
+            margin-bottom: 0px;
+        }
+        img{
+            width:24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+    }
+    .active{background: #5285ff1f;}
+}
+
+
+
+
+.xcard{
+    box-shadow: 0px 16px 46px 8px rgba(0, 0, 0, 0.12);
+    background: #fff;
+}
+
+.xheader{
+    padding:15px;
+    background: #4584FF;
+    color:#fff;
+    p{
+        margin-bottom: 0px;
+        font-size: 14px;
+    }
+}
+.xbody{
+    padding:15px
+}
+.fongo{
+    color:#979797;
+    font-size: 12px;
+    span{
+       color:#4584FF 
+    }
+}
+
+.innerul{padding-left: 0px; margin-bottom: 0px; width: 100%;
+li{
+    width:100%
+}
+}

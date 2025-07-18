@@ -1,0 +1,1310 @@
+
+import { CommonModule } from '@angular/common';
+import { NgbCarouselModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
+import {FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild,ViewEncapsulation  } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+
+import { distinctUntilChanged, Subscription, Unsubscribable } from 'rxjs';
+
+import { DatePipe } from '@angular/common';
+import { ApiService } from 'src/app/services/api.service';
+import { ShareService } from 'src/app/services/share.service';
+import { GlobalService } from 'src/app/services/global.service';
+import { HttpClient } from '@angular/common/http';
+
+import { ChartAllModule, StockChartAllModule ,ChartModule, RangeNavigatorModule, CrosshairService, AreaSeriesService,} from '@syncfusion/ej2-angular-charts'
+  import { DateTimeService, LegendService, TooltipService } from '@syncfusion/ej2-angular-charts';
+    import { DataLabelService, CandleSeriesService} from '@syncfusion/ej2-angular-charts'
+    import { TooltipModule } from '@syncfusion/ej2-angular-popups';
+    import {  RangeTooltipService, CategoryService,ZoomService ,PeriodSelectorService } from '@syncfusion/ej2-angular-charts'
+    import { StockChartComponent } from '@syncfusion/ej2-angular-charts';
+    import { PeriodsModel } from '@syncfusion/ej2-angular-charts';
+
+// import { HighchartsChartModule } from 'highcharts-angular';
+// import * as Highcharts from 'highcharts/highstock';
+// import IndicatorsCore from 'highcharts/indicators/indicators-all';
+// import StockTools from 'highcharts/modules/stock-tools';
+// import HC_stock from 'highcharts/modules/stock';
+// import HC_candlestick from 'highcharts/modules/candlestick';
+// IndicatorsCore(Highcharts);
+// StockTools(Highcharts);
+// // Initialize modules
+// HC_stock(Highcharts);
+// HC_candlestick(Highcharts);
+// declare const myFunction: any;
+declare const setupDataUpdateInterval: any;
+interface CandleData {
+  x: Date;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume?: number;
+}
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [NgbCarouselModule, NgbAccordionModule,CommonModule,FormsModule,ReactiveFormsModule,StockChartAllModule,ChartAllModule,TooltipModule,ChartModule, RangeNavigatorModule,],
+  providers: [  DateTimeService,
+  TooltipService,
+  LegendService,
+  DataLabelService,
+  CandleSeriesService,RangeTooltipService,CategoryService,ZoomService,PeriodSelectorService ,CrosshairService,AreaSeriesService, DateTimeService, ],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
+  encapsulation: ViewEncapsulation.None
+})
+
+export class DashboardComponent implements OnInit,OnDestroy{
+ @ViewChild('stockChart') stockChart!: StockChartComponent;
+    public chartData: CandleData[] = [];
+    annotations: any[] = [];
+//     public bidSeriesData: { x: Date, y: number }[] = [];
+// public askSeriesData: { x: Date, y: number }[] = [];
+  periods:any;
+title:any='AUDUSD.c_5200';
+ public zoomSettings: Object = {
+        mode: 'X',
+        enableMouseWheelZooming: true,
+        enablePinchZooming: true,
+        enableSelectionZooming: true,
+        enableScrollbar: true
+    };
+public tooltip = {
+  enable: true,
+  shared: false,  // ❗️Set this to false
+  format:
+    'Date: ${point.x}<br/>Open: ${point.open}<br/>High: ${point.high}<br/>Low: ${point.low}<br/>Close: ${point.close}'
+};
+public enableSolidCandles: Object = { enable: true };
+public crosshair?: Object= { enable: true };
+  overlays: any = []
+  pop: boolean = false
+  popUP: boolean = false;
+  selectedOverlay: string = 'abands'
+  oscillators: any = []
+  returnSeriesData: any = []
+  serialData: any = []
+  indicateor: any = -20
+  allHistoryData: any = []
+  allHistoryData2: any = []
+
+  selectedOscillator: string = 'abspriceindicator';
+  tradesValue: any = [];
+  indicatorValue: any = [
+   
+  ];
+  indicObj: any = [
+
+  ]
+
+  showChart: any = 1
+  getLocaAccList: any = []
+
+  checkSymboldata: any = []
+  checkSymboldata1: any = []
+  gotValue: boolean = false
+  accountList:any =[]
+  accountActiveList:any =[]
+  accountUnActiList:any =[]
+  DC_URL:any =""
+  // Highcharts: typeof Highcharts = Highcharts;
+  // updateChart = false;
+// chartCallback: Highcharts.ChartCallbackFunction = (chart) => {
+//   this.chartInstance = chart;
+
+//   const series = chart.series.find(s => s.type === 'candlestick');
+//   if (series && series.data.length > 50) {
+//     const total = series.data.length;
+//     const range = 50; // number of candles to show
+
+//     const min = series.data[total - range]?.x;
+//     const max = series.data[total - 1]?.x;
+
+//     if (min && max) {
+//       chart.xAxis[0].setExtremes(min, max);
+//     }
+//   }
+// }
+//   chartInstance!: Highcharts.Chart;
+
+//  chartOptions: any = {
+//     chart: {
+//         height:620,
+//         className: 'okok',
+//          zoomType: 'xy',
+//   panning: {
+//     enabled: true,
+//     type: 'xy'
+//   },
+//   panKey: 'shift', // optional
+//   scrollablePlotArea: {
+//     minWidth: 700, // or based on how much data
+//     scrollPositionX: 1
+//   },
+//   navigator: {
+//   enabled: true
+// },
+// scrollbar: {
+//   enabled: true
+// },
+// rangeSelector: {
+//   enabled: true
+// },
+//     },
+
+//     navigator: {
+//         maskInside: false,
+//         maskFill: 'rgba(0, 0, 0, 0.3)',
+//         height: 30,
+//         margin: 10,
+//         handles: {
+//             backgroundColor: '#000000'
+//         },
+//         xAxis: {
+//             labels: {
+//                 enabled: false
+//             },
+//             gridLineWidth: 0
+//         }
+//     },
+//     scrollbar: {
+//         height: 0
+//     },
+//     title: {
+//       text: 'Live Candlestick Chart'
+//     },
+//     xAxis: {
+//       type: 'datetime',
+//       gridLineWidth: 1,
+//         gridLineColor: '#c0c0c0',
+//         gridLineDashStyle: 'Dash',
+//         tickLength: 5,
+//         crosshair: {
+//             label: {
+//                 backgroundColor: '#000000',
+//                 padding: 2,
+//                 shape: 'rect',
+//                 borderRadius: 0
+//             }
+//         },
+//     //   events: {
+//     //      afterSetExtremes: (e: any) => {
+//     //   this.isUserInteracting = true;
+//     // }
+//     //   }
+//     },
+//     yAxis: {
+//        gridLineWidth: 1,
+//         gridLineColor: '#c0c0c0',
+//         gridLineDashStyle: 'Dash',
+//         tickInterval: 5,
+//         crosshair: {
+//             label: {
+//                 backgroundColor: '#000000',
+//                 padding: 2,
+//                 shape: 'rect',
+//                 borderRadius: 0
+//             }
+//         }
+//     },
+//     series: [
+//       {
+//         type: 'candlestick',
+//         name: 'Candlestick Series',
+//         data: [] // Initially empty
+//       }
+//     ]
+//   };
+  constructor(private datePipe: DatePipe, private cdr: ChangeDetectorRef, private route: ActivatedRoute, private formBuilder: FormBuilder, private api: GlobalService, private router: Router, private share: ShareService ,private http: HttpClient) {
+this.chartData = [{
+            "x": new Date('2012-04-02T00:00:00.000Z'),
+            "open": 320.705719,
+            "high": 324.074066,
+            "low": 317.737732,
+            "close": 323.783783,
+            "volume": 45638000
+        }, {
+            "x": new Date('2012-04-03T00:00:00.000Z'),
+            "open": 323.028015,
+            "high": 324.299286,
+            "low": 319.639648,
+            "close": 321.631622,
+            "volume": 40857000
+        }, {
+            "x": new Date('2012-04-04T00:00:00.000Z'),
+            "open": 319.544556,
+            "high": 319.819824,
+            "low": 315.865875,
+            "close": 317.892883,
+            "volume": 32519000
+        }, {
+            "x": new Date('2012-04-05T00:00:00.000Z'),
+            "open": 316.436432,
+            "high": 318.533539,
+            "low": 314.599609,
+            "close": 316.476471,
+            "volume": 46327000
+        }]
+
+
+    this.accountList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
+    this.accountActiveList=  this.accountList.filter((list:any) => list.account === Number(localStorage.getItem('AccountID')))
+  
+    if(this.accountActiveList.length > 0){
+      
+    }
+    this.accountUnActiList=  this.accountList.filter((list:any) => list.account != Number(localStorage.getItem('AccountID')))
+  
+    this.checkSymboldata = JSON.parse(localStorage.getItem('chartData') || '[]')
+   
+  
+
+    this.getLocaAccList = localStorage.getItem('brokerAccList')
+    if (this.getLocaAccList == "[]") {
+      this.showChart = 2
+    }
+    else {
+      this.showChart = 1
+    }
+
+    this.tradesValue = JSON.parse(localStorage.getItem('trades') || '[]')
+    this.indicatorValue = JSON.parse(localStorage.getItem('indicator') || '[]')
+
+    this.share.sharedData$.subscribe((data:any) => {
+     
+      if (data) {
+       console.log("dataa",data);
+      //  this.qoutes =(data.Sock_Quote).replace(/\\/g, "//")
+       this.DC_URL =(data.DC_URL)
+       
+      }
+      else{
+       
+        // const storedQuote = localStorage.getItem('Sock_Quote');
+        // this.qoutes = storedQuote ? storedQuote.replace(/\\/g, "//") : "";
+        // console.log(this.qoutes);
+        
+        const storedTradeString = localStorage.getItem('admin'); // Get item from localStorage
+
+        if (storedTradeString) {
+          const storedTrade = JSON.parse(storedTradeString); // Parse JSON string to object
+          this.DC_URL = storedTrade.DC_URL; // Access DC_URL property
+          console.log("this.DC_URL:", storedTrade, this.DC_URL);
+        } else {
+          console.error("No 'admin' data found in localStorage.");
+        }
+      }
+    });
+
+  }
+  private chartDataSubscription: Subscription | null = null;
+
+  symbolDataVal:any
+  
+
+globalSym:any
+public chartVisible = true;
+  // getSubscriveLiveData() {
+  
+  //   this.share.changeSym$.subscribe((res: any) => {
+  //   console.log("ressss checkkk",res);
+  //   if(res == 'NoData'){
+  //     localStorage.setItem('changeSym','AUDUSD.c_5200')
+  //     this.historyData("AUDUSD.c_5200",1);
+  //   }else{
+  //     localStorage.setItem('changeSym',res)
+  //     const sym = localStorage.getItem('changeSym')
+  //    this.globalSym = sym
+  //       this.gotValue = true;
+  //        this.title=sym
+  //        console.log("this.title",this.title)
+  //         this.historyData(sym,1);
+    
+
+
+  //   }
+    
+  //       });
+   
+  // }
+  private changeSymSub!: Subscription;
+
+getSubscriveLiveData() {
+  this.changeSymSub = this.share.changeSym$
+    .pipe(distinctUntilChanged())
+    .subscribe((res: any) => {
+      const sym = res === 'NoData' ? 'AUDUSD.c_5200' : res;
+      localStorage.setItem('changeSym', sym);
+      this.globalSym = sym;
+      this.gotValue = true;
+      this.title = sym;
+      this.historyData(sym, 3);
+    });
+}
+
+ngOnDestroy() {
+  this.changeSymSub?.unsubscribe();
+}
+    // public seriesRender(args: ISeriesRenderEventArgs){
+    //     args.series.bearFillColor = '#ff6347';
+    //     args.series.bullFillColor = '#009cb8';
+    // }
+ 
+  indData: any;
+  // chartData: any = []
+  ngOnInit() {
+  // setTimeout(() => {
+  //   this.isPeriodChangeHandled = true;
+  // }, 500);
+    this.periods = [
+  { intervalType: 'Minutes', interval: 1, text: '1m' },
+  { intervalType: 'Minutes', interval: 15, text: '15m' },
+  { intervalType: 'Hours', interval: 1, text: '1H' },
+  { intervalType: 'Auto', text: '1D' }
+];
+    this.commAphaNum(10);
+  
+    this.getSubscriveLiveData();
+
+    (async () => {
+
+      // const data = await fetch(
+      //   'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
+      // ).then(response => response.json());
+      this.indData = localStorage.getItem("indicater")
+      // this.chartData = data
+      // myFunction(data, JSON.parse(this.indData));
+
+      this.overlays = [
+        { value: 'abands', label: 'Acceleration Bands' },
+        { value: 'bb', label: 'Bollinger Bands' },
+        { value: 'dema', label: 'DEMA (Double Exponential Moving Average)' },
+        { value: 'ema', label: 'EMA (Exponential Moving Average)' },
+        { value: 'ikh', label: 'Ichimoku Kinko Hyo' },
+        { value: 'keltnerchannels', label: 'Keltner Channels' },
+        { value: 'linearRegression', label: 'Linear Regression' },
+        { value: 'pivotpoints', label: 'Pivot Points' },
+        { value: 'pc', label: 'Price Channel' },
+        { value: 'priceenvelopes', label: 'Price Envelopes' },
+        { value: 'psar', label: 'PSAR (Parabolic SAR)' },
+        { value: 'sma', label: 'SMA (Simple Moving Average)' },
+        { value: 'supertrend', label: 'Super Trend' },
+        { value: 'tema', label: 'TEMA (Triple Exponential Moving Average)' },
+        { value: 'vbp', label: 'VbP (Volume by Price)' },
+        { value: 'vwap', label: 'WMA (Weighted Moving Average)' },
+        { value: 'wma', label: 'VWAP (Volume Weighted Average Price)' },
+        { value: 'zigzag', label: 'Zig Zag' }
+      ];
+      this.oscillators = [
+        { value: 'abspriceindicator', label: 'Absolute price indicator' },
+        { value: 'ad', label: 'A/D (Accumulation/Distribution)' },
+        { value: 'aroon', label: 'Aroon' },
+        { value: 'aroonoscillator', label: 'Aroon oscillator' },
+        { value: 'atr', label: 'ATR (Average True Range)' },
+        { value: 'awesomeoscillator', label: 'Awesome oscillator' },
+        { value: 'cci', label: 'CCI (Commodity Channel Index)' },
+        { value: 'chaikin', label: 'Chaikin' },
+        { value: 'cmf', label: 'CMF (Chaikin Money Flow)' },
+        { value: 'disparityindex', label: 'Disparity Index' },
+        { value: 'cmo', label: 'CMO (Chande Momentum Oscillator)' },
+        { value: 'dmi', label: 'DMI (Directional Movement Index)' },
+        { value: 'detrendedprice', label: 'Detrended price' },
+        { value: 'linearregressionangle', label: 'Linear Regression Angle' },
+        { value: 'linearregressionintercept', label: 'Linear Regression Intercept' },
+        { value: 'linearregressionslope', label: 'Linear Regression Slope' },
+        { value: 'klingeroscillator', label: 'Klinger Oscillator' },
+        { value: 'macd', label: 'MACD (Moving Average Convergence Divergence)' },
+        { value: 'mfi', label: 'MFI (Money Flow Index)' },
+        { value: 'momentum', label: 'Momentum' },
+        { value: 'natr', label: 'NATR (Normalized Average True Range)' },
+        { value: 'obv', label: 'OBV (On-Balance Volume)' },
+        { value: 'percentagepriceoscillator', label: 'Percentage Price oscillator' },
+        { value: 'roc', label: 'RoC (Rate of Change)' },
+        { value: 'rsi', label: 'RSI (Relative Strength Index)' },
+        { value: 'slowstochastic', label: 'Slow Stochastic' },
+        { value: 'stochastic', label: 'Stochastic' },
+        { value: 'trix', label: 'TRIX' },
+        { value: 'williamsr', label: 'Williams %R' }
+      ];
+
+
+    })();
+
+  }
+
+  randomNumber:any;
+  generateRandomNumber() {
+    // Generate a random number between 10 and 99
+    this.randomNumber = Math.floor(Math.random() * 90) + 10;
+    console.log(" generateRandomNumber()",this.randomNumber);
+    
+  }
+
+
+  redirectNew() {
+    this.generateRandomNumber()
+    const data = {
+      sym: localStorage.getItem('setSymbol'),
+      info: localStorage.getItem('Info')
+    }
+    console.log("data", data);
+
+    const navData: NavigationExtras = {
+      queryParams: {
+        data: JSON.stringify(data)
+      }
+    }
+
+    this.router.navigate(['/', 'trade-buysell', this.randomNumber], navData)
+  }
+
+
+
+  getSeries(data: any, volume: any) {
+    let val = [
+      {
+        type: 'sma',
+        linkedTo: "BTCUSD"
+      },
+      {
+        type: 'sma',
+        linkedTo: "BTCUSD",
+        params: {
+          period: 50
+        }
+      },
+      {
+        type: 'column',
+        id: 'volume',
+        name: 'Volume',
+        data: volume,
+        yAxis: 1
+      },
+      {
+        type: 'pc',
+        id: 'overlay',
+        linkedTo: "BTCUSD",
+        yAxis: 0
+      },
+      {
+        type: 'macd',
+        id: 'oscillator',
+        linkedTo: "BTCUSD",
+        yAxis: 2
+      }
+    ]
+    return []
+  }
+  OpenPop(val: any) {
+
+    this.indicateor = val
+  }
+
+  obj: any;
+  toggleSymbol(val: any, label: any, valy: any) {
+    let trades = JSON.parse(localStorage.getItem('trades') || '[]')
+    const duplicateTrade = trades.some((trade: any) => trade.label === label);
+
+    if (!duplicateTrade) {
+      if (val == "abands") {
+        this.indicObj.push({
+          type: 'abands',
+          id: 'overlay',
+          linkedTo: 'aapl',
+          yAxis: 0
+        })
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+      }
+      else if (val == "sma") {
+        this.indicObj.push(
+          {
+            type: 'sma',
+            linkedTo: 'aapl',
+            params: {
+              period: 50
+            }
+          },
+        )
+
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+      }
+      else if (val == "pc") {
+        this.indicObj.push(
+          {
+            type: 'pc',
+            id: 'overlay',
+            linkedTo: 'aapl',
+            yAxis: 0
+          },
+        )
+
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+      }
+      else if (val == "zigzag") {
+        this.indicObj.push(
+          {
+            type: 'zigzag',
+            id: 'overlay',
+            linkedTo: 'aapl',
+            yAxis: 0
+          },
+        )
+
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+      }
+      else if (val == "wma") {
+        this.indicObj.push(
+          {
+            type: 'wma',
+            id: 'overlay',
+            linkedTo: 'aapl',
+            yAxis: 0
+          },
+        )
+
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+      }
+      else if (val == "wma") {
+        this.indicObj.push(
+          {
+            type: 'wma',
+            id: 'overlay',
+            linkedTo: 'aapl',
+            yAxis: 0
+          },
+        )
+
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+      }
+      else if (val == "dema" || "ikh" || "keltnerchannels" || "linearRegression" || "pivotpoints" || "psar" || "supertrend" || "tema" || "vwap" || "bb") {
+        this.indicObj.push(
+          {
+            type: `${val}`,
+            id: 'overlay',
+            linkedTo: 'aapl',
+            yAxis: 0
+          },
+        )
+
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+      }
+
+      // myFunction(this.ohlc, 1, this.indicObj, this.SymbolName, this.SymbInfo);
+
+      // If label doesn't exist, add it to trades array
+      trades.push({ val, label, valy });
+      localStorage.setItem('trades', JSON.stringify(trades));
+      this.OpenPop(0)
+
+      this.tradesValue = JSON.parse(localStorage.getItem('trades') || '[]')
+
+    }
+  }
+
+  toggleSymbol1(val: any, label: any, valy: any) {
+    let trades = JSON.parse(localStorage.getItem('indicator') || '[]')
+    const duplicateTrade = trades.some((trade: any) => trade.label === label);
+
+    if (!duplicateTrade) {
+      this.indicObj = JSON.parse(localStorage.getItem('indicater') || '[]')
+
+      if (val === "macd" || "abspriceindicator" || "cci" || "chaikin" || "cmf" || "disparityindex" || "cmo" || "dmi"
+        || "detrendedprice" || "linearregressionangle" || "linearregressionintercept" || "linearregressionslope" ||
+        "klingeroscillator" || "mfi" || "momentum" || "natr" || "obv" || "percentagepriceoscillator" || "roc" ||
+        "rsi" || "slowstochastic" || "stochastic" || "trix" || "williamsr") {
+
+        this.indicObj.push(
+          {
+            type: `${val}`,
+            id: 'oscillator',
+            linkedTo: 'aapl',
+            yAxis: 2
+          }
+        )
+        localStorage.setItem("indicater", JSON.stringify(this.indicObj))
+
+      }
+      // myFunction(this.ohlc, 2, this.indicObj, this.SymbolName, this.SymbInfo);
+
+
+      // If label doesn't exist, add it to trades array
+      trades.push({ val, label, valy });
+      localStorage.setItem('indicator', JSON.stringify(trades));
+      this.OpenPop(0)
+      this.indicatorValue = JSON.parse(localStorage.getItem('indicator') || '[]')
+
+    }
+  }
+
+
+  dataMK: any = []
+  // get_Mk() {
+  //   let obj = {
+  //     "Key": "",
+  //     "Account": Number(localStorage.getItem('AccountID'))
+
+  //   }
+
+  //   this.api.GET_USER_SUBSCRIBE_MK_v2(obj).subscribe({
+  //     next: (res: any) => {
+  //       if (res.lstSymbols != '') {
+  //         this.dataMK = res.lstSymbols
+  //         this.SymbolName = this.dataMK[0].oSymbolConfig.Symbol
+  //         this.SymbInfo= {
+  //           symbol:this.dataMK[0].oSymbolConfig.Symbol,
+  //           info:this.dataMK[0].oSymbolConfig.Info
+  //         }
+  //         // this.SymbInfo= {
+  //         //   symbol:"XAUUSD",
+  //         //   info:""
+  //         // }
+
+  //         // this.historyData(this.SymbolName);
+
+  //       }
+
+
+
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //       this.share.errorTester("Something went wrong")
+  //     },
+  //   });
+  // }
+
+
+  modelData: any
+  SymbolName: any
+  clickSelectSym(sym: any, info: any) {
+    // this.marketDataSubscription.unsubscribe()
+    this.cdr.detectChanges()
+
+    // this.commAphaNum(10)
+
+    // this.SymbolName = sym
+
+    // this.SymbInfo = {
+    //   symbol: sym,
+    //   info: info,
+
+    // }
+
+    localStorage.setItem('setSymbol', sym)
+    localStorage.setItem('Info',info)
+  
+    this.toggleActive('item2','chart')
+    // this.historyData(this.SymbolName)
+
+
+  }
+
+
+  toggleActive(item: string, val: any) {
+    if (item) {
+      this.router.navigateByUrl(`${val}`);
+      // this.share.setActiveRoute(item);
+     
+    }
+  }
+
+  id: any
+  digitFixed: any
+  commAphaNum(length: number): string {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters[randomIndex];
+    }
+    this.id = result
+
+    return result;
+  }
+
+
+
+
+  activeTab: any = 1
+  clickTab(val: any) {
+    this.activeTab = val
+  }
+
+  historyDataValue: any = []
+  historyDataValue1: any = []
+  ohlc: any = []
+  volume: any = []
+  SymbInfo: any = {}
+  newOHLC300: any = []
+  formattedDate: any;
+  private marketDataSubscription: any = Subscription;
+
+
+
+  // generateRandomFormattedDate() {
+  //   const randomTimestamp = 1717423260000 + Math.floor(Math.random() * 1000000000);
+  //   const randomDate = new Date(randomTimestamp);
+  //   this.formattedDate = this.datePipe.transform(randomDate, 'yyyy-MM-dd HH:mm:ss');
+  //   return this.formattedDate
+  // }
+  unixEpochTime: any
+  // generateRandomUnixEpochTime() {
+  //   const baseTimestamp = 1717423260000;
+  //   const minuteInMilliseconds = 60000; // 1 minute = 60,000 milliseconds
+  //   const randomMinutes = Math.floor(Math.random() * 60); // Random number of minutes (0-59)
+  //   const randomTimestamp = baseTimestamp + (randomMinutes * minuteInMilliseconds);
+  //   this.unixEpochTime = Math.floor(randomTimestamp / 1000);
+  //   return this.unixEpochTime
+  // }
+
+  // historyData(val: any) {
+     
+  //   this.historyDataValue = []
+  //   this.ohlc = []
+  //   // this.share.setloader(true)
+  //   let obj = {
+  //     "Symbol": val,
+  //     "oPeriod": 1
+  //   }
+
+  //   this.http.post(`${this.DC_URL}GET_DM_HG_CHRT`, obj).subscribe({
+  //     next: (res: any) => {
+  //       // this.share.setloader(false)
+
+
+  //       if (!this.showLiveData || !this.showLiveData.length) {
+  //         res.lstData.reverse().forEach((element: any, index: any) => {
+  //           // console.log("element1111", element);
+            
+  //           this.historyDataValue = []
+  //           this.historyDataValue.push(element.TimeSec * 1000)
+  //           this.historyDataValue.push(element.Open)
+  //           this.historyDataValue.push(element.High)
+  //           this.historyDataValue.push(element.Low)
+  //           this.historyDataValue.push(element.Close)
+  //           this.historyDataValue1[index] = this.historyDataValue
+  //         });
+  //       }
+
+  //       const volume = [],
+  //         dataLength = this.historyDataValue1.length;
+
+  //       for (let i = 0; i < dataLength; i += 1) {
+  //         this.ohlc.push([
+  //           this.historyDataValue1[i][0], // the date
+  //           this.historyDataValue1[i][1], // open
+  //           this.historyDataValue1[i][2], // high
+  //           this.historyDataValue1[i][3], // low
+  //           this.historyDataValue1[i][4] // close
+  //         ]);
+
+  //         volume.push([
+  //           this.historyDataValue1[i][0], // the date
+  //           this.historyDataValue1[i][5] // the volume
+  //         ]);
+  //       }
+       
+  //       myFunction(this.ohlc, 0, JSON.parse(this.indData), val, this.SymbInfo);
+  
+  //       this.SocketDataValue(val)
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //       // this.share.errorTester("Something went wrong")
+  //     },
+  //   });
+  // }
+  isUserInteracting:boolean = false;
+  private ignoreNextPeriodChange = true;
+
+onPeriodChange(event: any) {
+  if (this.ignoreNextPeriodChange) {
+    this.ignoreNextPeriodChange = false;
+    console.log('🟡 Ignoring initial periodChanged event');
+    return;
+  }
+
+  console.log("✅ Period button clicked", event);
+
+  const selectedText = event?.name || event?.detail?.text || event?.detail?.selectedPeriod?.text;
+
+  let oPeriod = 3;
+  switch (selectedText) {
+    case '1m': oPeriod = 1; break;
+    case '15m': oPeriod = 2; break;
+    case '1H': oPeriod = 3; break;
+    case '1D': oPeriod = 4; break;
+    default: oPeriod = 3;
+  }
+
+  const sym = this.globalSym || 'BTCUSD.c_5200';
+  this.historyData(sym, oPeriod);
+}
+
+historyData(val: any, val1:any) {
+ 
+  this.historyDataValue = [];
+  this.ohlc = [];
+  this.volume = [];
+  this.historyDataValue1 = [];
+
+  const obj = {
+    Symbol: val,
+    oPeriod: val1
+  };
+
+  this.http.post(`${this.DC_URL}GET_DM_HG_CHRT`, obj).subscribe({
+    next: (res: any) => {
+      const rawData = res.lstData || [];
+
+      this.chartData = rawData.reverse().map((element: any) => {
+        return {
+          x:  new Date(element.dtTime.replace('.', '-').replace('.', '-')),
+          open: element.Open,
+          high: element.High,
+          low: element.Low,
+          close: element.Close,
+          volume: element.Volume || 0
+        };
+      });
+
+      console.log('📡 Subscribing to live socket data for symbol:', val);
+      this.SocketDataValue(val);
+    },
+    error: (err: any) => {
+      console.error('Error fetching chart data', err);
+    }
+  });
+}
+
+SocketDataValue(val: any) {
+  console.log("✅ SocketDataValue() function is called.");
+
+  if (this.chartDataSubscription) {
+    this.chartDataSubscription.unsubscribe(); // prevent stacking subscriptions
+  }
+
+  this.chartDataSubscription = this.share.allMarketLiveData$.subscribe((res: any[]) => {
+    console.log("🔔 Subscription triggered:", res);
+
+    const matched = res.find((data: any) =>
+      data.oSymbolConfig?.Symbol?.toLowerCase().trim() === val.toLowerCase().trim()
+    );
+
+    console.log("🔍 Matching Against:", val);
+    console.log("📊 All Symbols:", res.map(r => r.oSymbolConfig?.Symbol));
+    console.log("🔍 Matched Symbol:", matched?.oSymbolConfig?.Symbol);
+
+    if (!matched || !matched.oInitial) {
+      console.warn("⚠️ No matching live data found for symbol:", val);
+      return;
+    }
+
+    const live = matched.oInitial;
+
+    if (
+      live.Open == null || live.High == null ||
+      live.Low == null || live.Close == null
+    ) {
+      console.warn("⚠️ Incomplete candle data received", live);
+      return;
+    }
+
+    const liveTime = new Date(live.TimeSec);
+
+    const newCandle: CandleData = {
+      x: liveTime,
+      open: Number(live.Open.toFixed(5)),
+      high: Number(live.High.toFixed(5)),
+      low: Number(live.Low.toFixed(5)),
+      close: Number(live.Close.toFixed(5)),
+      // volume: Number(live.Vol || 0)
+    };
+
+    const last = this.chartData[this.chartData.length - 1];
+
+    if (last && last.x.getTime() === newCandle.x.getTime()) {
+      Object.assign(last, newCandle);
+    } else {
+      this.chartData.push(newCandle);
+      if (this.chartData.length > 100) this.chartData.shift();
+    }
+
+    // ✅ Reassign reference to trigger change detection
+    this.chartData = [...this.chartData];
+
+    // ✅ Reassign new annotation array
+    // this.annotations = [
+    //   {
+    //     content: `<div style="color: red;">Bid: ${live.Bid}</div>`,
+    //     coordinateUnits: 'Point',
+    //     x: liveTime,
+    //     y: Number(live.Bid)
+    //   },
+    //   {
+    //     content: `<div style="color: green;">Ask: ${live.Ask}</div>`,
+    //     coordinateUnits: 'Point',
+    //     x: liveTime,
+    //     y: Number(live.Ask)
+    //   }
+    // ];
+
+    console.log("📈 Live Candle Received:", newCandle);
+    console.log("📊 Current Chart Data Length:", this.chartData.length);
+  });
+}
+
+
+
+
+  showLiveData: any = []
+  shocketData: any = []
+  i = .0001
+  time = 60
+  newDataLiveData: any = []
+  // SocketDataValue(val: any) {
+
+  //   this.showLiveData = []
+  //   this.chartDataSubscription = this.share.allMarketLiveData$.subscribe((res: any) => {
+  //     // console.log("testing")
+  
+  //     this.showLiveData = res.filter((data: any) => data.oSymbolConfig.Symbol === val)
+  //     //  console.log("this.showLiveDatathis.showLiveDatav",this.showLiveData);
+
+  //     const time = new Date();
+  //     time.setMinutes(time.getMinutes() + this.i);
+  //     let lastClose = 100;
+  //     const open = lastClose;
+  //     const high = open + Math.random() * 10;
+  //     const low = open - Math.random() * 10;
+  //     const close = low + Math.random() * (high - low);
+
+  //     // this.newDataLiveData = initialData;
+  //     const lastPoint = {
+  //       x: time.setMinutes(time.getMinutes() + this.i),         // Time
+  //       open: open,      // Open
+  //       high: high,      // High
+  //       low: low,       // Low
+  //       close: close     // Close
+  //     };
+
+  //     let fixDigit = this.countDecimalDigits(this.showLiveData[0]?.oInitial.Open)
+
+  //     // Update the new data live data array
+  //     this.newDataLiveData = [lastPoint.x, Number(lastPoint.open.toFixed(fixDigit)), Number(lastPoint.high.toFixed(fixDigit)), Number(lastPoint.low.toFixed(fixDigit)), Number(lastPoint.close.toFixed(fixDigit))];
+  //     // setupDataUpdateInterval(this.newDataLiveData)
+
+  //     setupDataUpdateInterval([this.showLiveData[0]?.oInitial.TimeSec, Number((this.showLiveData[0]?.oInitial.Open).toFixed(5)), Number((this.showLiveData[0]?.oInitial.High).toFixed(5)), Number((this.showLiveData[0]?.oInitial.Low).toFixed(5)), Number((this.showLiveData[0]?.oInitial.Close).toFixed(5))])
+
+  //   })
+
+  // }
+// SocketDataValue(val: any) {
+//   let lastCandleTime = 0;
+
+//   this.chartDataSubscription = this.share.allMarketLiveData$.subscribe((res: any) => {
+//     const matched = res.find((data: any) => data.oSymbolConfig.Symbol === val);
+//     if (!matched || !matched.oInitial) return;
+
+//     const live = matched.oInitial;
+//     const time = live.TimeSec * 1000;
+
+//     const candleData = [
+//       time,
+//       Number(live.Open.toFixed(5)),
+//       Number(live.High.toFixed(5)),
+//       Number(live.Low.toFixed(5)),
+//       Number(live.Close.toFixed(5))
+//     ];
+
+//     // const chart = this.chartInstance;
+//     // if (!chart) return;
+
+//     // const candleSeries = chart.series.find(s => s.type === 'candlestick');
+//     // const volumeSeries = chart.series.find(s => s.type === 'column');
+
+//     // if (!candleSeries) return;
+
+//     // const seriesData = candleSeries.data;
+//     // const lastPoint = seriesData[seriesData.length - 1];
+
+//     // if (lastPoint && lastPoint.x === time) {
+//     //   // Update existing candle
+//     //   lastPoint.update({
+//     //     open: candleData[1],
+//     //     high: candleData[2],
+//     //     low: candleData[3],
+//     //     close: candleData[4]
+//     //   });
+//     // } else {
+//     //   // Add new candle
+//     //   candleSeries.addPoint(candleData, false, seriesData.length > 1000);
+      
+//     //   // Add volume (optional)
+//     //   if (volumeSeries) {
+//     //     volumeSeries.addPoint([time, Number(live.Volume || 0)], false, volumeSeries.data.length > 1000);
+//     //   }
+
+//     //   // Redraw after both series updated
+//     //   chart.redraw();
+//     })
+
+//     // lastCandleTime = time;
+//   // });
+// // }
+//   }
+
+
+
+  countDecimalDigits(num: number): number {
+    // Convert the number to a string
+    const numStr: string = num.toString();
+
+    // Find the index of the decimal point
+    const decimalIndex: number = numStr.indexOf('.');
+
+    // If the decimal point exists, count the length of the substring after it
+    if (decimalIndex !== -1) {
+      return numStr.substring(decimalIndex + 1).length;
+    } else {
+      // If there's no decimal point, return 0
+      return 0;
+    }
+  }
+
+  // ngOnDestroy() {
+  //   if (this.chartDataSubscription) {
+
+  //     // this.chartDataSubscription.unsubscribe();
+  //     // setupDataUpdateInterval([])
+
+  //   }
+  // }
+
+}
+
+
+
+//===================================================================================Tradeing View Chart ==============================================================================
+
+// import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+// import {
+//     widget,
+//     IChartingLibraryWidget,
+//     ChartingLibraryWidgetOptions,
+//     LanguageCode,
+//     ResolutionString
+// } from '../../../assets/charting_library';
+// import { CommonModule } from '@angular/common';
+// import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+// import { NgbCarouselModule, NgbAccordionModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+// // import { subscribeOnStream, unsubscribeFromStream } from './streaming.js';
+
+// // import { SharedDataService } from 'src/app/services/sharedData/shared-data.service';
+// @Component({
+//     selector: 'app-dashboard',
+//     standalone: true,
+//     imports: [NgbCarouselModule, NgbAccordionModule,CommonModule,FormsModule,ReactiveFormsModule],
+//     templateUrl: './dashboard.component.html',
+//     styleUrls: ['./dashboard.component.scss']
+//   })
+//   export class DashboardComponent implements OnInit, OnDestroy {
+//     allMasterData: any = []
+//     allChartIndex : any =[]
+//     constructor(private modalService: NgbModal) {
+//     this.allChartIndex = JSON.parse(localStorage.getItem('marketIndex') || '{}')
+//     }
+
+
+//     repeatCount = 18;
+//     openLg(content: any) {
+//         this.modalService.open(content, { size: 'lg darkmode1 modal-dialog-centered' });
+//       }
+//     @Input() chart?: Array<any>;
+//     @Input() items?: "";
+//     private _interval: ChartingLibraryWidgetOptions['interval'] = '1d' as ResolutionString;
+//     // BEWARE: no trailing slash is expected in feed URL
+//     // private _datafeedUrl = 'https://demo_feed.tradingview.com';
+//     // private _datafeedUrl = 'https://www.marketwicks.com:4002';
+//     private _datafeedUrl = 'https://192.168.0.155:4000/history';
+//     private _libraryPath: ChartingLibraryWidgetOptions['library_path'] = '/assets/charting_library/';
+//     private _chartsStorageUrl: ChartingLibraryWidgetOptions['charts_storage_url'] = 'https://www.marketwicks.com:4000';
+//     private _chartsStorageApiVersion: ChartingLibraryWidgetOptions['charts_storage_api_version'] = '1.1';
+//     private _clientId: ChartingLibraryWidgetOptions['client_id'] = 'tradingview.com';
+//     private _userId: ChartingLibraryWidgetOptions['user_id'] = 'public_user_id';
+//     private _fullscreen: ChartingLibraryWidgetOptions['fullscreen'] = false;
+//     private _autosize: ChartingLibraryWidgetOptions['autosize'] = true;
+//     private _containerId: ChartingLibraryWidgetOptions['container'] = 'tv_chart_container';
+//     private _tvWidget: IChartingLibraryWidget | null = null;
+
+//     @Input()
+//     set symbol(symbol: ChartingLibraryWidgetOptions['symbol']) {
+//         this._symbol = "XAUUSD";
+//     }
+
+//     @Input()
+//     set interval(interval: ChartingLibraryWidgetOptions['interval']) {
+//         this._interval = interval || this._interval;
+//     }
+
+//     @Input()
+//     set datafeedUrl(datafeedUrl: string) {
+//         this._datafeedUrl = datafeedUrl || this._datafeedUrl;
+//     }
+
+//     @Input()
+//     set libraryPath(libraryPath: ChartingLibraryWidgetOptions['library_path']) {
+//         this._libraryPath = libraryPath || this._libraryPath;
+//     }
+
+//     @Input()
+//     set chartsStorageUrl(chartsStorageUrl: ChartingLibraryWidgetOptions['charts_storage_url']) {
+//         this._chartsStorageUrl = chartsStorageUrl || this._chartsStorageUrl;
+//     }
+
+//     @Input()
+//     set chartsStorageApiVersion(chartsStorageApiVersion: ChartingLibraryWidgetOptions['charts_storage_api_version']) {
+//         this._chartsStorageApiVersion = chartsStorageApiVersion || this._chartsStorageApiVersion;
+//     }
+
+//     @Input()
+//     set clientId(clientId: ChartingLibraryWidgetOptions['client_id']) {
+//         this._clientId = clientId || this._clientId;
+//     }
+
+//     @Input()
+//     set userId(userId: ChartingLibraryWidgetOptions['user_id']) {
+//         this._userId = ""
+//     }
+
+//     @Input()
+//     set fullscreen(fullscreen: ChartingLibraryWidgetOptions['fullscreen']) {
+//         this._fullscreen = fullscreen || this._fullscreen;
+//     }
+
+//     @Input()
+//     set autosize(autosize: ChartingLibraryWidgetOptions['autosize']) {
+//         this._autosize = autosize || this._autosize;
+//     }
+
+//     @Input()
+//     set containerId(containerId: ChartingLibraryWidgetOptions['container_id']) {
+//         this._containerId = containerId || this._containerId;
+//     }
+
+//     _symbol: ChartingLibraryWidgetOptions['symbol']
+
+//     ngOnInit() {
+//         // console.log('items', this.items)
+       
+//         this.getChartWigit()
+
+//     }
+//     getChartWigit() {
+        
+//         function getLanguageFromURL(): LanguageCode | null {
+//             const regex = new RegExp('[\\?&]lang=([^&#]*)');
+//             const results = regex.exec(location.search);
+
+//             return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode;
+//         }
+//         console.log("this._symbolthis._symbol", this._symbol)
+//         const widgetOptions: ChartingLibraryWidgetOptions = {
+//             symbol: this.Symb,
+//             theme: "dark",
+//             toolbar_bg: "#0000",
+//             "timezone": "Asia/Kolkata",
+//             datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(this._datafeedUrl, 5000),
+
+//             interval: this._interval,
+//             container: this._containerId,
+//             library_path: this._libraryPath,
+
+//             enable_publishing: false,
+//             withdateranges: false,
+//             hide_side_toolbar: false,
+//             allow_symbol_change: false,
+//             details: false,
+//             hotlist: false,
+//             calendar: false,
+//             // news: ["headlines"],
+//             // studies: [
+//             //     "Volume@tv-basicstudies"
+//             // ],
+//             locale: getLanguageFromURL() || 'en',
+
+//             // enabled_features: ['study_templates'],
+//             disabled_features: ['left_toolbar'],
+//             charts_storage_url: this._chartsStorageUrl,
+//             charts_storage_api_version: this._chartsStorageApiVersion,
+//             client_id: this._clientId,
+//             user_id: this._userId,
+//             fullscreen: this._fullscreen,
+//             autosize: this._autosize,
+
+
+
+//         };
+
+//         const tvWidget = new widget(widgetOptions);
+//         this._tvWidget = tvWidget;
+
+//         tvWidget.onChartReady(() => {
+
+//             tvWidget.headerReady().then(() => {
+//                 const button = tvWidget.createButton();
+//                 button.setAttribute('title', 'Click to show a notification popup');
+//                 button.classList.add('apply-common-tooltip');
+//                 button.addEventListener('click', () => tvWidget.showNoticeDialog({
+//                     title: 'Notification',
+//                     body: 'TradingView Charting Library API works correctly',
+//                     callback: () => {
+//                         console.log('Noticed!');
+//                     },
+//                 }));
+//                 button.innerHTML = 'Check API';
+//             });
+//         });
+//     }
+//     chartData(chartData: any): void {
+//         throw new Error('Method not implemented.');
+//     }
+
+//     ngOnDestroy() {
+//         if (this._tvWidget !== null) {
+//             this._tvWidget.remove();
+//             this._tvWidget = null;
+//         }
+//     }
+//     getID: any
+//     Symb: any ='XAUUSD'
+//     ngOnChanges(changes: any) {
+//         console.log("changes", changes.chart.currentValue
+//         )
+//         if(this._symbol == undefined){
+//             this._symbol = this.allChartIndex.Symbol
+//             this.Symb = this.allChartIndex.Symbol
+//             console.log(" this._symbol this._symbol this._symbol", this._symbol);
+       
+//         }
+//         else{
+//             this._symbol = changes.chart?.currentValue?.Symbol;
+//             this.Symb = changes.chart?.currentValue?.Symbol;
+//             console.log(" this._symbol this._symbol this._symbol", this._symbol);
+       
+//         }
+        
+    
+//         this.getChartWigit()
+//         // console.log("vikas pathak", this.items)
+//         // set page when items array first set or changed
+
+//     }
+// }

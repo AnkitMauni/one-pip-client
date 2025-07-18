@@ -1,0 +1,103 @@
+<div class="pagebody">
+    <div class="container-fluid p-0">
+       <div class="tableOne">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Comment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons8.png">192.254.00.36 </span></td>
+                <td>192.254.00.36</td>
+                <td>192.254.00.36</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons8.png">147.256.0.15 </span></td>
+                <td>147.256.0.15</td>
+                <td>147.256.0.15</td>
+              </tr>
+              <tr (dblclick)="openXl(content)">
+                <td><span><img class="table-img" src="assets/images/sideimg/mt-icons8.png">157.2458.8.156 </span></td>
+                <td>157.2458.8.156</td>
+                <td>55</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <button class="btn btn-outline-primary mb-2 me-2" (click)="openXl(content)">Large modal</button> -->
+       </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Modal title</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+       <div class="row align-items-center mb-3">
+        <div class="col-sm-2 text-center"><img class="img-fluid" src="assets/images/mod-img1.png"></div>
+        <div class="col-sm-10 ps-0">
+            <p class="mb-0 f11">Firewall is used for controlling of access to the server. Please specify the range of IP addresses and the action to be applied to it.</p>
+        </div>
+       </div>
+       <div class="row align-items-center">
+            <div class="col-sm-2 text-center"></div>
+            <div class="col-sm-10">
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">Action:</p></div>
+                            <div class="width100">
+                                <select class="width100 c-input" id="sel1" name="sellist1">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                  </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">From:</p></div>
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">To:</p></div>
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-12">
+                        <div class="d-flex align-items-center">
+                            <div><p class="lbl mb-0 me-2">Comment:</p></div>
+                            <div class="width100">
+                                <input type="text" class="width100 c-input" id="email"  name="email">
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+       </div>
+    </div>
+    <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-basic btn-sm">Ok</button>
+        <button type="button" class="btn btn-basic btn-sm" (click)="modal.close('Close click')">Close</button>
+    </div>
+</ng-template>
