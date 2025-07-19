@@ -273,17 +273,23 @@ GET_OPENED1(){
   this.api.GET_USER_OPEN_POS(obj).subscribe({next: (res:any)=>{
     // this.startInterval()
     this.listOpen = res.lstPos
-    if(this.listOpen){
-      this.listOpen.forEach((pos:any) => {
-  if (!this.symbolMetaMap[pos.Sy]) {
-    this.getInitial(pos.Sy);
-  }
-});
-    }
+//     if(this.listOpen){
+//       this.listOpen.forEach((pos:any) => {
+//   // if (!this.symbolMetaMap[pos.Sy]) {
+//   //   this.getInitial(pos.Sy);
+//   // }
+// });
+//     }
     this.listPending = res.lstPending
       this.allGetTrade1 = res?.oAccount
       this.allGetTrade = this.allGetTrade1
       this.share.livBalance(this.allGetTrade.Balance)
+      setInterval(() => {
+        this.calculateLiveMetrics();
+      }, 500); // Call calculation after metadata is available
+          
+    // Call calculation after metadata is available
+        
     console.log("lstPos",res);
     // this.GET_USER_TRADE_WD()
   },
@@ -299,36 +305,36 @@ marginLevel = 0;
 
 calculateLiveMetrics() {
   let floatingPL = 0;
-  let usedMargin = 0;
+  let usedMargin = this.allGetTrade.Margin;
 
   this.listOpen.forEach((pos:any) => {
     const symbol = pos.Sy;
-    const volumeLots = pos.V / 100; // Since V = 100 means 0.01 lot
-    const symbolMeta = this.symbolMetaMap[symbol];
+    // const volumeLots = pos.V / 100; // Since V = 100 means 0.01 lot
+    // const symbolMeta = this.symbolMetaMap[symbol];
+    floatingPL += Number(this.getProfitUSD(symbol));
+    // if (!symbolMeta) return; // Wait for metadata
 
-    if (!symbolMeta) return; // Wait for metadata
+    // const calcType = symbolMeta.Calculation;
+    // const contractSize = symbolMeta.ContractSize;
+    // const leverage = symbolMeta.INITIAL_MK_B || 1;
+    // const marketPrice = this.getCurrent(symbol, pos.BS); // Live price
 
-    const calcType = symbolMeta.Calculation;
-    const contractSize = symbolMeta.ContractSize;
-    const leverage = symbolMeta.INITIAL_MK_B || 1;
-    const marketPrice = this.getCurrent(symbol, pos.BS); // Live price
+    // // Margin Calculation
+    // let margin = 0;
+    // if (calcType === 'FOREX') {
+    //   margin = (volumeLots * contractSize) / leverage;
+    // } else if (calcType === 'CFD') {
+    //   margin = volumeLots * contractSize * marketPrice;
+    // } else if (calcType === 'CFDLEVERAGE') {
+    //   margin = (volumeLots * contractSize * marketPrice) / leverage;
+    // }
 
-    // Margin Calculation
-    let margin = 0;
-    if (calcType === 'FOREX') {
-      margin = (volumeLots * contractSize) / leverage;
-    } else if (calcType === 'CFD') {
-      margin = volumeLots * contractSize * marketPrice;
-    } else if (calcType === 'CFDLEVERAGE') {
-      margin = (volumeLots * contractSize * marketPrice) / leverage;
-    }
-
-    usedMargin += margin;
+    // usedMargin += margin;
 
     // Floating P/L
-    floatingPL += Number(this.getProfitUSD(pos));
+   
   });
-
+  // floatingPL += Number(this.getProfitUSD(pos));
   const balance = Number(this.allGetTrade?.Balance || 0);
   this.equity = balance + floatingPL;
   this.usedMargin = usedMargin;

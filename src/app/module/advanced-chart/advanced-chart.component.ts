@@ -47,7 +47,7 @@ export interface LimitedResponseConfiguration {
   imports: [],
 })
 export class AdvancedChartComponent implements OnInit, OnDestroy {
-  private _symbol: ChartingLibraryWidgetOptions['symbol'] = 'AUDUSD.c_5200';
+  private _symbol: ChartingLibraryWidgetOptions['symbol'] = localStorage.getItem('changeSym') as string;
   private _interval: ChartingLibraryWidgetOptions['interval'] =
     'M' as ResolutionString;
   // BEWARE: no trailing slash is expected in feed URL

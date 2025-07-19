@@ -60,11 +60,17 @@ private getSymbols: Subject<any> = new Subject<any>();
   active(data: any) {
     this.activeValue.next(data);
   }
-  getSymData(data: any){
-     console.log("changeSymchangeSymchangeSym",data);
-     
-      this.changeSym.next(data)
+  getSymData(newSymbol: string): void {
+    this.changeSym.next(newSymbol);
   }
+  getSymbol(): string {
+    return this.changeSym.getValue();
+  }
+  // getSymData(data: any){
+  //    console.log("changeSymchangeSymchangeSym",data);
+     
+  //     this.changeSym.next(data)
+  // }
   getSubscribedSymbol(data:any){
     this.getSymbols.next(data)
   }

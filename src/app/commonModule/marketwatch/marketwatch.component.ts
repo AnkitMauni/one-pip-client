@@ -726,7 +726,7 @@ get_Mk() {
       
       // this.getVal(this.data[0])
       this.share.getSubscribedSymbol(this.data)
-      this.share.getSymData("NoData")
+      // this.share.getSymData("NoData")
 
     },
     error: (err: any) => {

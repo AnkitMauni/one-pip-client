@@ -77,7 +77,7 @@
                     <!-- Balance:{{this.allGetTrade?.Balance | number: '1.2-2'}} USD Equity:{{this.allGetTrade?.Equity | number: '1.2-2'}} Margin:{{this.allGetTrade?.Margin | number: '1.2-2'}} Free Margin: {{this.allGetTrade?.FreeMargin | number: '1.2-2'}} Margin Level: {{this.allGetTrade?.Margin_Level | number: '1.2-2'}}</b> </span></td> -->
                 Balance: {{ allGetTrade?.Balance | number: '1.2-2' }} USD
         Equity: {{ equity | number: '1.2-2' }}
-        Margin: {{ usedMargin | number: '1.2-2' }}
+        Margin: {{ this.allGetTrade?.Margin  | number: '1.2-2' }}
         Free Margin: {{ freeMargin | number: '1.2-2' }}
         Margin Level: {{ marginLevel | number: '1.2-2' }}%</b></span></td>
                 </tr>

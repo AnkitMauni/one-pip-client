@@ -62,6 +62,11 @@ export class HeaderComponent {
         localStorage.getItem('changeSym')
         this.changeSymbolData(res)
          this.getInitial(res)
+         const selected = this.findSymbolNode(res);
+  if (selected) {
+    this.selectedNode2 = selected;
+    this.symShow = selected.scripCode;
+  }
     })
 
     this.share.liveBalance$.subscribe((res:any)=>{
@@ -198,8 +203,9 @@ convertSymbolsToMenuTree(lstSymbols: any[]) {
 
   this.symbolMenu = menuTree;
   this.menu2 = this.symbolMenu;
-  const currentSymbol = localStorage.getItem('changeSym') || 'AUDUSD.c_5200';
+  const currentSymbol = localStorage.getItem('changeSym') as string;
 const selected = this.findSymbolNode(currentSymbol);
+console.log("asele", selected);
 if (selected) {
   this.selectedNode2 = selected;
   this.symShow = selected.scripCode;
