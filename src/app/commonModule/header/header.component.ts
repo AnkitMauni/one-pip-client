@@ -58,20 +58,10 @@ export class HeaderComponent {
     // this.changeSymbolData()
     this.share.changeSym$.subscribe((res:any)=>{
       console.log(" symbol ress",res);
-      if(res == 'NoData'){
-        const sym = 'AUDUSD.c_5200'
-        this.getInitial(sym)
-        this.changeSymbolData(sym)
-      }
-      else{
         localStorage.setItem('changeSym',res)
-        const sym = res
-        console.log("sym",sym);
         localStorage.getItem('changeSym')
-        this.changeSymbolData(sym)
-         this.getInitial(sym)
-      }
-    
+        this.changeSymbolData(res)
+         this.getInitial(res)
     })
 
     this.share.liveBalance$.subscribe((res:any)=>{
@@ -1449,7 +1439,7 @@ if (orderType === 7) {
   // TP must be <= stopLimitPrice
   if (tpFilled && tp > stopLimitPrice) return true;
 
-  // SL & TP both filled – config may allow only one
+  // SL & TP both filled ï¿½ config may allow only one
   if (slFilled && tpFilled) return true;
 
   return false; // ? All Sell Stop Limit conditions passed
