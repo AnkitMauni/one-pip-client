@@ -73,8 +73,13 @@
               
                 </tr> -->
                 <tr>
-                  <td colspan="10"><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons39.png"> <b>Balance:{{this.allGetTrade?.Balance | number: '1.2-2'}} USD Equity:{{this.allGetTrade?.Equity | number: '1.2-2'}} Margin:{{this.allGetTrade?.Margin | number: '1.2-2'}} Free Margin: {{this.allGetTrade?.FreeMargin | number: '1.2-2'}} Margin Level: {{this.allGetTrade?.Margin_Level | number: '1.2-2'}}</b> </span></td>
-                
+                  <td colspan="10"><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons39.png"> <b>
+                    <!-- Balance:{{this.allGetTrade?.Balance | number: '1.2-2'}} USD Equity:{{this.allGetTrade?.Equity | number: '1.2-2'}} Margin:{{this.allGetTrade?.Margin | number: '1.2-2'}} Free Margin: {{this.allGetTrade?.FreeMargin | number: '1.2-2'}} Margin Level: {{this.allGetTrade?.Margin_Level | number: '1.2-2'}}</b> </span></td> -->
+                Balance: {{ allGetTrade?.Balance | number: '1.2-2' }} USD
+        Equity: {{ equity | number: '1.2-2' }}
+        Margin: {{ usedMargin | number: '1.2-2' }}
+        Free Margin: {{ freeMargin | number: '1.2-2' }}
+        Margin Level: {{ marginLevel | number: '1.2-2' }}%</b></span></td>
                 </tr>
                   <tr *ngFor="let openP of listPending let i=index" (click)="openXl2(content2,openP)">
                   <td ><span>{{openP?.Sy}}</span></td>

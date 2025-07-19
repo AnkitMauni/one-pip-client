@@ -445,7 +445,7 @@ decode(byteArray: Uint8Array) {
     // console.log("✅ Live Data:", marketData);
     objects.push(marketData);
   }
-  console.log(`ℹ️ Skipped packets in this chunk: ${skippedPackets}`);
+  // console.log(`ℹ️ Skipped packets in this chunk: ${skippedPackets}`);
   if (objects.length) {
     this.getLiveDataSoc(objects);
   } else {
@@ -725,7 +725,8 @@ get_Mk() {
       this.data = res.lstSymbols
       
       // this.getVal(this.data[0])
-      // this.share.getSymData("NoData")
+      this.share.getSubscribedSymbol(this.data)
+      this.share.getSymData("NoData")
 
     },
     error: (err: any) => {
@@ -741,10 +742,11 @@ getVal(val:any){
   this.share.getSymData(val?.oSymbolConfig?.Symbol)
   if(val?.oSymbolConfig?.Symbol == undefined || ''){
     localStorage.setItem('changeSym',val?.oSymbolConfig?.Symbol)
-  
+  this.getInitial(val?.oSymbolConfig?.Symbol)
     }
     else{
       localStorage.setItem('changeSym',val?.oSymbolConfig?.Symbol)
+      this.getInitial(val?.oSymbolConfig?.Symbol)
     }
   }
   
@@ -1059,7 +1061,7 @@ getSubscribe(){
 
   this.api.SUBSCRIBE_SYMBOL(obj).subscribe({
       next: (res: any) => {
-        this.getInitial()
+        this.getInitial(this.slectedSym)
         this.get_Mk()
         this.GET_USER_ALL_SYMBOLS_v2()
     
@@ -1070,28 +1072,24 @@ getSubscribe(){
       },
     });
  }
-
- getInitial(){
+getInitial(val:any) {
   let obj = {
-    "Key":"",
-    "Symbol": this.slectedSym,
-  
-   
-  }
+    "Key": "",
+    "Symbol": val,
+  };
 
   this.api.GET_SYMBOL_INITIAL(obj).subscribe({
-      next: (res: any) => {
-    
-          console.log("Ress",res);
-     
-    
-      },
-      error: (err: any) => {
-        console.log(err);
-        
-      },
-    });
- }
+    next: (res: any) => {
+      console.log("Ress", res);
+      if (res?.ordFlag) {
+        this.share.setOrderFlags(res.ordFlag);
+      }
+    },
+    error: (err: any) => {
+      console.log(err);
+    },
+  });
+}
 
 
  details(val:any){
@@ -1117,16 +1115,18 @@ getSubscribe(){
       next: (res: any) => {
         this.data2 = res
          
-     
-    // Create a set of Symbols from data1 for quick lookup
-const symbolsSet = new Set(this.data1.map((item:any) => item.oSymbolConfig.Symbol));
+     this.filteredSymbolData = this.data2.sort((a: any, b: any) => a.oSecurities.localeCompare(b.oSecurities));
 
-// Iterate through data2 and add the flag based on the presence of Symbol in data1
-this.data2.forEach((group:any) => {
-    group.lstSymbols.forEach((symbol:any) => {
-        symbol.flag = symbolsSet.has(symbol.Symbol);
-    });
+    // Sort each group's lstSymbols alphabetically
+this.data2.forEach((group: any) => {
+  group.lstSymbols.sort((a: any, b: any) => a.Symbol.localeCompare(b.Symbol));
 });
+
+// Optional: Sort the groups alphabetically
+this.data2.sort((a: any, b: any) => a.oSecurities.localeCompare(b.oSecurities));
+
+// Also set filtered data for display
+this.filteredSymbolData = this.data2;
 console.log("Ress",res);
       },
       error: (err: any) => {
@@ -1237,40 +1237,60 @@ console.log("Ress",res);
 filterData(): any[] {
   const searchTerm = this.searchSymbData.toLowerCase().trim();
 
-  if (!searchTerm) {
-    return this.data2; // Return all data if no search term is provided
-  }
+  let filtered = this.data2.flatMap((item: any) => {
+    const filteredSymbols = item.lstSymbols
+      .filter((symbol: any) =>
+        symbol.Symbol.toLowerCase().includes(searchTerm) ||
+        item.oSecurities.toLowerCase().includes(searchTerm)
+      )
+      .sort((a: any, b: any) => a.Symbol.localeCompare(b.Symbol)); // Sort symbols alphabetically
 
-  return this.data2.flatMap((item: any) => {
-    // Filter the symbols inside each section
-    const filteredSymbols = item.lstSymbols.filter((symbol: any) =>
-      symbol.Symbol.toLowerCase().includes(searchTerm) ||
-      item.oSecurities.toLowerCase().includes(searchTerm) // Filter the folder by oSecurities
-    );
-
-    // Return the section only if it has matching symbols or the folder name matches
     if (filteredSymbols.length > 0 || item.oSecurities.toLowerCase().includes(searchTerm)) {
       return [{ ...item, lstSymbols: filteredSymbols }];
     }
 
     return [];
   });
-}
-//================================================== upper case================================================================
-convertToUpperCase(): void {
-  if(this.searchSymbData==''){
-    this.showData = false 
-  }
-  else if(this.searchSymbData!=''){
-    this.searchSymbData = this.searchSymbData.toUpperCase();
-    this.showData = true
-  }
-  else{
-    this.showData = false 
-  }
-  return this.showData
+
+  // Sort groups alphabetically by oSecurities
+  filtered.sort((a: any, b: any) => a.oSecurities.localeCompare(b.oSecurities));
+
+  return searchTerm ? filtered : this.data2.sort((a: any, b: any) => a.oSecurities.localeCompare(b.oSecurities));
 }
 
+//================================================== upper case================================================================
+filteredSymbolData: any[] = [];
+convertToUpperCase(): void {
+  if (!this.searchSymbData) {
+    this.showData = false;
+    this.filteredSymbolData = this.data2; // default sorted list
+  } else {
+    this.searchSymbData = this.searchSymbData.toUpperCase();
+    this.showData = true;
+    this.filteredSymbolData = this.getFilteredData();
+  }
+}
+getFilteredData(): any[] {
+  const searchTerm = this.searchSymbData.toLowerCase().trim();
+
+  let filtered = this.data2.flatMap((item: any) => {
+    const filteredSymbols = item.lstSymbols
+      .filter((symbol: any) =>
+        symbol.Symbol.toLowerCase().includes(searchTerm) ||
+        item.oSecurities.toLowerCase().includes(searchTerm)
+      )
+      .sort((a: any, b: any) => a.Symbol.localeCompare(b.Symbol));
+
+    if (filteredSymbols.length > 0 || item.oSecurities.toLowerCase().includes(searchTerm)) {
+      return [{ ...item, lstSymbols: filteredSymbols }];
+    }
+
+    return [];
+  });
+
+  filtered.sort((a: any, b: any) => a.oSecurities.localeCompare(b.oSecurities));
+  return filtered;
+}
 getSubSy(val:any){
 return val
 }
@@ -1280,8 +1300,8 @@ clearSearch(): void {
   this.clerShowData = true
   this.searchSymbData = '';
   this.showData = false
-  this.data2=[]
-  
+  // this.data2=[]
+
   this.GET_USER_ALL_SYMBOLS_v2()
 }
 

@@ -35,6 +35,8 @@ export class ShareService {
     private changeSym: Subject<any> = new Subject<any>();
     changeSym$: Observable<any> = this.changeSym.asObservable();
 
+private getSymbols: Subject<any> = new Subject<any>();
+    getSymbols$: Observable<any> = this.getSymbols.asObservable();
 
     private liveBalance: Subject<any> = new Subject<any>();
     liveBalance$: Observable<any> = this.liveBalance.asObservable();
@@ -43,6 +45,13 @@ export class ShareService {
     private activeValue: Subject<any> = new Subject<any>();
     activeValue$: Observable<any> = this.activeValue.asObservable();
 
+
+     private orderFlagsSource = new BehaviorSubject<number[]>([]);
+  public orderFlags$ = this.orderFlagsSource.asObservable();
+
+  setOrderFlags(flags: number[]) {
+    this.orderFlagsSource.next(flags);
+  }
   livBalance(data: any){
      
       this.liveBalance.next(data)
@@ -55,6 +64,9 @@ export class ShareService {
      console.log("changeSymchangeSymchangeSym",data);
      
       this.changeSym.next(data)
+  }
+  getSubscribedSymbol(data:any){
+    this.getSymbols.next(data)
   }
   loader(data: any) {
     this.loaderValue.next(data);

@@ -241,6 +241,24 @@ else{
   }
  
 } 
+symbolMetaMap: { [symbol: string]: any } = {};
+
+getInitial(symbol: string) {
+  const obj = {
+    Key: "",
+    Symbol: symbol,
+  };
+
+  this.api.GET_SYMBOL_INITIAL(obj).subscribe({
+    next: (res: any) => {
+      this.symbolMetaMap[symbol] = res;
+      setInterval(() => {
+  this.calculateLiveMetrics();
+}, 500); // Call calculation after metadata is available
+    },
+    error: (err) => console.error(err),
+  });
+}
 
 listOpenObj:any ={}
 listOpen:any =[]
@@ -255,6 +273,13 @@ GET_OPENED1(){
   this.api.GET_USER_OPEN_POS(obj).subscribe({next: (res:any)=>{
     // this.startInterval()
     this.listOpen = res.lstPos
+    if(this.listOpen){
+      this.listOpen.forEach((pos:any) => {
+  if (!this.symbolMetaMap[pos.Sy]) {
+    this.getInitial(pos.Sy);
+  }
+});
+    }
     this.listPending = res.lstPending
       this.allGetTrade1 = res?.oAccount
       this.allGetTrade = this.allGetTrade1
@@ -267,7 +292,49 @@ GET_OPENED1(){
     
   }})
 }
+equity = 0;
+usedMargin = 0;
+freeMargin = 0;
+marginLevel = 0;
 
+calculateLiveMetrics() {
+  let floatingPL = 0;
+  let usedMargin = 0;
+
+  this.listOpen.forEach((pos:any) => {
+    const symbol = pos.Sy;
+    const volumeLots = pos.V / 100; // Since V = 100 means 0.01 lot
+    const symbolMeta = this.symbolMetaMap[symbol];
+
+    if (!symbolMeta) return; // Wait for metadata
+
+    const calcType = symbolMeta.Calculation;
+    const contractSize = symbolMeta.ContractSize;
+    const leverage = symbolMeta.INITIAL_MK_B || 1;
+    const marketPrice = this.getCurrent(symbol, pos.BS); // Live price
+
+    // Margin Calculation
+    let margin = 0;
+    if (calcType === 'FOREX') {
+      margin = (volumeLots * contractSize) / leverage;
+    } else if (calcType === 'CFD') {
+      margin = volumeLots * contractSize * marketPrice;
+    } else if (calcType === 'CFDLEVERAGE') {
+      margin = (volumeLots * contractSize * marketPrice) / leverage;
+    }
+
+    usedMargin += margin;
+
+    // Floating P/L
+    floatingPL += Number(this.getProfitUSD(pos));
+  });
+
+  const balance = Number(this.allGetTrade?.Balance || 0);
+  this.equity = balance + floatingPL;
+  this.usedMargin = usedMargin;
+  this.freeMargin = this.equity - usedMargin;
+  this.marginLevel = usedMargin > 0 ? (this.equity / usedMargin) * 100 : 0;
+}
 intervalId: any;
   counter = 0;
 

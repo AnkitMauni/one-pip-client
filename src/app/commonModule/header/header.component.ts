@@ -41,6 +41,8 @@ export class HeaderComponent {
   passForm:any= FormGroup
   private socket: any = WebSocketSubject;
   bufferArray: any = Uint8Array;
+  dropdownOptions: { label: string, value: number }[] = [];
+  subscribedSymbols:any
   constructor(private toaster: ToastrService,private fb: FormBuilder,private share:ShareService ,private location: Location,private modalService: NgbModal, config: NgbModalConfig,private global: GlobalService,private router: Router, private api:GlobalService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -55,9 +57,10 @@ export class HeaderComponent {
 		config.keyboard = false;
     // this.changeSymbolData()
     this.share.changeSym$.subscribe((res:any)=>{
-      console.log("ress",res);
+      console.log(" symbol ress",res);
       if(res == 'NoData'){
         const sym = 'AUDUSD.c_5200'
+        this.getInitial(sym)
         this.changeSymbolData(sym)
       }
       else{
@@ -66,6 +69,7 @@ export class HeaderComponent {
         console.log("sym",sym);
         localStorage.getItem('changeSym')
         this.changeSymbolData(sym)
+         this.getInitial(sym)
       }
     
     })
@@ -75,6 +79,16 @@ export class HeaderComponent {
       this.Blance = res
     })
 
+
+     this.share.orderFlags$.subscribe((flags: number[]) => {
+    this.buildDropdownOptions(flags);
+  });
+
+  this.share.getSymbols$.subscribe((res:any)=>{
+    this.subscribedSymbols = res
+    console.log("subscribedSymbols",this.subscribedSymbols)
+    this.convertSymbolsToMenuTree(this.subscribedSymbols)
+  })
     this.accountList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
     this.accountActiveList=  this.accountList.filter((list:any) => list.account === Number(localStorage.getItem('loginId')))
 console.log("this.accountActiveListthis.accountActiveListthis.accountActiveList",this.accountActiveList);
@@ -153,7 +167,160 @@ share.sendModefy$.subscribe((data:any) => {
       // this.renderer.listen(this.element, 'contextmenu',null);
     }
   }
+symbolMenu: any[] = [];
+menu2: any;
+// subscribedSymbols: any[] = [];
+selectedNode2: any;
+isDropdownOpen2 = false;
+isReadonly = true;
+index = 0;
+expand2: { [key: number]: boolean } = {};
 
+convertSymbolsToMenuTree(lstSymbols: any[]) {
+  const grouped: { [key: string]: any[] } = {};
+
+  lstSymbols.forEach(symbol => {
+    const group = symbol.oSymbolConfig.Secu || 'OTHERS';
+    if (!grouped[group]) grouped[group] = [];
+
+    grouped[group].push({
+      title: `${symbol.oSymbolConfig.Symbol}, ${symbol.oSymbolConfig.Info}`,
+      thumb: symbol.oSymbolConfig.Icon,
+      scripCode: symbol.oSymbolConfig.ScripCode,
+      path: symbol.oSymbolConfig.Symbol,
+      icon: '',
+      submenu: []
+    });
+  });
+
+  const menuTree: any[] = [];
+
+  for (const group in grouped) {
+    const node = {
+      title: group,
+      thumb: 'assets/images/sideimg/mt-icons22.png',
+      icon: '',
+      path: group,
+      submenu: grouped[group].map(this.toNode.bind(this))
+    };
+    menuTree.push(this.toNode(node));
+  }
+
+  this.symbolMenu = menuTree;
+  this.menu2 = this.symbolMenu;
+  const currentSymbol = localStorage.getItem('changeSym') || 'AUDUSD.c_5200';
+const selected = this.findSymbolNode(currentSymbol);
+if (selected) {
+  this.selectedNode2 = selected;
+  this.symShow = selected.scripCode;
+}
+}
+findSymbolNode(symbolCode: string): any {
+  const search = (nodes: any[]): any => {
+    for (const node of nodes) {
+      if (node.scripCode === symbolCode) return node;
+      if (node.submenu?.length) {
+        const found = search(node.submenu);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  return search(this.menu2 || []);
+}
+
+private toNode(node: any): any {
+  const copy = { ...node, index: ++this.index };
+  if (copy.submenu && copy.submenu.length) {
+    this.expand2[copy.index] = false; // Initialize as collapsed
+    copy.submenu = copy.submenu.map((sub: any) => this.toNode(sub));
+  }
+  return copy;
+}
+
+toggleDropdown2() {
+  this.isDropdownOpen2 = !this.isDropdownOpen2;
+}
+
+toggleVisible2(node: any) {
+  if (node.submenu?.length) {
+    this.expand2[node.index] = !this.expand2[node.index];
+  }
+}
+
+selectNode2(node: any) {
+  this.selectedNode2 = node;
+  this.symShow = node.scripCode;
+
+  localStorage.setItem('changeSym', node.scripCode); // persist
+  // this.share.changeSym$.next(node.scripCode);        // notify others if needed
+
+  this.toggleDropdown2();
+  this.getSymInfo(node.scripCode);  
+    this.getInitial(node.scripCode);                 // fetch new chart data
+}
+getSymInfo(val: any) {
+  this.selectedRowIndex = null;
+  this.filterSymbols(val?.path || val);
+}
+filterSymbols(filterValue: string) {
+  // If the structure is flat now (each item is a symbol)
+  const symbolMatch = this.subscribedSymbols.find(
+    (symbol: any) => symbol.oSymbolConfig?.Symbol === filterValue
+  );
+
+  if (symbolMatch) {
+    console.log("symbolMatch", [symbolMatch]);
+    this.subscribedSymbols = [symbolMatch];  // if you want to show only the matched one
+    return { lstSymbols: [symbolMatch] };
+  }
+
+  return { lstSymbols: [] };
+}
+
+getInitial(val:any) {
+  let obj = {
+    "Key": "",
+    "Symbol": val,
+  };
+
+  this.api.GET_SYMBOL_INITIAL(obj).subscribe({
+    next: (res: any) => {
+      console.log("Ress", res);
+      if (res?.ordFlag) {
+        this.share.setOrderFlags(res.ordFlag);
+      }
+    },
+    error: (err: any) => {
+      console.log(err);
+    },
+  });
+}
+buildDropdownOptions(flags: number[]) {
+  const options = [];
+
+  if (flags.includes(1)) {
+    options.push({ label: 'Market Execution', value: 0 }); // Always mapped to 0
+  }
+
+  if (flags.includes(2)) {
+    options.push({ label: 'Buy Limit', value: 2 });
+    options.push({ label: 'Sell Limit', value: 3 });
+  }
+
+  if (flags.includes(4)) {
+    options.push({ label: 'Buy Stop', value: 4 });
+    options.push({ label: 'Sell Stop', value: 5 });
+  }
+
+  if (flags.includes(8)) {
+    options.push({ label: 'Buy Stop Limit', value: 6 });
+    options.push({ label: 'Sell Stop Limit', value: 7 });
+  }
+
+  this.dropdownOptions = options;
+}
   private handleMessage(event: MessageEvent) {
     const blobData: Blob = event.data;
 
@@ -1129,6 +1296,171 @@ countDecimalDigits(num: number): number {
     return 0;
   }
 }
+isPlaceButtonDisabled(): boolean {
+  const orderType = Number(this.orderty1); // 2 = Buy Limit, 3 = Sell Limit
+  const price = parseFloat(this.orderFrom.get('price')?.value || '0');
+  const sl = parseFloat(this.orderFrom.get('stopLoss')?.value || '0');
+  const tp = parseFloat(this.orderFrom.get('takeProfit')?.value || '0');
+
+  const slFilled = this.orderFrom.get('stopLoss')?.value !== '';
+  const tpFilled = this.orderFrom.get('takeProfit')?.value !== '';
+
+  let marketPrice = 0;
+  if (orderType === 2) {
+    marketPrice = parseFloat(this.data[0]?.oInitial?.Ask || '0'); // Buy Limit uses Ask
+  } else if (orderType === 3) {
+    marketPrice = parseFloat(this.data[0]?.oInitial?.Bid || '0'); // Sell Limit uses Bid
+  }
+
+  if (!price || !marketPrice) return true;
+
+  // ? BUY LIMIT CONDITIONS
+  if (orderType === 2) {
+    // Basic Price Validation
+    if (price > marketPrice) return true;
+
+    // If both SL and TP are empty, allow placing (only price condition is required)
+    if (!slFilled && !tpFilled) return false;
+
+    // SL must be less than price
+    if (slFilled && sl >= price) return true;
+
+    // TP must be greater than price
+    if (tpFilled && tp <= price) return true;
+
+    return false; // ? All Buy Limit conditions passed
+  }
+
+  // ? SELL LIMIT CONDITIONS
+  if (orderType === 3) {
+    // Price must be >= market price
+    if (price < marketPrice) return true;
+
+    // If both SL and TP are empty, allow placing (only price condition is required)
+    if (!slFilled && !tpFilled) return false;
+
+    // SL must be >= price
+    if (slFilled && sl < price) return true;
+
+    // TP must be <= price
+    if (tpFilled && tp > price) return true;
+
+    // ? TP must also not exceed market price
+    if (tpFilled && tp > marketPrice) return true;
+
+    // ? SL is valid, but TP is still too high
+    if (slFilled && sl > price && tpFilled && tp > price) return true;
+
+    // ? All Sell Limit conditions passed
+    return false;
+  }
+ // ? Buy Stop
+  if (orderType === 4) {
+    if (price <= marketPrice) return true; // Price should be greater
+
+    // If both empty
+    if (!slFilled && !tpFilled) return false;
+
+    // If only SL filled
+    if (slFilled && !tpFilled) {
+      if (sl > price) return true;
+      return false;
+    }
+
+    // If only TP filled
+    if (tpFilled && !slFilled) {
+      if (tp < price) return true;
+      return false;
+    }
+
+    // If both filled
+    if (slFilled && tpFilled) {
+      if (sl > price || tp < price) return true;
+      return false;
+    }
+
+    return false;
+  }
+  // ? SELL STOP CONDITIONS
+if (orderType === 5) {
+  if (price >= marketPrice) return true; // Price should be less than market price
+
+  // Both SL and TP cannot be filled together (config restriction)
+  if (slFilled && tpFilled) return true;
+
+  // If SL is filled: it should be greater than the price
+  if (slFilled && sl <= price) return true;
+
+  // If TP is filled: it should be less than the price
+  if (tpFilled && tp >= price) return true;
+
+  return false; // ? All Sell Stop conditions passed
+}
+// ? BUY STOP LIMIT CONDITIONS
+if (orderType === 6) {
+  const stopLimitPrice = parseFloat(this.orderFrom.get('stopLimitPrice')?.value || '0');
+  const lot = parseFloat(this.orderFrom.get('lotSize')?.value || '0');
+
+  if (!price || !stopLimitPrice || !lot || lot <= 0 || price <= marketPrice) return true;
+
+  // Only one of price or stopLimitPrice filled
+  if ((price && !stopLimitPrice) || (!price && stopLimitPrice)) return true;
+
+  // Stop limit price must be less than price
+  if (stopLimitPrice >= price) return true;
+
+  // SL > stopLimitPrice => invalid
+  if (slFilled && sl > stopLimitPrice) return true;
+
+  // SL < 0 or unreasonable
+  if (slFilled && sl <= 0) return true;
+
+  // TP < stopLimitPrice => invalid
+  if (tpFilled && tp < stopLimitPrice) return true;
+
+  // TP < 0 or unreasonable
+  if (tpFilled && tp <= 0) return true;
+
+  // All correct, but price field cleared
+  if (!price && stopLimitPrice && slFilled && tpFilled) return true;
+
+  return false; // ? All Buy Stop Limit conditions passed
+}
+// ? SELL STOP LIMIT CONDITIONS
+if (orderType === 7) {
+  const stopLimitPrice = parseFloat(this.orderFrom.get('stopLimitPrice')?.value || '0');
+  const lot = parseFloat(this.orderFrom.get('lotSize')?.value || '0');
+
+  // Price should be < market price
+  if (!price || price >= marketPrice) return true;
+
+  // stopLimitPrice should be >= price
+  if (!stopLimitPrice || stopLimitPrice < price) return true;
+
+  // Invalid or missing lot
+  if (!lot || lot <= 0) return true;
+
+  // Only price or stopLimitPrice filled (not both)
+  if ((price && !stopLimitPrice) || (!price && stopLimitPrice)) return true;
+
+  // SL must be > stopLimitPrice
+  if (slFilled && sl <= stopLimitPrice) return true;
+
+  // TP must be <= stopLimitPrice
+  if (tpFilled && tp > stopLimitPrice) return true;
+
+  // SL & TP both filled – config may allow only one
+  if (slFilled && tpFilled) return true;
+
+  return false; // ? All Sell Stop Limit conditions passed
+}
+
+  return true; // For unsupported order types, disable by default
+}
+
+
+
+
 
   modref2:any
   inputTPP:any
