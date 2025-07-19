@@ -112,7 +112,7 @@ export class UDFCompatibleDatafeedBase implements IExternalDatafeed, IDatafeedQu
 
 	private _symbolsStorage: SymbolsStorage | null = null;
 
-	private readonly _historyProvider: HistoryProvider;
+	protected readonly _historyProvider: HistoryProvider;
 	// private readonly _dataPulseProvider: DataPulseProvider;
 
 	private readonly _quotesProvider: IQuotesProvider;

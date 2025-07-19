@@ -31,12 +31,12 @@
   {
     "glob": "**/*",
     "input": "src/assets/charting_library",
-    "output": "/assets/charting_library"
+    "output": "src/assets/charting_library"
   },
   {
     "glob": "**/*",
     "input": "src/assets/charting_library/datafeeds/udf/dist",
-    "output": "/assets/datafeeds"
+    "output": "src/assets/datafeeds"
   }
 ],
             "styles": [
