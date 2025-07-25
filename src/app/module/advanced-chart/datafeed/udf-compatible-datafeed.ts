@@ -20,7 +20,7 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
   private shareService: ShareService;
   private marketDataSubscription?: Subscription;
   private latestListenerGuid: string | null = null;
-  private currentSymbol:string = localStorage.getItem('changeSym') as string;
+  private currentSymbol: string = 'AUDUSD.c_5200';
   constructor(
     datafeedURL: string,
     updateFrequency: number = 10 * 1000,
@@ -115,7 +115,7 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
               return;
             }
  
-            // console.log('✅ Emitting bar for:', symbol, bar);
+            console.log('✅ Emitting bar for:', symbol, bar);
             onRealtimeCallback(bar);
           } catch (error) {
             console.error('❌ Error processing live data tick:', error, tick);

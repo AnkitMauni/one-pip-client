@@ -843,65 +843,93 @@ digitData: any
   private previousAskValue: any = null;
   private previousIconClass: string = 'fa-arrow-up'; // Default icon class
 
+  previousValues: { [symbol: string]: { bid: number, ask: number, iconClass: string, bidClass: string } } = {};
 
   getIconClass(data: any): string {
-    const currentBidValue = data?.oInitial?.Bid;
-    const currentAskValue = data?.oInitial?.Ask;
+    const symbol = data?.oSymbolConfig?.Symbol;
+    const currentBid = data?.oInitial?.Bid;
+    const currentAsk = data?.oInitial?.Ask;
     const previousBid = data?.oInitial?.previousBid;
     const previousAsk = data?.oInitial?.previousAsk;
-
-    if (this.previousBidValue !== null && (this.previousBidValue !== currentBidValue || this.previousAskValue !== currentAskValue)) {
-      // Compare current values with previous values to determine if there has been a change
-      if (this.arrowBidP(previousBid, currentAskValue, currentBidValue)) {
-        if (previousBid < currentBidValue) {
-          this.previousIconClass = 'fa-arrow-up';
-        } else if (previousBid > currentBidValue) {
-          this.previousIconClass = 'fa-arrow-down';
-        } else if (previousBid === currentBidValue || previousAsk === currentAskValue) {
-          this.previousIconClass = 'fa-dot-circle';
-        }
-      }
-       else {
-        this.previousIconClass = 'fa-arrow-up'; // Default icon if no significant change
-      }
+  
+    if (!this.previousValues[symbol]) {
+      this.previousValues[symbol] = {
+        bid: currentBid,
+        ask: currentAsk,
+        iconClass: 'fa-dot-circle',
+        bidClass: 'black-class'
+      };
+      return this.previousValues[symbol].iconClass;
     }
-
-    // Update the previous values
-    this.previousBidValue = currentBidValue;
-    this.previousAskValue = currentAskValue;
-
-    return this.previousIconClass;
+  
+    const prev = this.previousValues[symbol];
+  
+    // Only update if bid or ask has changed
+    if (prev.bid !== currentBid || prev.ask !== currentAsk) {
+      if (this.arrowBidP(previousBid, currentAsk, currentBid)) {
+        if (previousBid < currentBid) {
+          prev.iconClass = 'fa-arrow-up';
+        } else if (previousBid > currentBid) {
+          prev.iconClass = 'fa-arrow-down';
+        } else {
+          prev.iconClass = 'fa-dot-circle';
+        }
+      } else {
+        prev.iconClass = 'fa-arrow-up';
+      }
+  
+      // Update stored values
+      prev.bid = currentBid;
+      prev.ask = currentAsk;
+    }
+  
+    return prev.iconClass;
   }
+  
 
 
   
 
   getClassBid(data: any): string {
+    const symbol = data?.oSymbolConfig?.Symbol;
     const currentBid = data?.oInitial?.Bid;
     const currentAsk = data?.oInitial?.Ask;
     const previousBid = data?.oInitial?.previousBid;
-
-    if (this.lastBid !== null && (this.lastBid !== currentBid || this.lastAsk !== currentAsk)) {
-      // Compare current values with last values to determine if there has been a change
+  
+    if (!this.previousValues[symbol]) {
+      this.previousValues[symbol] = {
+        bid: currentBid,
+        ask: currentAsk,
+        iconClass: 'fa-dot-circle',
+        bidClass: 'black-class'
+      };
+      return this.previousValues[symbol].bidClass;
+    }
+  
+    const prev = this.previousValues[symbol];
+  
+    // Only update if values changed
+    if (prev.bid !== currentBid || prev.ask !== currentAsk) {
       if (this.arrowBidP(previousBid, currentAsk, currentBid)) {
         if (previousBid < currentBid) {
-          this.lastClass = 'blue-class';
+          prev.bidClass = 'blue-class';
         } else if (previousBid > currentBid) {
-          this.lastClass = 'red-class';
-        } else if (previousBid === currentBid) {
-          this.lastClass = 'black-class';
+          prev.bidClass = 'red-class';
+        } else {
+          prev.bidClass = 'black-class';
         }
       } else {
-        this.lastClass = 'blue-class'; // Default class if no significant change
+        prev.bidClass = 'blue-class';
       }
+  
+      // Update stored values
+      prev.bid = currentBid;
+      prev.ask = currentAsk;
     }
-
-    // Update the last values
-    this.lastBid = currentBid;
-    this.lastAsk = currentAsk;
-
-    return this.lastClass;
+  
+    return prev.bidClass;
   }
+  
 
   getClassAsk(data: any): string {
     if (this.arrowBidP(data?.oInitial?.previousAsk, data?.oInitial?.Ask, data?.oInitial?.Ask)) {
@@ -1183,6 +1211,7 @@ console.log("Ress",res);
 
    
  //=================================================Search Symbol===============================================================
+ Collapse: any = true;
  searchSymbData: any =''
  showData: any = false
  clerShowData: any = true
@@ -1266,6 +1295,9 @@ convertToUpperCase(): void {
     this.filteredSymbolData = this.data2; // default sorted list
   } else {
     this.searchSymbData = this.searchSymbData.toUpperCase();
+    if (this.searchSymbData && this.searchSymbData.length >= 1) {
+      this.Collapse = false; 
+    }
     this.showData = true;
     this.filteredSymbolData = this.getFilteredData();
   }
@@ -1299,7 +1331,8 @@ data2:any
 clearSearch(): void {
   this.clerShowData = true
   this.searchSymbData = '';
-  this.showData = false
+  this.showData = false;
+  this.Collapse = true;
   // this.data2=[]
 
   this.GET_USER_ALL_SYMBOLS_v2()
