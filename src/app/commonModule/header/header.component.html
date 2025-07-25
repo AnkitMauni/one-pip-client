@@ -539,21 +539,23 @@
                     </select>
                       </div>
                 </div>
-                    <div class="col-md-12 mb-3">
-                        <div style="display: flex; justify-content: space-between;">
-                            <p class="mb-0">Volume</p>
-                            <!-- <p class="mb-0">50.00 SILVER</p> -->
-                        </div>
-                        <div class="width100">
-                            <div class="input-group">
-                                <button class="btn btn-outline-secondary llbtn" (click)="subtractValue(1)">-</button>
-                                <input type="text" class="form-control" [(ngModel)]="inputLotValue" placeholder="" aria-label="Example text with button addon" >
-                                <button class="btn btn-outline-secondary rrbtn" (click)="addValue(1)">+</button>  
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-12 mb-3">
+                  <div style="display: flex; justify-content: space-between;">
+                      <p class="mb-0">Volume</p>
+                      <!-- <p class="mb-0">50.00 SILVER</p> -->
+                  </div>
+                  <div class="width100">
+                      <div class="input-group">
+                          <button class="btn btn-outline-secondary llbtn" (click)="SubVol()">-</button>
+                          <input type="text" class="form-control"  [(ngModel)]="inputLotValue" [min]="minLot" [max]="MaxLot"
+                          [step]="stepVol"  (change)="onLotInputChange()" placeholder="" aria-label="Example text with button addon" >
+                          <button class="btn btn-outline-secondary rrbtn" (click)="addVol()">+</button>  
+                      </div>
+                  </div>
+              </div>
                 
                     <div [formGroup]="orderFrom">
+                      
                         <div class="col-md-12 mb-3" *ngIf="orderty1 !=0">
                             <div style="display: flex; justify-content: space-between;">
                                 <p class="mb-0">Price</p>
@@ -562,7 +564,7 @@
                             <div class="width100">
                                 <div class="input-group">
                                     <button class="btn btn-outline-secondary llbtn" (click)="subPricee(orderFrom.get('price')?.value)" [disabled]="orderFrom.get('price')?.value <= 0">-</button>
-                                    <input type="text" class="form-control" (keypress)="numberOnly2($event)" formControlName="price" maria-label="Example text with button addon" >
+                                    <input type="text" class="form-control" (keypress)="numberOnly2($event)&& onDecimalInputKeyPress($event, 'price')"  formControlName="price" maria-label="Example text with button addon" >
                                     <button class="btn btn-outline-secondary rrbtn" (click)="addPricee(currentAddP)" >+</button>  
                                 </div>
                             </div>
@@ -572,7 +574,7 @@
                           <div class="width100">
                             <div class="input-group">
                               <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('stopLoss')?.value <= 0" (click)="SubSll(orderFrom.get('stopLoss')?.value)">-</button>
-                              <input type="text" class="form-control" (keypress)="numberOnly2($event)" formControlName="stopLoss" aria-label="Stop Loss input">
+                              <input type="text" class="form-control" (keypress)="numberOnly2($event) &&onDecimalInputKeyPress($event, 'stopLoss')" formControlName="stopLoss" aria-label="Stop Loss input">
                               <button class="btn btn-outline-secondary rrbtn" (click)="addSll(inputSl)">+</button>
                             </div>
                           </div>
@@ -583,7 +585,7 @@
                           <div class="width100">
                             <div class="input-group">
                               <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('takeProfit')?.value <= 0"  (click)="subTP(orderFrom.get('takeProfit')?.value)">-</button>
-                              <input type="text" class="form-control" (keypress)="numberOnly2($event)" formControlName="takeProfit" aria-label="Take Profit input">
+                              <input type="text" class="form-control" (keypress)="numberOnly2($event)&&onDecimalInputKeyPress($event, 'takeProfit')" formControlName="takeProfit" aria-label="Take Profit input">
                               <button class="btn btn-outline-secondary rrbtn" (click)="addTP(this.inputTPP)">+</button>
                             </div>
                           </div>
@@ -598,14 +600,38 @@
                       </div>
                     
              </div>
-             <div class="row text-center me-1 ms-1 mb-3" style="background: #F2F9FF;">
-                <div class="col-md-6 pt-2"><p class=" mb-1">{{ chnagevalueinsideNode !== 0 ? chnagevalueinsideNode[0]?.oInitial?.Bid : data[0]?.oInitial?.Bid }}</p></div>
-                <div class="col-md-6 pt-2"><p class=" mb-1">{{ chnagevalueinsideNode !== 0 ? chnagevalueinsideNode[0]?.oInitial?.Ask : data[0]?.oInitial?.Ask }}</p></div>
-             </div>
-             <div class="row"  *ngIf="orderty1 == 0">
-                <div class="col-md-6" ><button  class="btn btn-danger btn-sm w-100" [disabled]="!orderFrom.get('stopLoss')?.value || !orderFrom.get('takeProfit')?.value || !orderFrom.get('price')?.value" (click)="MAKE_NEW_ORDER_Market(1, data[0]?.oInitial?.Ask)">Sell by Market</button></div>
-                <div class="col-md-6"><button  class="btn btn-primary btn-sm w-100" [disabled]="!orderFrom.get('stopLoss')?.value || !orderFrom.get('takeProfit')?.value || !orderFrom.get('price')?.value" (click)="MAKE_NEW_ORDER_Market(0, data[0]?.oInitial?.Bid)">Buy by Market</button></div>
-             </div>
+             <!-- Display Bid/Ask for the symbol selected in the dialog dropdown -->
+<!-- Shows price if available, blank otherwise. Adjust placeholder text as needed. -->
+<div class="row text-center me-1 ms-1 mb-3" style="background: #F2F9FF;">
+  <div class="col-md-6 pt-2">
+      <!-- Use dialogDisplayData for Bid -->
+      <!-- Display Bid if it exists (including 0), show '-' or blank if undefined/null -->
+      <p class=" mb-1">{{ dialogDisplayData?.oInitial?.Bid !== undefined && dialogDisplayData?.oInitial?.Bid !== null ? (dialogDisplayData.oInitial.Ask) : '-' }}</p>
+  </div>
+  <div class="col-md-6 pt-2">
+      <!-- Use dialogDisplayData for Ask -->
+      <!-- Display Ask if it exists (including 0), show '-' or blank if undefined/null -->
+      <p class=" mb-1">{{ dialogDisplayData?.oInitial?.Ask !== undefined && dialogDisplayData?.oInitial?.Ask !== null ? (dialogDisplayData.oInitial.Bid) : '-' }}</p>
+  </div>
+</div>
+          <div class="row" *ngIf="orderty1 == 0">
+            <div class="col-md-6">
+                <button
+                    class="btn btn-danger btn-sm w-100"
+                   
+                    (click)="MAKE_NEW_ORDER_Market(1, data[0]?.oInitial?.Ask)"> <!-- Price from global data -->
+                    Sell by Market
+                </button>
+            </div>
+            <div class="col-md-6">
+                <button
+                    class="btn btn-primary btn-sm w-100"
+                   
+                    (click)="MAKE_NEW_ORDER_Market(0, data[0]?.oInitial?.Bid)"> <!-- Price from global data -->
+                    Buy by Market
+                </button>
+            </div>
+        </div>
              <!-- <div class="row"  *ngIf="orderty1 != 0">
                 <div class="col-md-12" ><button  class="btn btn-danger btn-sm w-100" [disabled]="!orderFrom.get('stopLoss')?.value || !orderFrom.get('takeProfit')?.value || !orderFrom.get('price')?.value || orderFrom.get('price')?.value <= 0" (click)="MAKE_NEW_ORDER(orderty1)">Place</button></div>
                

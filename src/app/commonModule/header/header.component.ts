@@ -1,7 +1,7 @@
 import { Component,Input } from '@angular/core';
 import { GlobalService } from '../../services/global.service';
 import { NgbDropdownModule, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl  } from '@angular/forms';
 import { Router, NavigationEnd } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { Location } from '@angular/common';
@@ -9,7 +9,7 @@ import { ShareService } from 'src/app/services/share.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { ToastrService } from 'ngx-toastr';
 import { HeaderToFooterService } from 'src/app/services/headerToFooter.service';
-
+import { Subscription, Subject } from 'rxjs';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -44,6 +44,19 @@ export class HeaderComponent {
   subscribedSymbols:any
   allGetTrade: any;
   allGetTrade1: any;
+    /** Holds the symbol code the dialog should currently display data for. */
+    private dialogDisplaySymbol: string | null = null;
+    /** Holds the full data object for the dialogDisplaySymbol. */
+    public dialogDisplayData: any | null = null;
+
+    chnagevalueinsideNode: any = 0; // Initial/fallback value as per your original code
+
+    // --- Subscription Management ---
+    private priceControlSubscription?: Subscription;
+    private subscriptions: Subscription = new Subscription();
+    public minLot:number = 0;
+    public MaxLot:number = 0;
+    public stepVol:number = 0;
   constructor(private headertoFooterSer:HeaderToFooterService,private toaster: ToastrService,private fb: FormBuilder,private share:ShareService ,private location: Location,private modalService: NgbModal, config: NgbModalConfig,private global: GlobalService,private router: Router, private api:GlobalService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -56,20 +69,6 @@ export class HeaderComponent {
    
    config.backdrop = 'static';
 		config.keyboard = false;
-  
-    this.share.changeSym$.subscribe((res:any)=>{
-      // console.log(" symbol ress",res);
-        localStorage.setItem('changeSym',res)
-        localStorage.getItem('changeSym')
-        this.changeSymbolData(res)
-         this.getInitial(res)
-         const selected = this.findSymbolNode(res);
-  if (selected) {
-    this.selectedNode2 = selected;
-    this.symShow = selected.scripCode;
-  }
-    })
-
     this.share.liveBalance$.subscribe((res:any)=>{
  
       this.Blance = res
@@ -162,6 +161,7 @@ share.sendModefy$.subscribe((data:any) => {
     if (this.element) {
       // this.renderer.listen(this.element, 'contextmenu',null);
     }
+    this.subscriptions.unsubscribe();
   }
 symbolMenu: any[] = [];
 menu2: any;
@@ -246,46 +246,160 @@ toggleVisible2(node: any) {
 }
 
 selectNode2(node: any) {
+  console.log("Local symbol selection:", node?.scripCode);
+  if (!node) return;
+
   this.selectedNode2 = node;
   this.symShow = node.scripCode;
- 
-  // localStorage.setItem('changeSym', node.scripCode); // persist
-  // this.share.changeSym$.next(node.scripCode);        // notify others if needed
- 
-  this.toggleDropdown2();
-  this.getSymInfo(node.scripCode);  
-    this.getInitial(node.scripCode);      
-    const matchedSymbol = this.subscribedSymbols.find(
-      (s: any) => s.oSymbolConfig.Symbol === node.scripCode
-    );
- 
-    if (matchedSymbol) {
-      this.chnagevalueinsideNode = [matchedSymbol]; // Sync with filter path
-    } else {
-      this.chnagevalueinsideNode = 0; // fallback
-    }          // fetch new chart data
-    // console.log("this.chnagevalueinsideNode[0]?.oSymbolConfig?.Symbol",this.chnagevalueinsideNode)
+
+  const symbolCode = node.scripCode;
+  this.dialogDisplaySymbol = symbolCode;
+
+  const matchedSymbolData = this.subscribedSymbols.find(
+    (s: any) => s.oSymbolConfig?.Symbol === symbolCode
+  );
+  this.dialogDisplayData = matchedSymbolData || null;
+  if (matchedSymbolData) {
+     this.chnagevalueinsideNode = [matchedSymbolData]; // If legacy code still needs it
+  } else {
+     this.chnagevalueinsideNode = 0;
+  }
+
+  // Fetch data for the newly selected symbol in the dialog
+  if (this.dialogDisplayData) {
+    console.log("symbolcode", symbolCode);
+    console.log("dialogDisplayData", this.dialogDisplayData);
+    this.currentPri = this.dialogDisplayData?.oInitial?.Bid;
+    localStorage.setItem('changeSym',symbolCode)
+    this.share.getSymData(symbolCode)
+    this.orderFrom.patchValue({
+      price: this.currentPri, // Or this.currentPri if that's the desired default price context
+      stopLoss: '', // Or this.currentPri if that's the desired default price context
+      takeProfit: '', // Or this.currentPri if that's the desired default price context
+  });
+  console.log("prove", this.currentPri);
+    //  this.getInitialForDialogDisplay(symbolCode);
+  }
+
+  // Do NOT emit globally unless intended
+  // this.share.changeSym$.next(symbolCode);
+
+  this.toggleDropdown2(); // Close the dropdown after selection
 }
 getSymInfo(val: any) {
   this.selectedRowIndex = null;
   this.filterSymbols(val?.path || val);
 }
-chnagevalueinsideNode:any = 0;
 filterSymbols(filterValue: string) {
   // If the structure is flat now (each item is a symbol)
   const symbolMatch = this.subscribedSymbols.find(
     (symbol: any) => symbol.oSymbolConfig?.Symbol === filterValue
   );
- 
+
   if (symbolMatch) {
-    // console.log("symbolMatch", [symbolMatch]);
-    this.chnagevalueinsideNode= [symbolMatch];
-    // this.subscribedSymbols = [symbolMatch]; 
-    //  console.log("this.chnagevalueinsideNode", this.chnagevalueinsideNode[0].oSymbolConfig.Symbol); // if you want to show only the matched one
+    // Update dialog display context based on filter match
+    this.dialogDisplaySymbol = filterValue;
+    this.dialogDisplayData = symbolMatch;
+    this.chnagevalueinsideNode = [symbolMatch]; // If still needed
+    console.log("Symbol matched via filter:", filterValue);
     return { lstSymbols: [symbolMatch] };
+  } else {
+     // No match found
+     this.dialogDisplaySymbol = null;
+     this.dialogDisplayData = null;
+     this.chnagevalueinsideNode = 0; // Reset if needed
+     console.log("No symbol matched via filter:", filterValue);
   }
- 
+
   return { lstSymbols: [] };
+}
+onLotInputChange() {
+  if (this.inputLotValue < this.minLot) {
+    this.inputLotValue = this.minLot;
+  } else if (this.inputLotValue > this.MaxLot) {
+    this.inputLotValue = this.MaxLot;
+  }
+}
+
+addVol() {
+  const newVal = +(this.inputLotValue + this.stepVol).toFixed(this.pricePrecision??2); // Fixed to 4 decimal to avoid floating point issues
+  if (newVal <= this.MaxLot) {
+    this.inputLotValue = newVal;
+  }
+}
+
+SubVol() {
+  const newVal = +(this.inputLotValue - this.stepVol).toFixed(this.pricePrecision??2);
+  if (newVal >= this.minLot) {
+    this.inputLotValue = newVal;
+  }
+}
+
+private getInitialForDialogDisplay(symbol: string) {
+  let obj = { "Key": "", "Symbol": symbol };
+  this.subscriptions.add(
+    this.api.GET_SYMBOL_PROP(obj).subscribe({ // Ensure api service and method name are correct
+      next: (res: any) => {
+        this.pricePrecision = res.Digit;
+        this.minLot  = res.MinVol/10000;
+        this.inputLotValue = this.minLot;
+            this.MaxLot  = res.MaxVol/10000;
+            this.stepVol    = res.vol_step/1000;
+        console.log(`Fetched initial data for dialog display (${symbol}):`, res);
+        if (this.dialogDisplayData && this.dialogDisplayData.oSymbolConfig?.Symbol === symbol) {
+          let initialDataToUpdate = null;
+
+          // --- Robustly extract oInitial data (adjust based on your API response) ---
+          if (res && typeof res === 'object' && !Array.isArray(res)) {
+              if (res.oInitial) {
+                  initialDataToUpdate = res.oInitial;
+              } else if (res.hasOwnProperty('Bid') || res.hasOwnProperty('Ask')) {
+                  initialDataToUpdate = res;
+              }
+          } else if (Array.isArray(res) && res.length > 0) {
+              const firstItem = res[0];
+              if (firstItem?.oInitial) {
+                  initialDataToUpdate = firstItem.oInitial;
+              } else if (firstItem && (firstItem.hasOwnProperty('Bid') || firstItem.hasOwnProperty('Ask'))) {
+                  initialDataToUpdate = firstItem;
+              }
+          }
+
+          if (initialDataToUpdate) {
+              this.dialogDisplayData.oInitial = { ...this.dialogDisplayData.oInitial, ...initialDataToUpdate };
+
+              // --- Update currentPri based on the freshly fetched Ask price ---
+              const newPrice = initialDataToUpdate.Ask ?? initialDataToUpdate.Bid ?? this.currentPri ?? null;
+              this.currentPri = newPrice;
+              console.log(`Updated currentPri based on local selection (${symbol}):`, this.currentPri);
+
+              // --- Update the form's price field if it seems appropriate ---
+              // E.g., if it's empty or matches the previous currentPri
+              const currentFormPrice = this.orderFrom.get('price')?.value;
+              if (currentFormPrice === null || currentFormPrice === undefined ||
+                  currentFormPrice === '' || (this.currentPri !== null && currentFormPrice == this.currentPri)) { // Use == for potential string/number comparison
+                  this.orderFrom.patchValue({ price: this.currentPri });
+                  console.log("Patched order form price with currentPri from local symbol fetch.");
+              }
+
+          } else {
+              console.warn("Could not extract oInitial data from response for:", symbol, res);
+              this.dialogDisplayData.oInitial = { Bid: 'Err', Ask: 'Err' };
+          }
+        } else {
+          console.log("Ignoring update for stale/non-matching symbol:", symbol);
+        }
+      },
+      error: (err: any) => {
+        console.error("Error fetching initial data for dialog display symbol:", symbol, err);
+        if (this.dialogDisplayData && this.dialogDisplayData.oSymbolConfig?.Symbol === symbol) {
+          this.dialogDisplayData.oInitial = { Bid: 'Err', Ask: 'Err' };
+          // Decide if currentPri should reflect the error or stay unchanged
+          // this.currentPri = null;
+        }
+      }
+    })
+  );
 }
   changeSymbolData(val:any){
   
@@ -297,31 +411,69 @@ filterSymbols(filterValue: string) {
       this.currentPri = this.data[0]?.oInitial?.Ask
       // localStorage.setItem('changeSym',this.data[0]?.oSymbolConfig?.Symbol)
     })}
-getInitial(val:any) {
+// getInitial(val:any) {
+//   let obj = {
+//     "Key": "",
+//     "Symbol": val,
+//   };
+ 
+//   this.api.GET_SYMBOL_PROP(obj).subscribe({
+//     next: (res: any) => {
+//       // Assume res contains updated oInitial info
+//       this.data = Array.isArray(res) ? res : [res];
+ 
+//       // Optional: also sync chnagevalueinsideNode here if needed
+//       if (this.chnagevalueinsideNode !== 0) {
+//         // Keep it in sync if already filtered
+//         this.chnagevalueinsideNode[0].oInitial = res?.oInitial || this.chnagevalueinsideNode[0].oInitial;
+//       }
+//       // console.log("Ress", res);
+//       if (res?.ordFlag) {
+//         this.share.setOrderFlags(res.ordFlag);
+//       }
+//     },
+//     error: (err: any) => {
+//       console.log(err);
+//     },
+//   });
+// }
+getInitial(val: any) {
   let obj = {
-    "Key": "",
-    "Symbol": val,
+      "Key": "",
+      "Symbol": val,
   };
- 
-  this.api.GET_SYMBOL_INITIAL(obj).subscribe({
-    next: (res: any) => {
-      // Assume res contains updated oInitial info
-      this.data = Array.isArray(res) ? res : [res];
- 
-      // Optional: also sync chnagevalueinsideNode here if needed
-      if (this.chnagevalueinsideNode !== 0) {
-        // Keep it in sync if already filtered
-        this.chnagevalueinsideNode[0].oInitial = res?.oInitial || this.chnagevalueinsideNode[0].oInitial;
-      }
-      // console.log("Ress", res);
-      if (res?.ordFlag) {
-        this.share.setOrderFlags(res.ordFlag);
-      }
-    },
-    error: (err: any) => {
-      console.log(err);
-    },
-  });
+  this.subscriptions.add(
+    this.api.GET_SYMBOL_PROP(obj).subscribe({
+        next: (res: any) => {
+            console.log("GET_SYMBOL_PROP response for main data:", res);
+            this.pricePrecision = res.Digit;
+            this.minLot  = res.MinVol/10000;
+            this.inputLotValue = this.minLot;
+            this.MaxLot  = res.MaxVol/10000;
+            this.stepVol    = res.Vol_Step/10000;
+            // Update the primary data array used by the component (often for display/order context)
+            // Assuming it expects an array of symbol objects with oInitial
+            if (Array.isArray(res)) {
+               this.data = res;
+            } else if (res && typeof res === 'object') {
+               // If API returns single object, wrap it
+               this.data = [res];
+            } else {
+               this.data = [];
+            }
+
+            // Handle ordFlag if present
+            if (res?.ordFlag) {
+                this.share.setOrderFlags(res.ordFlag);
+            }
+        },
+        error: (err: any) => {
+            console.error("Error in GET_SYMBOL_PROP for main data symbol:", val, err);
+            // Handle error appropriately (e.g., show message, keep old data)
+            this.data = []; // Or keep previous data?
+        },
+    })
+  );
 }
 buildDropdownOptions(flags: number[]) {
   const options = [];
@@ -532,8 +684,17 @@ Margin:any
    console.log("login req", obj, result);
     return result;
   }
-
-
+decimalValidator(control: AbstractControl): { [key: string]: any } | null {
+  if (control.value == null || control.value === '') return null;
+  console.error("con",control.value);
+  const value = control.value.toString();
+  const precision = this.pricePrecision ?? 2; // fallback
+  console.error("this.pricePrecision",this.pricePrecision);
+  const regex = new RegExp(`^\\d+(\\.\\d{0,${precision}})?$`);
+  console.error("regex.test(value)",regex.test(value));
+  return regex.test(value) ? null : { invalidDecimal: true };
+}
+pricePrecision =2;
   ngOnInit(){
     // console.log(" this.shareInputNav",this.shareInputNav);
     this.loginForm = this.fb.group({
@@ -554,10 +715,10 @@ Margin:any
     this.onLeverageChange()
 
     this.orderFrom = this.fb.group({
-      // volume: [''],  
-      price:[''] ,   // Control for the Volume input
-      stopLoss: [''],    // Control for the Stop Loss input
-      takeProfit: [''],  // Control for the Take Profit input
+      // volume: ['',[this.decimalValidator.bind(this)]],  
+      price:['',[this.decimalValidator.bind(this)]] ,   // Control for the Volume input
+      stopLoss: ['',[this.decimalValidator.bind(this)]],    // Control for the Stop Loss input
+      takeProfit: ['',this.decimalValidator.bind(this)],  // Control for the Take Profit input
       comment: ['']      // Control for the Comment input
     });
   
@@ -572,6 +733,35 @@ this.share.shareNavigateHight(this.shareInputNav)
 //     this.changeSymbolData(currentSymbol);
 //   }
 // });
+this.subscriptions.add(
+  this.share.changeSym$.subscribe((res: any) => {
+    console.log("Global symbol change received:", res);
+    if (res) {
+      
+      localStorage.setItem('changeSym', res);
+
+      // --- Update Dialog Display Context ---
+      this.dialogDisplaySymbol = res;
+      // Find the corresponding data object
+      const matchedData = this.subscribedSymbols?.find(
+        (item: any) => item?.oSymbolConfig?.Symbol === res
+      );
+      this.dialogDisplayData = matchedData || null;
+
+      // --- Update Main Data Context (for Market Orders etc.) ---
+      // Assuming changeSymbolData and getInitial update 'this.data'
+      this.changeSymbolData(res);
+      this.getInitial(res);
+
+      // --- Update Dropdown Selection UI ---
+      const selectedNode = this.findSymbolNode(res);
+      if (selectedNode) {
+        this.selectedNode2 = selectedNode;
+        this.symShow = selectedNode.scripCode;
+      }
+    }
+  })
+);
   }
   closePassForm(){
    this.modref1.close() 
@@ -707,29 +897,37 @@ onDateChange(event: any) {
   // You can now use epochTimestamp as needed
 }
 
-MAKE_NEW_ORDER_Market(val:any, price:any){
+MAKE_NEW_ORDER_Market(val: any, price: any) {
+  // Ensure 'data' array has the correct symbol context for market orders
+  // This context is primarily set by the global changeSym$ subscription
+  const symbolForOrder = this.data[0]?.oSymbolConfig?.Symbol || localStorage.getItem('changeSym');
 
-let obj = {
-  Login: 105,
-  accID:Number(localStorage.getItem('loginId')),
-  Symbol:  this.chnagevalueinsideNode[0]?.oSymbolConfig?.Symbol || localStorage.getItem('changeSym'),
-  Lot:  Number(this.inputLotValue),
-  Price: Number(price),
-  SL: Number(this.orderFrom.value.stopLoss),
-  PL: 0,
-  ordType: val, 
-  fillType: 1,
-  trdType: 3,
-   StopLimit: "",
-   Expiry: "",
-   ExpTime: "",
-  Comment: ""
-};
+  if (!symbolForOrder) {
+     console.error("Cannot place market order: No symbol determined.");
+     // Handle error (e.g., show message)
+     return;
+  }
 
-this.sendOrder1(obj)
-console.log("New order ",obj);
-
-
+  let obj = {
+    Login: 105,
+    accID: Number(localStorage.getItem('loginId')),
+    // --- Use symbol from 'data' (global context) for Market Orders ---
+    Symbol: symbolForOrder,
+    // ... other properties ...
+    Lot: Number(this.inputLotValue),
+    Price: Number(price), // Price passed from button click (from 'data')
+    SL: Number(this.orderFrom.value.stopLoss),
+    PL: 0,
+    ordType: val,
+    fillType: 1,
+    trdType: 3,
+    StopLimit: "",
+    Expiry: "",
+    ExpTime: "",
+    Comment: ""
+  };
+  this.sendOrder1(obj);
+  console.log("New Market order placed for symbol:", symbolForOrder, obj);
 }
 
 okReturn(){
@@ -1310,7 +1508,7 @@ this.sendOrder1(obj)
 
 }
  
-inputLotValue: any = 0.01; // Initial value for the ion-input
+inputLotValue: any = 0; // Initial value for the ion-input
 inputLotValuew: any = 0.1;
   
   addValue(val:any) {
@@ -1480,6 +1678,53 @@ subtractValue(val:any) {
   }
  
 }
+onDecimalInputKeyPress(event: KeyboardEvent, field: 'price' | 'stopLoss' | 'takeProfit') {
+  const inputChar = event.key;
+
+  // Allow navigation and control keys
+  if (
+    event.ctrlKey ||
+    event.metaKey ||
+    inputChar === 'Backspace' ||
+    inputChar === 'Delete' ||
+    inputChar === 'ArrowLeft' ||
+    inputChar === 'ArrowRight'
+  ) {
+    return;
+  }
+
+  // Only allow digits and dot
+  if (!/[0-9.]/.test(inputChar)) {
+    event.preventDefault();
+    return;
+  }
+
+  const inputElement = event.target as HTMLInputElement;
+  const currentValue = inputElement.value;
+
+  const selectionStart = inputElement.selectionStart ?? currentValue.length;
+  const selectionEnd = inputElement.selectionEnd ?? currentValue.length;
+
+  // Build the next value as if inputChar is inserted at cursor position
+  const nextValue =
+    currentValue.slice(0, selectionStart) + inputChar + currentValue.slice(selectionEnd);
+
+  const precision = this.pricePrecision ?? 2;
+
+  // Disallow multiple dots
+  if (inputChar === '.' && currentValue.includes('.')) {
+    event.preventDefault();
+    return;
+  }
+
+  // Prevent exceeding decimal places
+  const parts = nextValue.split('.');
+  if (parts.length === 2 && parts[1].length > precision) {
+    event.preventDefault();
+    return;
+  }
+}
+
 
 countDecimalDigits(num: number): number {
   // Convert the number to a string
@@ -1506,10 +1751,12 @@ isPlaceButtonDisabled(): boolean {
   const tpFilled = this.orderFrom.get('takeProfit')?.value !== '';
 
   let marketPrice = 0;
+  console.log("market", this.currentPri);
+
   if (orderType === 2) {
-    marketPrice = parseFloat(this.data[0]?.oInitial?.Ask || '0'); // Buy Limit uses Ask
+    marketPrice = parseFloat(this.currentPri || '0'); // Buy Limit uses Ask
   } else if (orderType === 3) {
-    marketPrice = parseFloat(this.data[0]?.oInitial?.Bid || '0'); // Sell Limit uses Bid
+    marketPrice = parseFloat(this.currentPri || '0'); // Sell Limit uses Bid
   }
 
   if (!price || !marketPrice) return true;
@@ -1667,42 +1914,147 @@ if (orderType === 7) {
   currentAddP:any
   symShow:any =""
   openXl2(content2: any) {
-  // Set today's date
-  const initialDateEvent = {
-    target: {
-      value: new Date().toISOString().split('T')[0]
-    }
-  };
+    // --- All your existing setup logic for the modal ---
+    const initialDateEvent = { target: { value: new Date().toISOString().split('T')[0] } };
     this.onDateChange(initialDateEvent);
+    this.navGateUrl();
+    console.log("this.currentPri", this.currentPri);
+    this.showMassage = 1;
+    this.symShow = localStorage.getItem('changeSym') || '';
 
-  // Navigate or perform any pre-modal actions
-  this.navGateUrl();
+    const initialSymbol = this.symShow;
+    if (initialSymbol) {
+        const initialSymbolData = this.subscribedSymbols?.find(
+            (item: any) => item?.oSymbolConfig?.Symbol === initialSymbol
+        );
+        this.dialogDisplayData = initialSymbolData || null;
 
-  // Log current price
-  console.log("this.currentPri",this.currentPri);
+        if (this.dialogDisplayData && (!this.dialogDisplayData.oInitial || Object.keys(this.dialogDisplayData.oInitial).length === 0)) {
+            //  this.getInitialForDialogDisplay(initialSymbol);
+        }
 
-  // Set flags and values
-  this.showMassage = 1;
-  this.symShow = localStorage.getItem('changeSym') || '';
+        const selectedNodeForInitialSymbol = this.findSymbolNode(initialSymbol);
+        if (selectedNodeForInitialSymbol) {
+            this.selectedNode2 = selectedNodeForInitialSymbol;
+        }
+    } else {
+        this.dialogDisplayData = null;
+        this.selectedNode2 = null;
+    }
+    const existingFormPrice = this.orderFrom.get('price')?.value;
+    if (existingFormPrice === null || existingFormPrice === undefined || existingFormPrice === '') {
+        if (this.currentPri !== null && this.currentPri !== undefined) {
+            this.orderFrom.patchValue({ price: this.currentPri });
+            console.log("Patched order form price with initialized currentPri:", this.currentPri);
+        } else {
+            console.log("currentPri is null, order form price not patched automatically.");
+        }
+    } else {
+        console.log("Order form price already has a value, not overwritten:", existingFormPrice);
+    }
 
-  // Patch form values
-  if (this.currentPri !== null && this.currentPri !== undefined) {
-    this.orderFrom.patchValue({ price: this.currentPri });
-    this.inputSl = this.currentPri;
+    this.inputSl = this.currentPri; // Initialize SL/TP inputs if needed
     this.inputTPP = this.currentPri;
-    this.currentAddP = this.currentPri;
+
+    // --- Initialize currentAddP and sync with form ---
+    const initialFormPrice = this.orderFrom.get('price')?.value;
+    if (initialFormPrice !== null && initialFormPrice !== undefined && initialFormPrice !== '') {
+        this.currentAddP = initialFormPrice;
+    } else if (this.currentPri !== null && this.currentPri !== undefined) {
+        this.currentAddP = this.currentPri;
+    } else {
+        this.currentAddP = '0';
+    }
+    console.log("Initialized currentAddP:", this.currentAddP);
+
+    if (this.priceControlSubscription) {
+        this.priceControlSubscription.unsubscribe();
+    }
+    // Subscribe to price form control changes to sync currentAddP
+    this.priceControlSubscription = this.orderFrom.get('price')?.valueChanges.subscribe((newPriceValue: any) => {
+        console.log("Price form control changed to:", newPriceValue, "Updating currentAddP.");
+        if (newPriceValue === null || newPriceValue === undefined) {
+            this.currentAddP = '0';
+        } else {
+            this.currentAddP = newPriceValue;
+        }
+    });
+
+    // --- End of existing setup logic ---
+
+    // --- Open the modal and get the reference ---
+    this.modref = this.modalService.open(content2, { size: 'lg', centered: true });
+
+    // --- Handle modal close/dismiss events ---
+    // The result promise is resolved when modal is closed (e.g., this.modref.close())
+    // and rejected when modal is dismissed (e.g., this.modref.dismiss(), backdrop click, ESC)
+    this.modref.result.then(
+        (result: any) => {
+            // Modal was closed (e.g., this.modref.close() was called)
+            console.log('Modal closed with result:', result);
+            this.resetModalData(); // Call reset function
+        },
+        (dismissedReason: any) => {
+            // Modal was dismissed (e.g., backdrop click, ESC, this.modref.dismiss())
+            console.log('Modal dismissed with reason:', dismissedReason);
+            this.resetModalData(); // Call reset function
+        }
+    );
+}
+
+closeModel() {
+  if (this.modref) {
+      // Using close() will resolve the result promise
+      // You can pass a result value if needed, though not required for reset
+      this.modref.close('Closing from closeModel'); // Or just this.modref.close();
+      // Alternatively, use dismiss() which will reject the result promise
+      // this.modref.dismiss('Closing from closeModel');
+  }
+}
+
+private resetModalData() {
+  console.log("Resetting modal data...");
+  this.dialogDisplaySymbol = null;
+  this.dialogDisplayData = null;
+  this.chnagevalueinsideNode = 0; // Reset legacy variable if still used
+
+  const globalSymbol = localStorage.getItem('changeSym');
+  if (globalSymbol) {
+      const nodeForGlobalSymbol = this.findSymbolNode(globalSymbol);
+      if (nodeForGlobalSymbol) {
+          this.selectedNode2 = nodeForGlobalSymbol;
+          this.symShow = nodeForGlobalSymbol.scripCode;
+      } else {
+          this.selectedNode2 = null;
+          this.symShow = globalSymbol;
+      }
+  } else {
+      this.selectedNode2 = null;
+      this.symShow = '';
+  }
+  this.isDropdownOpen2 = false;
+
+  if (this.orderFrom) {
+      this.orderFrom.patchValue({
+          stopLoss: null,
+          takeProfit: null,
+          price: null,
+          lotSize: null,
+          stopLimitPrice: null
+      });
   }
 
-  // Open the modal
-  this.modref = this.modalService.open(content2, {
-    size: 'md modalone',
-    centered: true
-  });
-  }
+  this.inputLotValue = null;
+  this.inputSl = null;
+  this.inputTPP = null;
+  this.orderty1 = 0;
+  this.showMassage = 1;
+  this.showErroMass = 1;
+  this.currentAddP = '0'; // Reset price manipulation variable
 
-  closeModel(){
-    this.modref.close()
-  }
+  console.log("Modal data reset complete.");
+}
+
   loginDetails:any ={}
   // login(){
   //   debugger

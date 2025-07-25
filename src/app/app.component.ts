@@ -26,7 +26,7 @@ export class AppComponent {
   loginId :any = 771227
   constructor(private router: Router,private zone: NgZone, private cdr: ChangeDetectorRef, public share:ShareService)
   {
-
+   
     // localStorage.setItem('loginId',this.loginId)
     this.share.loader(false);
     this.share.selectedloaderValue.subscribe((val:any)=>{
@@ -108,7 +108,8 @@ this.appDataMargin=val
     
     this.router.navigate(['/login']).then(() => {
       this.router.navigate([{ outlets: { primary: null } }]); // Clear router state
-      localStorage.removeItem('loginId');
+      // localStorage.removeItem('loginId');
+      localStorage.clear();
       window.location.reload()
     });
 
