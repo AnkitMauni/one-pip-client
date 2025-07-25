@@ -1,11 +1,5 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
-import {
-  BarStyles,
-  CONTAINER_ID,
-  IntervalTypes,
-  ITradingViewWidget,
-  Themes,
-} from 'angular-tradingview-widget';
+
 import { OnDestroy } from '@angular/core';
 import {
   widget,
@@ -182,7 +176,7 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
       user_id: this._userId,
       fullscreen: this._fullscreen,
       autosize: this._autosize,
-      timezone:'Europe/Berlin', // Use configured timezone
+      timezone: 'Europe/Berlin', // Use configured timezone
     };
 
     const tvWidget = new widget(widgetOptions);
@@ -207,18 +201,21 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
     });
 
     // 👇 Listen to symbol updates
-    this.symbolSub = this.share.changeSym$.subscribe((newSymbol) => {
-      console.log('📈 Changing chart symbol to:', newSymbol);
-
-      if (newSymbol && newSymbol != 'NoData') {
-        this._symbol = newSymbol;
-        if (this._tvWidget?.chart()) {
-          this._tvWidget.chart().setSymbol(newSymbol);
-          this._tvWidget.chart().setResolution(this._interval!);
-        }
+    this.share.changeSym$.subscribe((newSymbol) => {
+      console.log('📈 Symbol received:', newSymbol);
+      this._symbol = newSymbol;
+    
+      if (this._tvWidget) {
+        this._tvWidget.onChartReady(() => {
+          this._tvWidget?.chart().setSymbol(newSymbol);
+          this._tvWidget?.chart().setResolution(this._interval!);
+        });
+      } else {
+        console.warn('⚠️ Widget not ready. Symbol will be applied after init.');
       }
     });
-  }
+    
+  }    
 
   ngOnDestroy() {
     if (this._tvWidget !== null) {

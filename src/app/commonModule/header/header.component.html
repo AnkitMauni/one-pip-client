@@ -29,16 +29,16 @@
                                 </div>
                                
                                 <!-- Add Server with Submenu -->
-                                <div class="dropdown-submenu" ngbDropdown>
+                                <!-- <div class="dropdown-submenu" ngbDropdown>
                                     <a ngbDropdownItem href="#" ngbDropdownToggle (click)="$event.preventDefault()">
                                         <img class="topnav-dd" src="assets/images/clientimg/nv0.png">Trading accounts
                                     </a>
                                     <div ngbDropdownMenu class="dropdown-menu">
                                         <a ngbDropdownItem href="#" (click)="$event.preventDefault();openXl(content)"><img class="topnav-dd" src="assets/images/clientimg/nv11.png" >Connect to account</a>
                                         <a ngbDropdownItem href="#" (click)="$event.preventDefault();openXl(content)"><img class="topnav-dd" src="assets/images/clientimg/nv12.png">Open Demo account</a>
-                                        <!-- <a ngbDropdownItem href="#" (click)="$event.preventDefault()"><img class="topnav-dd" src="assets/images/clientimg/nv13.png">Open Real account</a> -->
+                                       
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="dropdown-submenu" ngbDropdown>
                                     <a ngbDropdownItem href="#" ngbDropdownToggle (click)="$event.preventDefault()">
                                         <img class="topnav-dd" src="assets/images/clientimg/nv1.png">Chart settings
@@ -179,92 +179,8 @@
 
 
 
-<ng-template #content let-modal>
-    <!-- <form [formGroup]="loginForm">
- 
-    <div class="modal-header">
-        <h4 class="modal-title">Trading accounts: Admirals Group </h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-       <div class="row">
-        <div class="col-md-4">
-            <ul class="modtab">
-                <li>
-                    <div><img class="nav-img" src="assets/images/clientimg/nv11.png"></div>
-                    <p>Connect to account</p>
-                </li>
-                <li>
-                    <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
-                    <p>Open Demo account</p>
-                </li>
-                <li>
-                    <div><img class="nav-img" src="assets/images/clientimg/nv13.png"></div>
-                    <div>
-                        <p class="untxt">Anurag singh</p>
-                                    <p class="crdtxt">4265959642659596</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-8" style="border-left:solid 1px #646363">
-            
-               <div class="row align-items-center">
-                    <div class="col-sm-2 text-center"></div>
-                    <div class="col-sm-10">
-                        <div class="row mb-2">
-                            <div class="col-md-8">
-                                <div class="d-flex align-items-center">
-                                    <div><p class="lbl mb-0 me-2">Server:</p></div>
-                                    <div class="width100">
-                                        <input type="text" readonly   value="UnityFX" class="width100 c-input" id="email"  name="email">
-                                       
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-        
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                    <div><p class="lbl mb-0 me-2">Login:</p></div>
-                                    <div class="width100">
-                                        <input type="text" (keypress)="numberOnly1($event)" readonly onfocus="this.removeAttribute('readonly');" formControlName="ac" class="width100 c-input" id="email"  name="email">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
-                        <div class="row mb-2">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                    <div><p class="lbl mb-0 me-2">Password:</p></div>
-                                    <div class="width100">
-                                        <input type="password" formControlName="pass" class="width100 c-input" id="email"  name="email">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                    <div  class="form-check mb-0">
-                                        <label  class="form-check-label">
-                                            <input  type="checkbox" name="remember" checked class="form-check-input">Save password </label>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
-               </div>
-        </div>
-       </div>
-    </div>
-    <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-basic btn-sm" (click)="login()">Login</button>
-        <button type="button" class="btn btn-basic btn-sm" (click)="closeModel()">Cancel</button>
-    </div>
-</form> -->
-<div class="modal-header">
+<!-- <ng-template #content let-modal>
+  <div class="modal-header">
     <h4 class="modal-title">Trading accounts: Admirals Group </h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 </div>
@@ -429,7 +345,7 @@
                                                     <option value="4">300 USD</option>
                                                     <option value="5">100 USD</option>
                                                   </select>
-                                                <!-- <input type="text" class="width100 c-input" formControlName="deposit"> -->
+                                         
                                               </div>
                                             </div>
                                             <div class="col-md-3">
@@ -518,12 +434,12 @@
     </div>
 </section>
 </div>
-</ng-template>
+</ng-template> -->
 
 <ng-template #content2 let-modal>
   
     <div class="modal-header">
-        <h4 class="modal-title">Order ({{symShow }})</h4>
+        <h4 class="modal-title">Order</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body mnginputgup">
@@ -543,7 +459,7 @@
             [ngClass]="{ 'c-disable': isReadonly }"
             style="width:100%; height: 30px;     border: solid 1px #dee2e6;"
             type="text"
-            [value]="selectedNode2?.title"
+            [value]="selectedNode2?.title || ''"
             placeholder="*"
           />
           <div class="btn-group" role="group">
@@ -683,8 +599,8 @@
                     
              </div>
              <div class="row text-center me-1 ms-1 mb-3" style="background: #F2F9FF;">
-                 <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Bid }}</p></div>
-                <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Ask }}</p></div>
+                <div class="col-md-6 pt-2"><p class=" mb-1">{{ chnagevalueinsideNode !== 0 ? chnagevalueinsideNode[0]?.oInitial?.Bid : data[0]?.oInitial?.Bid }}</p></div>
+                <div class="col-md-6 pt-2"><p class=" mb-1">{{ chnagevalueinsideNode !== 0 ? chnagevalueinsideNode[0]?.oInitial?.Ask : data[0]?.oInitial?.Ask }}</p></div>
              </div>
              <div class="row"  *ngIf="orderty1 == 0">
                 <div class="col-md-6" ><button  class="btn btn-danger btn-sm w-100" [disabled]="!orderFrom.get('stopLoss')?.value || !orderFrom.get('takeProfit')?.value || !orderFrom.get('price')?.value" (click)="MAKE_NEW_ORDER_Market(1, data[0]?.oInitial?.Ask)">Sell by Market</button></div>

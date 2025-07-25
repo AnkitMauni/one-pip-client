@@ -35,72 +35,51 @@
                   <td class="text-end">{{openP?.SL}}</td>
                   <td class="text-end">{{openP?.TP}}</td>
                   <td class="text-end">{{getCurrent(openP?.Sy,openP.BS)}}</td>
-                  <!-- <td class="text-end" *ngIf="getValue(getCurrent(openP?.Sy,openP.BS),openP?.PC,openP?.V/10000,openP) !='-Infinity || Infinity'">{{getValue(getCurrent(openP?.Sy,openP.BS),openP?.PC,openP?.V/10000,openP)}}</td>
-                  <td class="text-end" *ngIf="getValue(getCurrent(openP?.Sy,openP.BS),openP?.PC,openP?.V/10000,openP) =='-Infinity || Infinity || NaN'">0.00</td> -->
+                  
                   <td class="text-end" >
   {{ getProfitUSD(openP) }} 
-  <!-- <span class="text-muted">USD</span> -->
+ 
 </td>
               
                 </tr>
           
 
-                <!-- <tr *ngFor="let openP of positionListData let i=index" (click)="openXl2(content2,openP)">
-                  <td ><span>{{openP?.Symbol}}</span></td>
-                  <td class="text-end">{{openP?.Ticket}}</td>
-                  <td>{{(openP?.Timestamp)}}</td>
-            
-                  <td class="text-end">
-                    <span *ngIf="openP?.oBuySell == 1">sell</span>
-                    <span *ngIf="openP?.oBuySell == 0">buy</span>
-                    <span  *ngIf="openP?.oBuySell == 2">buy limit </span>
-                    <span *ngIf="openP?.oBuySell == 3">sell limit </span>
-                    <span  *ngIf="openP?.oBuySell == 4">Buy Stop </span>
-                    <span  *ngIf="openP?.oBuySell == 5">Sell Stop </span>
-                    <span  *ngIf="openP?.oBuySell == 6">Buy Stop Limit </span>
-                    <span  *ngIf="openP?.oBuySell == 7">Sell Stop Limit </span>
-                
-                  </td>
-                  <td class="text-end">{{openP?.Lot}}</td>
-                  <td class="text-end">{{openP?.Price}}</td>
-                  <td class="text-end" [ngClass]="{'bg-blue': openP?.SL > 0}">{{openP?.SL}}</td>
-                  <td class="text-end" [ngClass]="{'bg-yellow': openP?.TL > 0}">{{openP?.TL}}</td>
-               
-                  <td class="text-end">{{getCurrent(openP?.Symbol,openP.oBuySell)}}</td>
-                  <td class="text-end" *ngIf="openP?.oBuySell <= 1 || openP?.oBuySell == 0">-</td>
-                  <td class="text-end" *ngIf="openP?.oBuySell > 1">Placed</td>
-                  
-              
-                </tr> -->
                 <tr>
-                  <td colspan="10"><span><img class="table-img me-1" src="assets/images/sideimg/mt-icons39.png"> <b>
-                    <!-- Balance:{{this.allGetTrade?.Balance | number: '1.2-2'}} USD Equity:{{this.allGetTrade?.Equity | number: '1.2-2'}} Margin:{{this.allGetTrade?.Margin | number: '1.2-2'}} Free Margin: {{this.allGetTrade?.FreeMargin | number: '1.2-2'}} Margin Level: {{this.allGetTrade?.Margin_Level | number: '1.2-2'}}</b> </span></td> -->
-                Balance: {{ allGetTrade?.Balance | number: '1.2-2' }} USD
+                  <td colspan="10">
+                    <div class="d-flex aligen-items-center justify-content-between ">
+                      <div>
+                        <span><img class="table-img me-1" src="assets/images/sideimg/mt-icons39.png"> <b>
+                   
+                Balance: {{ liveBalance | number: '1.2-2' }} USD
         Equity: {{ equity | number: '1.2-2' }}
-        Margin: {{ this.allGetTrade?.Margin  | number: '1.2-2' }}
+        Margin: {{ liveMargin | number: '1.2-2' }}
         Free Margin: {{ freeMargin | number: '1.2-2' }}
-        Margin Level: {{ marginLevel | number: '1.2-2' }}%</b></span></td>
+        Margin Level: {{ marginLevel | number: '1.2-2' }}%</b></span>
+                      </div>
+                      <div><b> {{floatingPL  | number: '1.2-2'}}</b></div>
+                    </div>
+      
+      </td>
                 </tr>
-                  <tr *ngFor="let openP of listPending let i=index" (click)="openXl2(content2,openP)">
-                  <td ><span>{{openP?.Sy}}</span></td>
-                  <td class="text-end">{{openP?.Ord}}</td>
-                  <td class="text-end">{{trimTime(openP?.TmO)}}</td>
+                  <tr *ngFor="let openPen of listPending let i=index" (click)="openXl2(content2,openPen)">
+                  <td ><span>{{openPen?.Sy}}</span></td>
+                  <td class="text-end">{{openPen?.Ord}}</td>
+                  <td class="text-end">{{trimTime(openPen?.TmO)}}</td>
                   <td class="text-end">
-                    <!-- <span *ngIf="openP?.BS == 1">sell</span>
-                    <span *ngIf="openP?.BS == 0">buy</span> -->
-                     <span  *ngIf="openP?.BS == 2">buy limit </span>
-                    <span *ngIf="openP?.BS == 3">sell limit </span>
-                    <span  *ngIf="openP?.BS == 4">Buy Stop </span>
-                    <span  *ngIf="openP?.BS == 5">Sell Stop </span>
-                    <span  *ngIf="openP?.BS == 6">Buy Stop Limit </span>
-                    <span  *ngIf="openP?.BS == 7">Sell Stop Limit </span>
+                  
+                     <span  *ngIf="openPen?.BS == 2">buy limit </span>
+                    <span *ngIf="openPen?.BS == 3">sell limit </span>
+                    <span  *ngIf="openPen?.BS == 4">Buy Stop </span>
+                    <span  *ngIf="openPen?.BS == 5">Sell Stop </span>
+                    <span  *ngIf="openPen?.BS == 6">Buy Stop Limit </span>
+                    <span  *ngIf="openPen?.BS == 7">Sell Stop Limit </span>
                   </td>
-                  <td class="text-end">{{openP?.V/10000}}</td>
-                  <td class="text-end">{{openP?.P}}</td>
-                  <td class="text-end">{{openP?.SL}}</td>
-                  <td class="text-end">{{openP?.TP}}</td>
-                  <td class="text-end">{{getCurrent(openP?.Sy,openP.BS)}}</td>
-                   <td class="text-end" *ngIf="openP?.BS == 2 || 3 || 4 || 5 || 6 || 7">Placed</td>
+                  <td class="text-end">{{openPen?.V/10000}}</td>
+                  <td class="text-end">{{openPen?.P}}</td>
+                  <td class="text-end">{{openPen?.SL}}</td>
+                  <td class="text-end">{{openPen?.TP}}</td>
+                  <td class="text-end">{{getCurrent(openPen?.Sy,openPen.BS)}}</td>
+                   <td class="text-end" *ngIf="openPen?.BS == 2 || 3 || 4 || 5 || 6 || 7">Placed</td>
                  
               
                 </tr>
@@ -463,18 +442,6 @@
     </table>
   </div>
 </div>
-    
-    
-    
-    
-   
-  
-   
-    
-
-
-
-
   <ul class="tabnavc-ul ps-0">
       <li [ngClass]="{'active': currentTab == 'tab1'}" (click)="nvatabc ('tab1')" >
           <div class="tabnavc-a">
@@ -576,26 +543,29 @@
 
 
 <ng-template #content2 let-modal>
-  
+ 
   <div class="modal-header">
-      <h4 class="modal-title">#{{modelData.Ticket}} 
-        <span *ngIf="modelData?.oBuySell == 0">buy </span>
-        <span *ngIf="modelData?.oBuySell == 1">sell </span>
-        <span *ngIf="modelData?.oBuySell == 2">buy limit </span>
-        <span *ngIf="modelData?.oBuySell == 3">sell limit </span>
-        <span *ngIf="modelData?.oBuySell == 4">buy stop </span>
-        <span *ngIf="modelData?.oBuySell == 5">sell stop </span>
-        <span *ngIf="modelData?.oBuySell == 6">buy stop limit </span>
-        <span *ngIf="modelData?.oBuySell == 7">sell stop limit </span> <span>{{modelData.Lot}} </span> <span>{{modelData?.Symbol}} </span> at <span>{{modelData?.Price}}
+      <h4 class="modal-title">#{{modelData.Pos}}
+        <span *ngIf="modelData?.BS == 0">buy </span>
+        <span *ngIf="modelData?.BS == 1">sell </span>
+        <span *ngIf="modelData?.BS == 2">buy limit </span>
+        <span *ngIf="modelData?.BS == 3">sell limit </span>
+        <span *ngIf="modelData?.BS == 4">buy stop </span>
+        <span *ngIf="modelData?.BS == 5">sell stop </span>
+        <span *ngIf="modelData?.BS == 6">buy stop limit </span>
+        <span *ngIf="modelData?.BS == 7">sell stop limit </span> <span>{{modelData.V/10000}} </span> <span>{{modelData?.Sy}} </span> at 
+        <span *ngIf="modelData.BS== 0 || modelData.BS ==1 ">{{modelData?.PC}}
+       </span>
+         <span *ngIf="modelData.BS >1">{{modelData?.P}}
        </span>
        </h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');refreshPosition()"></button>
   </div>
   <div class="modal-body mnginputgup">
-     <div class="row">
-      
-      <div class="col-md-12" *ngIf="showMassage == 1">
-          
+     <div class="row" *ngIf="showMassage == 1">
+     
+      <div class="col-md-12" >
+         
              <div class="row align-items-center">
               <div class="col-md-12 mb-3">
                 <!-- /  <p class="text-primary">#48490455 buy 0.01 XAUUSD at 2470.94</p> -->
@@ -617,37 +587,47 @@
                       </div>
                       <div class="width100">
                           <div class="input-group">
-                              <button class="btn btn-outline-secondary llbtn" (click)="subtractValue(1)">-</button>
-                              <input type="text" class="form-control" [(ngModel)]="inputLotValue" placeholder="" aria-label="Example text with button addon" >
-                              <button class="btn btn-outline-secondary rrbtn" (click)="addValue(1)">+</button>  
+                             <button class="btn btn-outline-secondary llbtn" (click)="subtractValue(1)" >-</button>
+                             <input type="text" class="form-control" [(ngModel)]="inputLotValue"  [readOnly]="modelData?.BS > 1"/>
+                             <button class="btn btn-outline-secondary rrbtn" (click)="addValue(1)" >+</button>
                           </div>
                       </div>
                   </div>
-              
+             
                   <div class="row" [formGroup]="orderFrom">
-                      
+                     <div class="col-md-12 mb-3">
+                        <p class="mb-0">Price</p>
+                        <div class="width100">
+                          <div class="input-group">
+                            <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('price')?.value <= 0" (click)="SubSll(orderFrom.get('price')?.value)">-</button>
+                            <input type="text" class="form-control" formControlName="price" aria-label="Price inputt" [readOnly]="modelData?.BS == 0 || modelData?.BS == 1">
+                            <button class="btn btn-outline-secondary rrbtn" (click)="addSll(orderFrom.get('price')?.value)">+</button>
+                          </div>
+                        </div>
+                      </div>
+                     
                       <div class="col-md-6 mb-3">
                         <p class="mb-0">Stop Loss</p>
                         <div class="width100">
                           <div class="input-group">
                             <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('stopLoss')?.value <= 0" (click)="SubSll(orderFrom.get('stopLoss')?.value)">-</button>
-                            <input type="text" class="form-control" formControlName="stopLoss" aria-label="Stop Loss input">
-                            <button class="btn btn-outline-secondary rrbtn" (click)="addSll(inputSl)">+</button>
+                            <input type="text" class="form-control" formControlName="stopLoss" aria-label="Stop Loss input" >
+                            <button class="btn btn-outline-secondary rrbtn" (click)="addSll(orderFrom.get('stopLoss')?.value)">+</button>
                           </div>
                         </div>
                       </div>
-                    
+                   
                       <div class="col-md-6 mb-3">
                         <p class="mb-0">Take Profit</p>
                         <div class="width100">
                           <div class="input-group">
-                            <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('takeProfit')?.value <= 0"  (click)="subTP(orderFrom.get('stopLoss')?.value)" >-</button>
+                            <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('takeProfit')?.value <= 0"  (click)="subTP(orderFrom.get('takeProfit')?.value)" >-</button>
                             <input type="text" class="form-control" formControlName="takeProfit" aria-label="Take Profit input">
-                            <button class="btn btn-outline-secondary rrbtn" (click)="addTP(inputTPP)">+</button>
+                            <button class="btn btn-outline-secondary rrbtn" (click)="addTP(orderFrom.get('takeProfit')?.value)">+</button>
                           </div>
                         </div>
                       </div>
-                    
+                   
                       <!-- <div class="col-md-12 mb-3">
                         <p class="mb-0">Comment</p>
                         <div class="width100">
@@ -655,7 +635,7 @@
                         </div>
                       </div> -->
                     </div>
-                  
+                 
            </div>
            <!-- <div class="row text-center me-1 ms-1 mb-3" style="background: #F2F9FF;">
                <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Bid }}</p></div>
@@ -663,60 +643,83 @@
            </div> -->
            <div class="row" >
             <div class="col-md-12"><button  class="btn btn-primary btn-sm w-100 mb-2" (click)="modefyOrder()">Modify</button></div>
-              <div class="col-md-12 mb-3" ><button  class="btn btn-danger btn-sm w-100"  (click)="closeOrder(data[0]?.oInitial?.Ask, data[0]?.oInitial?.Bid)">
-               Close #{{modelData.Ticket}} 
-                  <span *ngIf="modelData?.oBuySell == 0">buy </span>
-                  <span *ngIf="modelData?.oBuySell == 1">sell </span>
-                  <span *ngIf="modelData?.oBuySell == 2">buy limit </span>
-                  <span *ngIf="modelData?.oBuySell == 3">sell limit </span>
-                  <span *ngIf="modelData?.oBuySell == 4">buy stop </span>
-                  <span *ngIf="modelData?.oBuySell == 5">sell stop </span>
-                  <span *ngIf="modelData?.oBuySell == 6">buy stop limit </span>
-                  <span *ngIf="modelData?.oBuySell == 7">sell stop limit </span> <span>{{modelData?.Lot}} </span> <span>{{modelData?.Symbol}} </span> at 
-                  <span>{{modelData?.Price}} 
-                    <!-- at with Profit {{getValue(getCurrent(modelData?.Sy,modelData.BS),modelData?.PC,modelData?.V/10000,modelData)}} --></span> 
+              <div class="col-md-12 mb-3" *ngIf="modelData?.BS == 0 || modelData?.BS == 1"><button  class="btn btn-danger btn-sm w-100"  (click)="closeOrder(modelData?.Sy,modelData?.BS)">
+               Close #{{modelData.Pos}}
+                  <span *ngIf="modelData?.BS == 0">buy </span>
+                  <span *ngIf="modelData?.BS == 1">sell </span>
+                  <span *ngIf="modelData?.BS == 2">buy limit </span>
+                  <span *ngIf="modelData?.BS == 3">sell limit </span>
+                  <span *ngIf="modelData?.BS == 4">buy stop </span>
+                  <span *ngIf="modelData?.BS == 5">sell stop </span>
+                  <span *ngIf="modelData?.BS == 6">buy stop limit </span>
+                  <span *ngIf="modelData?.BS == 7">sell stop limit </span> <span>{{modelData?.V/10000}} </span> <span>{{modelData?.Sy}} </span> at
+                  <span>{{modelData?.PC}}
+                    at with Profit {{getProfitUSD(modelData)}}</span>
               </button>
              
             </div>
-              
+            <div class="col-md-12 mb-3" *ngIf="modelData?.BS > 1"><button  class="btn btn-danger btn-sm w-100"  (click)="deleteOrder(modelData?.Sy,modelData?.BS)">
+               Delete
+                 
+              </button>
+             
+            </div>
+             
            </div>
          
-
+ 
       </div>
-
-      <div style="min-height: 498px; display: flex; align-items: center; justify-content: center;" class="col-md-12" *ngIf="showMassage == 2">
+ </div>
+  <div class="row" *ngIf="showMassage == 2 && showErroMass == 1">
+      <div style="min-height: 498px; display: flex; align-items: center; justify-content: center;" class="col-md-12" >
         <div>
             <button class="btn mb-3"  (click)="okReturn()"><i class="fa-solid fa-arrow-left"></i></button>
-        <div class="text-center" *ngIf="showErroMass == 1 && showMassage == 2">
-            
-            <p class="mb-1" style="font-size: 16px;"><b>#{{orderResData?.Ticket}} <span *ngIf="orderResData?.ordType == 0">buy </span>
-                <span *ngIf="orderResData?.ordType == 1">sell </span>
-                <span *ngIf="orderResData?.ordType == 2">buy limit </span>
-                <span *ngIf="orderResData?.ordType == 3">sell limit </span>
-                <span *ngIf="orderResData?.ordType == 4">buy stop </span>
-                <span *ngIf="orderResData?.ordType == 5">sell stop </span>
-                <span *ngIf="orderResData?.ordType == 6">buy stop limit </span>
-                <span *ngIf="orderResData?.ordType == 7">sell stop limit </span> <span>{{orderResData?.Lot}} </span> <span>{{orderResData?.Symbol}} </span> at <span>{{orderResData?.Price}} </span></b></p>
+        <div class="text-center">
+           
+            <p class="mb-1" style="font-size: 16px;"><b>#{{orderResData?.Ticket}}
+              <span *ngIf="modelData?.BS == 0">buy </span>
+        <span *ngIf="modelData?.BS == 1">sell </span>
+        <span *ngIf="modelData?.BS == 2">buy limit </span>
+        <span *ngIf="modelData?.BS == 3">sell limit </span>
+        <span *ngIf="modelData?.BS == 4">buy stop </span>
+        <span *ngIf="modelData?.BS == 5">sell stop </span>
+        <span *ngIf="modelData?.BS == 6">buy stop limit </span>
+        <span *ngIf="modelData?.BS == 7">sell stop limit </span>
+                <span>{{orderResData?.Lot}} </span> <span>{{modelData?.Sy}}
+ 
+                </span> at <span>{{orderResData?.Price}} </span></b></p>
               <p class="mb-1" style="font-size: 16px;"><b>sl:{{orderResData.SL}}, tp: {{orderResData.TL}}</b></p>
               <p class="mb-1" style="font-size: 16px; color:rgb(16, 134, 16)"><b>Done</b></p>
               <button class="btn btn-primary btn-sm ps-4 pe-4" (click)="okReturn()">Ok</button>
         </div>
-        
-
-          <div  class="text-center" *ngIf="showErroMass == 2 && showMassage == 2">
+       
+ 
+       
+        </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="showErroMass == 2 && showMassage == 0">
+    <div style="min-height: 498px; display: flex; align-items: center; justify-content: center;" class="col-md-12" >
+        <div>
+            <!-- <button class="btn mb-3"  (click)="okReturn()"><i class="fa-solid fa-arrow-left"></i></button> -->
+     
+       
+  <div  class="text-center" >
          
             <p class="mb-1" style="font-size: 16px;"><b>{{orderResData?.ERR_MSG}}</b></p>
-                    
+                   
             <div class="row">
                 <button class="btn btn-primary btn-sm ps-4 pe-4" (click)="okReturn()">OK</button>
                
-              
+             
             </div>
           </div>
+       
         </div>
     </div>
-     </div>
+  </div>
+   
   </div>
  
-
+ 
 </ng-template>

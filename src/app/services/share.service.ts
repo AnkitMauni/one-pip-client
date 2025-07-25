@@ -32,7 +32,7 @@ export class ShareService {
     shareNaviValue = this.shareNavi.asObservable();
 
 
-    private changeSym: BehaviorSubject<any> = new BehaviorSubject<any>('AUDUSD.c_5200');
+    private changeSym: Subject<any> = new Subject<any>();
     changeSym$: Observable<any> = this.changeSym.asObservable();
 
 private getSymbols: Subject<any> = new Subject<any>();
@@ -49,6 +49,20 @@ private getSymbols: Subject<any> = new Subject<any>();
      private orderFlagsSource = new BehaviorSubject<number[]>([]);
   public orderFlags$ = this.orderFlagsSource.asObservable();
 
+  private marginSubject = new BehaviorSubject<number>(0);
+public liveMargin$ = this.marginSubject.asObservable();
+
+private accountDataSubject = new BehaviorSubject<any>({ balance: 0, margin: 0 });
+  public accountData$ = this.accountDataSubject.asObservable();
+ 
+  updateAccountData(data: any) {
+    this.accountDataSubject.next(data);
+  }
+
+livMargin(margin: number) {
+  this.marginSubject.next(margin);
+}
+
   setOrderFlags(flags: number[]) {
     this.orderFlagsSource.next(flags);
   }
@@ -63,9 +77,9 @@ private getSymbols: Subject<any> = new Subject<any>();
   getSymData(newSymbol: string): void {
     this.changeSym.next(newSymbol);
   }
-  getSymbol(): string {
-    return this.changeSym.getValue();
-  }
+  // getSymbol(): string {
+  //   return this.changeSym.;
+  // }
   // getSymData(data: any){
   //    console.log("changeSymchangeSymchangeSym",data);
      
@@ -302,7 +316,7 @@ private getSymbols: Subject<any> = new Subject<any>();
   private sendModefy: Subject<any> = new Subject<any>();
   sendModefy$: Observable<any> = this.sendModefy.asObservable();
 
-  sendModefyData(data: any) {
+  sendModefyData(data: any):any {
     this.sendModefy.next(data);
   }
 

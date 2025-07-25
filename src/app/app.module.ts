@@ -12,7 +12,7 @@ import { GlobalService } from './services/global.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 // import { AdvancedChartComponent } from './advanced-chart/advanced-chart.component';
-import { TradingviewWidgetModule } from 'angular-tradingview-widget';
+// import { TradingviewWidgetModule } from 'angular-tradingview-widget';
 import { AngularSplitModule } from 'angular-split';
 import { LoaderComponent } from './commonModule/loader/loader.component';
 import { AdvancedChartComponent } from './module/advanced-chart/advanced-chart.component';
@@ -23,7 +23,7 @@ import { AdvancedChartComponent } from './module/advanced-chart/advanced-chart.c
     
   ],
   imports: [
-    BrowserModule,TradingviewWidgetModule,
+    BrowserModule,
     AppRoutingModule,
     NgbModule,
     RouterOutlet,

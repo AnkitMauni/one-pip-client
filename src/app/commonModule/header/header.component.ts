@@ -8,11 +8,10 @@ import { Location } from '@angular/common';
 import { ShareService } from 'src/app/services/share.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { ToastrService } from 'ngx-toastr';
+import { HeaderToFooterService } from 'src/app/services/headerToFooter.service';
 
 @Component({
   selector: 'app-header',
-  
-	
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -43,7 +42,9 @@ export class HeaderComponent {
   bufferArray: any = Uint8Array;
   dropdownOptions: { label: string, value: number }[] = [];
   subscribedSymbols:any
-  constructor(private toaster: ToastrService,private fb: FormBuilder,private share:ShareService ,private location: Location,private modalService: NgbModal, config: NgbModalConfig,private global: GlobalService,private router: Router, private api:GlobalService) {
+  allGetTrade: any;
+  allGetTrade1: any;
+  constructor(private headertoFooterSer:HeaderToFooterService,private toaster: ToastrService,private fb: FormBuilder,private share:ShareService ,private location: Location,private modalService: NgbModal, config: NgbModalConfig,private global: GlobalService,private router: Router, private api:GlobalService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.previousUrl = event.url;
@@ -51,13 +52,13 @@ export class HeaderComponent {
     });
     this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
 
-   this.id = localStorage.getItem('loginId')
+    this.id = localStorage.getItem('loginId')
    
    config.backdrop = 'static';
 		config.keyboard = false;
-    // this.changeSymbolData()
+  
     this.share.changeSym$.subscribe((res:any)=>{
-      console.log(" symbol ress",res);
+      // console.log(" symbol ress",res);
         localStorage.setItem('changeSym',res)
         localStorage.getItem('changeSym')
         this.changeSymbolData(res)
@@ -81,15 +82,15 @@ export class HeaderComponent {
 
   this.share.getSymbols$.subscribe((res:any)=>{
     this.subscribedSymbols = res
-    console.log("subscribedSymbols",this.subscribedSymbols)
+    // console.log("subscribedSymbols",this.subscribedSymbols)
     this.convertSymbolsToMenuTree(this.subscribedSymbols)
   })
     this.accountList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
     this.accountActiveList=  this.accountList.filter((list:any) => list.account === Number(localStorage.getItem('loginId')))
-console.log("this.accountActiveListthis.accountActiveListthis.accountActiveList",this.accountActiveList);
+// console.log("this.accountActiveListthis.accountActiveListthis.accountActiveList",this.accountActiveList);
 this.share.sharedData$.subscribe((data:any) => {
   if (data) {
-   console.log("dataa",data);
+  //  console.log("dataa",data);
   //  this.qoutes =(data.Sock_Quote).replace(/\\/g, "//")
    this.trades =(data.Sock_Trade).replace(/\\/g, "//")
    
@@ -102,7 +103,7 @@ this.share.sharedData$.subscribe((data:any) => {
     
     const storedTrade = localStorage.getItem('Sock_Trade');
     this.trades = storedTrade ? storedTrade.replace(/\\/g, "//") : "";
-    console.log("this.trades0",this.trades);
+    // console.log("this.trades0",this.trades);
   }
 });
 
@@ -124,11 +125,11 @@ setTimeout(() => {
   // this.get_Mk()
   // this.GET_USER_ALL_SYMBOLS_v2()
 }, 3000);
-this.
 
-share.closeOrderbySocket$.subscribe((data:any) => {
+
+this.share.closeOrderbySocket$.subscribe((data:any) => {
   if(!data){
-    console.log('Received Data:', null);
+    // console.log('Received Data:', null);
   }
   else{
     console.log('Received Data:', data);
@@ -139,7 +140,7 @@ share.closeOrderbySocket$.subscribe((data:any) => {
 
 share.sendModefy$.subscribe((data:any) => {
   if(!data){
-    console.log('Received Data:', null);
+    // console.log('Received Data:', null);
   }
   else{
     console.log('Received Data:', data);
@@ -205,7 +206,6 @@ convertSymbolsToMenuTree(lstSymbols: any[]) {
   this.menu2 = this.symbolMenu;
   const currentSymbol = localStorage.getItem('changeSym') as string;
 const selected = this.findSymbolNode(currentSymbol);
-console.log("asele", selected);
 if (selected) {
   this.selectedNode2 = selected;
   this.symShow = selected.scripCode;
@@ -248,42 +248,72 @@ toggleVisible2(node: any) {
 selectNode2(node: any) {
   this.selectedNode2 = node;
   this.symShow = node.scripCode;
-
-  localStorage.setItem('changeSym', node.scripCode); // persist
+ 
+  // localStorage.setItem('changeSym', node.scripCode); // persist
   // this.share.changeSym$.next(node.scripCode);        // notify others if needed
-
+ 
   this.toggleDropdown2();
   this.getSymInfo(node.scripCode);  
-    this.getInitial(node.scripCode);                 // fetch new chart data
+    this.getInitial(node.scripCode);      
+    const matchedSymbol = this.subscribedSymbols.find(
+      (s: any) => s.oSymbolConfig.Symbol === node.scripCode
+    );
+ 
+    if (matchedSymbol) {
+      this.chnagevalueinsideNode = [matchedSymbol]; // Sync with filter path
+    } else {
+      this.chnagevalueinsideNode = 0; // fallback
+    }          // fetch new chart data
+    // console.log("this.chnagevalueinsideNode[0]?.oSymbolConfig?.Symbol",this.chnagevalueinsideNode)
 }
 getSymInfo(val: any) {
   this.selectedRowIndex = null;
   this.filterSymbols(val?.path || val);
 }
+chnagevalueinsideNode:any = 0;
 filterSymbols(filterValue: string) {
   // If the structure is flat now (each item is a symbol)
   const symbolMatch = this.subscribedSymbols.find(
     (symbol: any) => symbol.oSymbolConfig?.Symbol === filterValue
   );
-
+ 
   if (symbolMatch) {
-    console.log("symbolMatch", [symbolMatch]);
-    this.subscribedSymbols = [symbolMatch];  // if you want to show only the matched one
+    // console.log("symbolMatch", [symbolMatch]);
+    this.chnagevalueinsideNode= [symbolMatch];
+    // this.subscribedSymbols = [symbolMatch]; 
+    //  console.log("this.chnagevalueinsideNode", this.chnagevalueinsideNode[0].oSymbolConfig.Symbol); // if you want to show only the matched one
     return { lstSymbols: [symbolMatch] };
   }
-
+ 
   return { lstSymbols: [] };
 }
-
+  changeSymbolData(val:any){
+  
+    
+    this.share.allMarketLiveData$.subscribe((res: any) => {
+      // console.log("allMarketLiveData",res);
+      this.data = res.filter((item: any) => item?.oSymbolConfig?.Symbol === val);
+      // console.log("dddaata[0]", this.data);
+      this.currentPri = this.data[0]?.oInitial?.Ask
+      // localStorage.setItem('changeSym',this.data[0]?.oSymbolConfig?.Symbol)
+    })}
 getInitial(val:any) {
   let obj = {
     "Key": "",
     "Symbol": val,
   };
-
+ 
   this.api.GET_SYMBOL_INITIAL(obj).subscribe({
     next: (res: any) => {
-      console.log("Ress", res);
+      // Assume res contains updated oInitial info
+      this.data = Array.isArray(res) ? res : [res];
+ 
+      // Optional: also sync chnagevalueinsideNode here if needed
+      if (this.chnagevalueinsideNode !== 0) {
+        // Keep it in sync if already filtered
+        this.chnagevalueinsideNode[0].oInitial = res?.oInitial || this.chnagevalueinsideNode[0].oInitial;
+      }
+      // console.log("Ress", res);
       if (res?.ordFlag) {
         this.share.setOrderFlags(res.ordFlag);
       }
@@ -317,6 +347,7 @@ buildDropdownOptions(flags: number[]) {
 
   this.dropdownOptions = options;
 }
+Margin:any
   private handleMessage(event: MessageEvent) {
     const blobData: Blob = event.data;
 
@@ -329,6 +360,25 @@ buildDropdownOptions(flags: number[]) {
         const uint8ArrayData = new Uint8Array(binaryData);
         // console.log('Received binary data:', uint8ArrayData);
         // this.orderCancelRespDecrypt(uint8ArrayData)
+      const view = new DataView(binaryData);
+      const MsgID = view.getUint16(0, true);
+
+      if (MsgID === 102) {
+        const Login = Number(view.getBigUint64(2, true));
+        const Balance = view.getFloat64(10, true);
+        const Margin = view.getFloat64(18, true);
+
+        console.log(">>> MsgID 102 received", { Login, Balance, Margin });
+
+        this.Blance = Balance;
+        this.Margin = Margin;
+       this.share.updateAccountData({
+        balance: Balance,
+        margin: Margin
+      });
+        return; // Exit early; no need to run decode functions for MsgID 102
+      }
+
         if (this.step == 0) {
           this.decodeLogin1(uint8ArrayData)
         }
@@ -356,7 +406,7 @@ buildDropdownOptions(flags: number[]) {
         try {
           const jsonData = JSON.parse(this.bytesToAscii(uint8ArrayData));
 
-          console.log('Received data as JSON:', jsonData);
+          // console.log('Received data as JSON:', jsonData);
 
           // Now you have the JSON object and can use it as needed
         } catch (error) {
@@ -380,7 +430,7 @@ buildDropdownOptions(flags: number[]) {
 
   connection: any
   handleClose(event: Event) {
-    console.log('Connection Market closed:', event);
+    // console.log('Connection Market closed:', event);
     // You can add your logic here to handle the connection loss
     if (event.type == 'close') {
       this.connection = false
@@ -426,7 +476,7 @@ buildDropdownOptions(flags: number[]) {
     // Split the time string into hours, minutes, and seconds
     const timeParts = timeString.split(':');
     if (timeParts.length !== 3) {
-      // console.error('Invalid time string format:', timeString);
+      console.error('Invalid time string format:', timeString);
       return '00:00:00'; // Or any default value you prefer
     }
 
@@ -455,10 +505,10 @@ buildDropdownOptions(flags: number[]) {
       // Convert the hexadecimal string to bytes before sending
       // const byteArray = this.hexToBytes(data);
 
-      console.log("this.jsonBytes1111", this.jsonBytes)
+      // console.log("this.jsonBytes1111", this.jsonBytes)
 
       this.socket.send(this.bufferArray);
-      console.log("this.jsonBytes", this.jsonBytes.buffer,"this.bufferArray" ,this.bufferArray)
+      // console.log("this.jsonBytes", this.jsonBytes.buffer,"this.bufferArray" ,this.bufferArray)
 
     } else {
       console.error('WebSocket connection is not open.');
@@ -485,7 +535,7 @@ buildDropdownOptions(flags: number[]) {
 
 
   ngOnInit(){
-    console.log(" this.shareInputNav",this.shareInputNav);
+    // console.log(" this.shareInputNav",this.shareInputNav);
     this.loginForm = this.fb.group({
       ac:[''],
       pass:['']
@@ -514,6 +564,14 @@ buildDropdownOptions(flags: number[]) {
 this.NaviGteMargin("Margin")
 this.NaviGteMargin("Queue")
 this.share.shareNavigateHight(this.shareInputNav)
+// this.share.allMarketLiveData$.subscribe((res: any) => {
+//   this.subscribedSymbols = res;
+
+//   const currentSymbol = localStorage.getItem('changeSym');
+//   if (currentSymbol) {
+//     this.changeSymbolData(currentSymbol);
+//   }
+// });
   }
   closePassForm(){
    this.modref1.close() 
@@ -530,7 +588,7 @@ changePass(){
 this.api.MAKE_CHANGE_PASSWORD(payload)
       .subscribe({
         next: (res: any) => {
-          console.log("Password changed successfully:", res);
+          // console.log("Password changed successfully:", res);
          
            this.toaster.success("Password changed successfully!", "Success");
           this.closeModel();
@@ -565,9 +623,10 @@ this.api.MAKE_CHANGE_PASSWORD(payload)
 
   
 logout(){
-  localStorage.removeItem('loginId');
   this.router.navigate(['/login']).then(() => {
     window.location.reload();
+    localStorage.clear();
+    sessionStorage.clear();
   });
 }
 
@@ -597,22 +656,26 @@ logout(){
 
   data:any=[]
   changeAskBid:any =[]
-  currentPri:any 
-  changeSymbolData(val:any){
-  
-    
-    this.share.allMarketLiveData$.subscribe((res: any) => {
-      // console.log("allMarketLiveData",res);
-      this.data = res.filter((item: any) => item?.oSymbolConfig?.Symbol === val);
-      this.currentPri = this.data[0]?.oInitial?.Ask
-      localStorage.setItem('changeSym',this.data[0]?.oSymbolConfig?.Symbol)
-    })
+  currentPri:any =0
+// changeSymbolData(val: any) {
+//   const symbol = val?.trim();
+//   if (!symbol) return;
 
-     
-    // localStorage.setItem('Ask',this.data.oInitial.Ask)
-    //   localStorage.setItem('Bid',this.data.oInitial.Bid)
-  
-  }
+//   const match = this.subscribedSymbols?.find(
+//     (item: any) => item?.oSymbolConfig?.Symbol === symbol
+//   );
+
+//   if (match) {
+//     this.data = [match];
+//     this.currentPri = match?.oInitial?.Ask;
+//     // localStorage.setItem('changeSym', match.oSymbolConfig.Symbol);
+//   } else {
+//     this.data = [];
+//     this.currentPri = null;
+//     console.warn("❗ Symbol not found in live data:", symbol);
+//   }
+// }
+
 
 
  
@@ -645,31 +708,11 @@ onDateChange(event: any) {
 }
 
 MAKE_NEW_ORDER_Market(val:any, price:any){
-  // this.priceTrade = this.tradeForm.value.Price
-  // this.tradeForm.patchValue({
-  //   AtPrice:price
-  // })
-//   let obj ={
-//     "Login": Number(localStorage.getItem('loginId')),
-//     "Symbol": localStorage.getItem('changeSym'),
-//     "Lot": Number(this.inputLotValue),
-//     "Price":Number(price),
-//     "SL":Number(this.orderFrom.value.stopLoss),
-//     "PL":Number(this.orderFrom.value.takeProfit),
-//     "ordType":val,               //Buy = 0,Sell = 1,BuyLimit = 2,SellLimit = 3,BuyStop = 4,SellStop = 5,BuyStopLimit = 6,SellStopLimit = 7
-//     "fillType":1,               //FillOrKill = 0,ImmediateOrCancel = 1,FlashFill = 2,Any = 3
-//     "trdType":3,                //TradePrice = 0,RequestExecution = 1,InstantExecution = 2, MarketExecution = 3,ExchangeExecution = 4,SetOrder = 5,ModifyDeal = 6,ModifyOrder = 7,CancelOrder = 8,Transfer = 9,ClosePosition = 10,ActivateOrder = 100,ActivateStopLoss = 101,ActivateTakeProfit = 102,ActivateStopLimitOrder = 103,ActivateStopOutOrder = 104,ActivateStopOutPosition = 105,ExpireOrder = 106, ForSetOrder = 200,ForOrderPrice = 201,    ForModifyDeal = 202,ForModifyOrder = 203,ForCancelOrder = 204,ForActivateOrder = 205,ForBalance = 206,ForActivateStopLimitOrder = 207,ForClosePosition = 208
-//     //"StopLimit":185.890,
-//     "Expiry": 0,                //GTC = 0, Today = 1,Specified = 2,SpecifiedDay = 3
-//     "ExpTime":this.timeStamp,
-//     "Comment":(this.orderFrom.value.comment)
-// }
-console.log("localStorage.getItem('changeSym')",localStorage.getItem('changeSym'));
 
 let obj = {
   Login: 105,
   accID:Number(localStorage.getItem('loginId')),
-  Symbol: localStorage.getItem('changeSym'),
+  Symbol:  this.chnagevalueinsideNode[0]?.oSymbolConfig?.Symbol || localStorage.getItem('changeSym'),
   Lot:  Number(this.inputLotValue),
   Price: Number(price),
   SL: Number(this.orderFrom.value.stopLoss),
@@ -686,31 +729,11 @@ let obj = {
 this.sendOrder1(obj)
 console.log("New order ",obj);
 
-// this.global.MAKE_NEW_ORDER(obj).subscribe({next:(res:any)=>{
-//   this.orderResData= res
- 
-//   this.share.active(1)
-//   if(this.orderResData.ERR_MSG == ""){
-//     this.showMassage = 2
-//     this.showErroMass =1
-//   }
-//   else   if(this.orderResData.ERR_MSG != ""){
-//     this.showMassage = 2
-//     this.showErroMass =2
-//   }
-//   else{
-//     this.showMassage = 1
-//     this.showErroMass =1
-//   }
 
-
-// },error:(err:any)=>{
-//   console.log(err);
-  
-// }})
 }
 
 okReturn(){
+  this.modref.close()
   this.showErroMass =1
   this.showMassage = 1
   this.share.active(1)
@@ -735,7 +758,7 @@ sendOrder1(obj:any) {
      this.socket.send(this.bufferArray);
      console.log("Buffer as Array:", Array.from(this.bufferArray));
      console.log("this.jsonBytes", this.jsonBytes.buffer)
-
+     this.headertoFooterSer.sendData(true);    
    } else {
      console.error('WebSocket connection is not open.');
    }
@@ -842,22 +865,33 @@ orderRes(byteArray: Uint8Array): any {
           Update:Update,
           Timestamp:Timestamp,
           Symbol:Symbol,
-          // Blance :Balance ,// 8 bytes for Price
-          // Margin : Margin,  //8 bytes for SL
-          // FreeMargin : FreeMargin, // 8 bytes for TL
+          Blance :Balance ,// 8 bytes for Price
+          Margin : Margin,  //8 bytes for SL
+          FreeMargin : FreeMargin, // 8 bytes for TL
           // PLCalPrice:this.CheckP
       };
+      const balance = obj?.Blance;
+  const margin = obj?.Margin;
+
+  // this.share.livBalance(balance);
+  // this.share.livMargin(margin);
+    this.share.updateAccountData({
+        balance: balance,
+        margin: margin
+      });
    console.log("order res", obj);
          if(obj.oBuySell == 0 ||obj.oBuySell == 1 ){
-        this.share.addPositon(obj)
+        // this.share.addPositon(obj)
+        this.GET_OPENED1()
       this.orderResData = obj
+      this.Blance = obj.Blance
     this.showMassage = 2
     this.showErroMass =1
       //   this.redirect(obj)
         
       }
       else{
-        this.share.addPositon(obj)
+        // this.share.addPositon(obj)
         this.getStatusActivity(obj)
         this.orderResData = obj
         this.showMassage = 2
@@ -868,37 +902,43 @@ orderRes(byteArray: Uint8Array): any {
 
 
     }
-   else if (MsgID == 301){
-   const Login = Number((view as any).getBigUint64(2, true)); // 8 bytes Convert BigInt to number for Login
-      const Ticket = Number((view as any).getBigUint64(10, true));// 8 bytes Convert BigInt to number for Ticket
-     // Extract Symbol (up to 15 characters, starting at byte 18, stopping at null character)
+
+ if (MsgID == 301) {
+  const Login = Number((view as any).getBigUint64(2, true));
+  const Ticket = Number((view as any).getBigUint64(10, true));
+
   let symbolBytes = [];
   for (let i = 0; i < 15; i++) {
-      const byte = view.getUint8(18 + i); // Symbol starts at byte 18
-      if (byte === 0) break; // Stop if null character is encountered
+      const byte = view.getUint8(18 + i);
+      if (byte === 0) break;
       symbolBytes.push(byte);
   }
   const Symbol = new TextDecoder().decode(new Uint8Array(symbolBytes));
 
-  // Extract Comment (up to 20 characters, starting at byte 33)
   let commentBytes = [];
   for (let i = 0; i < 20; i++) {
-      const byte = view.getUint8(33 + i); // Comment starts after Symbol (byte 33)
-      if (byte === 0) break; // Stop if null character is encountered
+      const byte = view.getUint8(33 + i);
+      if (byte === 0) break;
       commentBytes.push(byte);
   }
   const Comment = new TextDecoder().decode(new Uint8Array(commentBytes));
 
-  // Extract ERR_MSG (up to 50 characters, starting at byte 53)
   let errorMsgBytes = [];
   for (let i = 0; i < 50; i++) {
-      const byte = view.getUint8(53 + i); // ERR_MSG starts after Comment (byte 53)
-      if (byte === 0) break; // Stop if null character is encountered
+      const byte = view.getUint8(53 + i);
+      if (byte === 0) break;
       errorMsgBytes.push(byte);
   }
   const ERR_MSG = new TextDecoder().decode(new Uint8Array(errorMsgBytes));
 
-  // Create object with parsed values
+  let Balance = 0, Margin = 0;
+  if (byteArray.length >= 120) {
+      Balance = view.getFloat64(104, true);
+      Margin = view.getFloat64(112, true);
+  } else {
+      console.warn(`Payload too short for Balance/Margin read in MsgID 301: length = ${byteArray.length}`);
+  }
+
   const obj = {
       MsgID,
       Login,
@@ -906,13 +946,54 @@ orderRes(byteArray: Uint8Array): any {
       Symbol,
       Comment,
       ERR_MSG,
+      Balance,
+      Margin
   };
 
   console.log("rejecttt",obj);
-   this.orderResData = obj
-    this.showMassage = 2
-    this.showErroMass =2
+  this.orderResData = obj;
+  this.showMassage = 2;
+  this.showErroMass = 2;
+}
 
+if (MsgID == 120) {
+  const Login = Number((view as any).getBigUint64(2, true));
+  const Ticket = Number((view as any).getBigUint64(10, true));
+  const Lot = view.getFloat64(18, true);
+  const Price = view.getFloat64(26, true);
+  const SL = view.getFloat64(34, true);
+  const TL = view.getFloat64(42, true);
+  const oBuySell = view.getUint16(50, true);
+  const State = view.getUint16(52, true);
+  const Update = view.getInt16(54, true);
+  const Timestamp = Number((view as any).getBigUint64(56, true));
+
+
+  const Balance = view.getFloat64(88, true); 
+  const Margin = view.getFloat64(96, true);
+
+  localStorage.setItem('trade_Blance', `${Balance}`);
+  localStorage.setItem('trade_Margin', `${Margin}`);
+
+  const obj = {
+    MsgID,
+    Login,
+    Ticket,
+    Price,
+    Lot,
+    SL,
+    TL,
+    oBuySell,
+    State,
+    Update,
+    Timestamp,
+    Balance,
+    Margin,
+    Symbol: '...' // Add symbol decoding logic if needed
+  };
+
+  console.log("ORDER RES 120", obj);
+  this.share.addPositon(obj);
    }
 
 
@@ -923,54 +1004,123 @@ timepa:any
 closeOrderRes(byteArray: Uint8Array): any {
       
           const view = new DataView(byteArray.buffer);
-
+  console.log("byteArray close order rsponse",byteArray)
           const MsgID = view.getUint16(0, true); // 2 bytes for MsgID
-          if(MsgID == 124){
+        //   if(MsgID == 124){
+        //     const Login = Number((view as any).getBigUint64(2, true)); // 8 bytes for Login
+        //     const Ticket = Number((view as any).getBigUint64(10, true)); // 8 bytes for Ticket
+        //     const Lot = view.getFloat64(18, true); // 8 bytes for Lot
+ 
+            
+        //     // Extract Symbol (15 bytes, starting at byte 26)
+        //     let symbolBytes = [];
+        //     for (let i = 0; i < 15; i++) {
+        //         const byte = view.getUint8(26 + i);
+        //         if (byte === 0) break; // Stop at null character
+        //         symbolBytes.push(byte);
+        //     }
+        //     const Symbol = new TextDecoder().decode(new Uint8Array(symbolBytes));
+            
+        //     // Extract Comment (20 bytes, starting at byte 41)
+        //     let commentBytes = [];
+        //     for (let i = 0; i < 20; i++) {
+        //         const byte = view.getUint8(41 + i);
+        //         if (byte === 0) break; // Stop at null character
+        //         commentBytes.push(byte);
+        //     }
+        //     const Comment = new TextDecoder().decode(new Uint8Array(commentBytes));
+            
+        //     // Extract ERR_MSG (50 bytes, starting at byte 61)
+        //     let errorMsgBytes = [];
+        //     for (let i = 0; i < 50; i++) {
+        //         const byte = view.getUint8(61 + i);
+        //         if (byte === 0) break; // Stop at null character
+        //         errorMsgBytes.push(byte);
+        //     }
+        //     const ERR_MSG = new TextDecoder().decode(new Uint8Array(errorMsgBytes));
+
+        //      const Balance = view.getFloat64(112, true);
+        //     // const Margin = view.getFloat64(120, true);
+        //     let obj ={ 
+        //       MsgID:MsgID, 
+        //       Login:Login,
+        //       Ticket:Ticket, 
+        //       Lot:Lot,
+        //       Symbol:Symbol, 
+        //       Comment:Comment,
+        //       ERR_MSG:ERR_MSG,
+        //       Balnce: Balance,
+        //       // Margin: Margin
+
+        //     }
+        //     console.log({ MsgID, Login, Ticket, Lot, Symbol, Comment, ERR_MSG ,Balance});
+        //  this.step = 3;
+        //  console.log("order res", obj);
+            
+        //       this.share.addPositon(obj)
+        //       this.getStatusActivityClose(obj)
+        //       this.share.msgForClientToModifyData(obj)
+        //       // this.orderResData = obj
+        //       // this.showMassage = 2
+        //       // this.showErroMass =1
+        //       // this.redirect(obj)
+         
+      
+      
+        //   }
+    if(MsgID == 124){
             const Login = Number((view as any).getBigUint64(2, true)); // 8 bytes for Login
             const Ticket = Number((view as any).getBigUint64(10, true)); // 8 bytes for Ticket
             const Lot = view.getFloat64(18, true); // 8 bytes for Lot
-            
+			      const Balance = view.getFloat64(26, true);
+            const Margin = view.getFloat64(34, true);            
+           
             // Extract Symbol (15 bytes, starting at byte 26)
             let symbolBytes = [];
             for (let i = 0; i < 15; i++) {
-                const byte = view.getUint8(26 + i);
+                const byte = view.getUint8(42 + i);
                 if (byte === 0) break; // Stop at null character
                 symbolBytes.push(byte);
             }
             const Symbol = new TextDecoder().decode(new Uint8Array(symbolBytes));
-            
+           
             // Extract Comment (20 bytes, starting at byte 41)
             let commentBytes = [];
             for (let i = 0; i < 20; i++) {
-                const byte = view.getUint8(41 + i);
+                const byte = view.getUint8(57 + i);
                 if (byte === 0) break; // Stop at null character
                 commentBytes.push(byte);
             }
             const Comment = new TextDecoder().decode(new Uint8Array(commentBytes));
-            
+           
             // Extract ERR_MSG (50 bytes, starting at byte 61)
             let errorMsgBytes = [];
             for (let i = 0; i < 50; i++) {
-                const byte = view.getUint8(61 + i);
+                const byte = view.getUint8(67 + i);
                 if (byte === 0) break; // Stop at null character
                 errorMsgBytes.push(byte);
             }
             const ERR_MSG = new TextDecoder().decode(new Uint8Array(errorMsgBytes));
-            let obj ={ 
-              MsgID:MsgID, 
+            
+            let obj ={
+              MsgID:MsgID,
               Login:Login,
-              Ticket:Ticket, 
+              Ticket:Ticket,
               Lot:Lot,
-              Symbol:Symbol, 
+              Symbol:Symbol,
               Comment:Comment,
-              ERR_MSG:ERR_MSG
-
+              ERR_MSG:ERR_MSG,
+              Balnce: Balance,
+              Margin: Margin
             }
-            console.log({ MsgID, Login, Ticket, Lot, Symbol, Comment, ERR_MSG });
+            console.log({ MsgID, Login, Ticket, Lot, Symbol, Comment, ERR_MSG ,Balance});
          this.step = 3;
          console.log("order res", obj);
-            
-              this.share.addPositon(obj)
+             this.share.updateAccountData({
+        balance: obj.Balnce,
+        margin: obj.Margin
+      });
+              // this.share.addPositon(obj)
               this.getStatusActivityClose(obj)
               this.share.msgForClientToModifyData(obj)
               // this.orderResData = obj
@@ -978,39 +1128,88 @@ closeOrderRes(byteArray: Uint8Array): any {
               // this.showErroMass =1
               // this.redirect(obj)
          
-      
-      
+     
+     
           }
-         else if (MsgID == 301){
+        //  else if (MsgID == 301){
+        //  const Login = Number((view as any).getBigUint64(2, true)); // 8 bytes Convert BigInt to number for Login
+        //     const Ticket = Number((view as any).getBigUint64(10, true));// 8 bytes Convert BigInt to number for Ticket
+        //    // Extract Symbol (up to 15 characters, starting at byte 18, stopping at null character)
+        // let symbolBytes = [];
+        // for (let i = 0; i < 15; i++) {
+        //     const byte = view.getUint8(18 + i); // Symbol starts at byte 18
+        //     if (byte === 0) break; // Stop if null character is encountered
+        //     symbolBytes.push(byte);
+        // }
+        // const Symbol = new TextDecoder().decode(new Uint8Array(symbolBytes));
+      
+        // // Extract Comment (up to 20 characters, starting at byte 33)
+        // let commentBytes = [];
+        // for (let i = 0; i < 20; i++) {
+        //     const byte = view.getUint8(33 + i); // Comment starts after Symbol (byte 33)
+        //     if (byte === 0) break; // Stop if null character is encountered
+        //     commentBytes.push(byte);
+        // }
+        // const Comment = new TextDecoder().decode(new Uint8Array(commentBytes));
+      
+        // // Extract ERR_MSG (up to 50 characters, starting at byte 53)
+        // let errorMsgBytes = [];
+        // for (let i = 0; i < 50; i++) {
+        //     const byte = view.getUint8(53 + i); // ERR_MSG starts after Comment (byte 53)
+        //     if (byte === 0) break; // Stop if null character is encountered
+        //     errorMsgBytes.push(byte);
+        // }
+        // const ERR_MSG = new TextDecoder().decode(new Uint8Array(errorMsgBytes));
+      
+        // // Create object with parsed values
+        // const obj = {
+        //     MsgID,
+        //     Login,
+        //     Ticket,
+        //     Symbol,
+        //     Comment,
+        //     ERR_MSG,
+        // };
+      
+        // console.log("rejecttt",obj);
+        // this.share.msgForClientToModifyData(obj)
+        //  this.orderResData = obj
+        //   this.showMassage = 2
+        //   this.showErroMass =2
+    
+        //  }
+      if (MsgID == 301){
          const Login = Number((view as any).getBigUint64(2, true)); // 8 bytes Convert BigInt to number for Login
-            const Ticket = Number((view as any).getBigUint64(10, true));// 8 bytes Convert BigInt to number for Ticket
-           // Extract Symbol (up to 15 characters, starting at byte 18, stopping at null character)
+         const Ticket = Number((view as any).getBigUint64(10, true));// 8 bytes Convert BigInt to number for Ticket
+         const Balance = view.getFloat64(18, true);
+         const Margin = view.getFloat64(26, true); 
+		 
         let symbolBytes = [];
         for (let i = 0; i < 15; i++) {
-            const byte = view.getUint8(18 + i); // Symbol starts at byte 18
+            const byte = view.getUint8(34 + i); // Symbol starts at byte 18
             if (byte === 0) break; // Stop if null character is encountered
             symbolBytes.push(byte);
         }
         const Symbol = new TextDecoder().decode(new Uint8Array(symbolBytes));
-      
+     
         // Extract Comment (up to 20 characters, starting at byte 33)
         let commentBytes = [];
         for (let i = 0; i < 20; i++) {
-            const byte = view.getUint8(33 + i); // Comment starts after Symbol (byte 33)
+            const byte = view.getUint8(49 + i); // Comment starts after Symbol (byte 33)
             if (byte === 0) break; // Stop if null character is encountered
             commentBytes.push(byte);
         }
         const Comment = new TextDecoder().decode(new Uint8Array(commentBytes));
-      
+     
         // Extract ERR_MSG (up to 50 characters, starting at byte 53)
         let errorMsgBytes = [];
         for (let i = 0; i < 50; i++) {
-            const byte = view.getUint8(53 + i); // ERR_MSG starts after Comment (byte 53)
+            const byte = view.getUint8(69 + i); // ERR_MSG starts after Comment (byte 53)
             if (byte === 0) break; // Stop if null character is encountered
             errorMsgBytes.push(byte);
         }
         const ERR_MSG = new TextDecoder().decode(new Uint8Array(errorMsgBytes));
-      
+     
         // Create object with parsed values
         const obj = {
             MsgID,
@@ -1019,16 +1218,21 @@ closeOrderRes(byteArray: Uint8Array): any {
             Symbol,
             Comment,
             ERR_MSG,
+            Balance,
+            Margin
         };
-      
+     
         console.log("rejecttt",obj);
+        this.share.updateAccountData({
+        balance: obj.Balance,
+        margin: obj.Margin
+      });
         this.share.msgForClientToModifyData(obj)
          this.orderResData = obj
           this.showMassage = 2
           this.showErroMass =2
-    
+   
          }
-      
     
       }
       
@@ -1087,7 +1291,7 @@ MAKE_NEW_ORDER(val:any){
 let obj = {
   Login: 105,
   accID: Number(localStorage.getItem('loginId')),
-  Symbol: localStorage.getItem('changeSym'),
+  Symbol: this.chnagevalueinsideNode[0].oSymbolConfig.Symbol,
   Lot: Number(this.inputLotValue),
   Price: Number(this.orderFrom.value.price),
   SL:  Number(this.orderFrom.value.stopLoss),
@@ -1310,7 +1514,7 @@ isPlaceButtonDisabled(): boolean {
 
   if (!price || !marketPrice) return true;
 
-  // ? BUY LIMIT CONDITIONS
+  // ✅ BUY LIMIT CONDITIONS
   if (orderType === 2) {
     // Basic Price Validation
     if (price > marketPrice) return true;
@@ -1324,10 +1528,10 @@ isPlaceButtonDisabled(): boolean {
     // TP must be greater than price
     if (tpFilled && tp <= price) return true;
 
-    return false; // ? All Buy Limit conditions passed
+    return false; // ✅ All Buy Limit conditions passed
   }
 
-  // ? SELL LIMIT CONDITIONS
+  // ✅ SELL LIMIT CONDITIONS
   if (orderType === 3) {
     // Price must be >= market price
     if (price < marketPrice) return true;
@@ -1341,16 +1545,16 @@ isPlaceButtonDisabled(): boolean {
     // TP must be <= price
     if (tpFilled && tp > price) return true;
 
-    // ? TP must also not exceed market price
+    // ❌ TP must also not exceed market price
     if (tpFilled && tp > marketPrice) return true;
 
-    // ? SL is valid, but TP is still too high
+    // ❌ SL is valid, but TP is still too high
     if (slFilled && sl > price && tpFilled && tp > price) return true;
 
-    // ? All Sell Limit conditions passed
+    // ✅ All Sell Limit conditions passed
     return false;
   }
- // ? Buy Stop
+ // ✅ Buy Stop
   if (orderType === 4) {
     if (price <= marketPrice) return true; // Price should be greater
 
@@ -1377,7 +1581,7 @@ isPlaceButtonDisabled(): boolean {
 
     return false;
   }
-  // ? SELL STOP CONDITIONS
+  // ✅ SELL STOP CONDITIONS
 if (orderType === 5) {
   if (price >= marketPrice) return true; // Price should be less than market price
 
@@ -1390,9 +1594,9 @@ if (orderType === 5) {
   // If TP is filled: it should be less than the price
   if (tpFilled && tp >= price) return true;
 
-  return false; // ? All Sell Stop conditions passed
+  return false; // ✅ All Sell Stop conditions passed
 }
-// ? BUY STOP LIMIT CONDITIONS
+// ✅ BUY STOP LIMIT CONDITIONS
 if (orderType === 6) {
   const stopLimitPrice = parseFloat(this.orderFrom.get('stopLimitPrice')?.value || '0');
   const lot = parseFloat(this.orderFrom.get('lotSize')?.value || '0');
@@ -1420,9 +1624,9 @@ if (orderType === 6) {
   // All correct, but price field cleared
   if (!price && stopLimitPrice && slFilled && tpFilled) return true;
 
-  return false; // ? All Buy Stop Limit conditions passed
+  return false; // ✅ All Buy Stop Limit conditions passed
 }
-// ? SELL STOP LIMIT CONDITIONS
+// ✅ SELL STOP LIMIT CONDITIONS
 if (orderType === 7) {
   const stopLimitPrice = parseFloat(this.orderFrom.get('stopLimitPrice')?.value || '0');
   const lot = parseFloat(this.orderFrom.get('lotSize')?.value || '0');
@@ -1445,10 +1649,10 @@ if (orderType === 7) {
   // TP must be <= stopLimitPrice
   if (tpFilled && tp > stopLimitPrice) return true;
 
-  // SL & TP both filled � config may allow only one
+  // SL & TP both filled – config may allow only one
   if (slFilled && tpFilled) return true;
 
-  return false; // ? All Sell Stop Limit conditions passed
+  return false; // ✅ All Sell Stop Limit conditions passed
 }
 
   return true; // For unsupported order types, disable by default
@@ -1463,75 +1667,93 @@ if (orderType === 7) {
   currentAddP:any
   symShow:any =""
   openXl2(content2: any) {
-    const initialDateEvent = { target: { value: new Date().toISOString().split('T')[0] } };
+  // Set today's date
+  const initialDateEvent = {
+    target: {
+      value: new Date().toISOString().split('T')[0]
+    }
+  };
     this.onDateChange(initialDateEvent);
-  this.navGateUrl()
+
+  // Navigate or perform any pre-modal actions
+  this.navGateUrl();
+
+  // Log current price
   console.log("this.currentPri",this.currentPri);
-  this.showMassage = 1
-  this.symShow =  localStorage.getItem('changeSym')
-   this.orderFrom.patchValue({
-    price:this.currentPri
-   })
-    this.inputSl  = this.currentPri
-    this.inputTPP = this.currentPri
-    this.currentAddP = this.currentPri
-    this.modref= this.modalService.open(content2, { size: 'md modalone', centered: true });
+
+  // Set flags and values
+  this.showMassage = 1;
+  this.symShow = localStorage.getItem('changeSym') || '';
+
+  // Patch form values
+  if (this.currentPri !== null && this.currentPri !== undefined) {
+    this.orderFrom.patchValue({ price: this.currentPri });
+    this.inputSl = this.currentPri;
+    this.inputTPP = this.currentPri;
+    this.currentAddP = this.currentPri;
+  }
+
+  // Open the modal
+  this.modref = this.modalService.open(content2, {
+    size: 'md modalone',
+    centered: true
+  });
   }
 
   closeModel(){
     this.modref.close()
   }
   loginDetails:any ={}
-  login(){
-    debugger
-    this.navGateUrl()
-    let val = this.loginForm.value
-   let obj ={
-    "Account":val.ac,
-    "Password":val.pass,
-    "BrokerID":100
-    // "Key":"",
-    // "AC": val.ac,
-    // "PWD":val.pass
+  // login(){
+  //   debugger
+  //   this.navGateUrl()
+  //   let val = this.loginForm.value
+  //  let obj ={
+  //   "Account":val.ac,
+  //   "Password":val.pass,
+  //   "BrokerID":100
+  //   // "Key":"",
+  //   // "AC": val.ac,
+  //   // "PWD":val.pass
     
-   }
-   this.global.LOGIN_USER_ACCOUNT(obj).subscribe({ next: (res:any)=>{
-  console.log("ress",res);
-  if(res.oResult.Result == true){
-    this.loginDetails = res
-    const updatedData = { ...this.loginDetails, BrokerURL: '' }; // Merge BrokerURL into data
-    localStorage.setItem('Acc',val.ac)
-    this.share.setLoginData(updatedData);
+  //  }
+  //  this.global.LOGIN_USER_ACCOUNT(obj).subscribe({ next: (res:any)=>{
+  // console.log("ress",res);
+  // if(res.oResult.Result == true){
+  //   this.loginDetails = res
+  //   const updatedData = { ...this.loginDetails, BrokerURL: '' }; // Merge BrokerURL into data
+  //   localStorage.setItem('Acc',val.ac)
+  //   this.share.setLoginData(updatedData);
   
-    localStorage.setItem("admin", JSON.stringify(updatedData))
-    this.toggleConnection('eff')
-    localStorage.setItem('loginId', val.ac);
-    localStorage.setItem('managerId', res.Result);
-    setTimeout(() => {
-      window.location.reload()
-    this.closeModel()
-    },1000);
+  //   localStorage.setItem("admin", JSON.stringify(updatedData))
+  //   this.toggleConnection('eff')
+  //   localStorage.setItem('loginId', val.ac);
+  //   localStorage.setItem('managerId', res.Result);
+  //   setTimeout(() => {
+  //     window.location.reload()
+  //   this.closeModel()
+  //   },1000);
     
  
 
-  }
-  else if(res.oResult.Result == false){
-    localStorage.setItem('status', 'Disconnect');
-      this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
+  // }
+  // else if(res.oResult.Result == false){
+  //   localStorage.setItem('status', 'Disconnect');
+  //     this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
    
-      window.location.reload()
+  //     window.location.reload()
 
-  }
+  // }
 
  
   
-   },
-   error: (err:any)=>{
-  console.log(err);
+  //  },
+  //  error: (err:any)=>{
+  // console.log(err);
   
-   }
-  })
-  }
+  //  }
+  // })
+  // }
 
   marginOb:boolean= false
   queue:boolean= false
@@ -1597,75 +1819,75 @@ loginId :any = 771227
 brokerAccList:any =[]
 
 
-async  loginSend(){
+// async  loginSend(){
   
    
-  try {
-    // Execute functions one by one
-    await this.login()
-    await this.getMtInfo();
+//   try {
+//     // Execute functions one by one
+//     await this.login()
+//     await this.getMtInfo();
     
 
 
-  } catch (error) {
-    console.error("Error in sequential calls:", error);
+//   } catch (error) {
+//     console.error("Error in sequential calls:", error);
   
-  }
-}
+//   }
+// }
  
 
-async getMtInfo(){
+// async getMtInfo(){
 
-    let obj =
-    {
-      "Key":"",
-      "Account":Number(this.connectAccountForm.value.login),
-      "BrokerID": 100
-    }
-    this.global.GET_MT_USER_INFO(obj).subscribe({
-      next: (res: any) => {
-        if (res != ""){
-          this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
-          let AccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
-          const duplicateTrade = AccList.some((list: any) => list.account === Number(this.connectAccountForm.value.login));
+//     let obj =
+//     {
+//       "Key":"",
+//       "Account":Number(this.connectAccountForm.value.login),
+//       "BrokerID": 100
+//     }
+//     this.global.GET_MT_USER_INFO(obj).subscribe({
+//       next: (res: any) => {
+//         if (res != ""){
+//           this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
+//           let AccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
+//           const duplicateTrade = AccList.some((list: any) => list.account === Number(this.connectAccountForm.value.login));
       
-          if (!duplicateTrade) {
-            this.brokerAccList.push({
-              account:Number(this.connectAccountForm.value.login),
-              password:this.connectAccountForm.value.password,
-              // brokerName:this.optionSelect,
-              Company:res.Company,
-              // brokeId:this.optionSelectObj.BrokerID,
-              Leverage:res.Leverage,
-              balance:res.Balance,
-              name:res.Name
-            })
-            localStorage.setItem("brokerAccList", JSON.stringify(this.brokerAccList))
-            this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
+//           if (!duplicateTrade) {
+//             this.brokerAccList.push({
+//               account:Number(this.connectAccountForm.value.login),
+//               password:this.connectAccountForm.value.password,
+//               // brokerName:this.optionSelect,
+//               Company:res.Company,
+//               // brokeId:this.optionSelectObj.BrokerID,
+//               Leverage:res.Leverage,
+//               balance:res.Balance,
+//               name:res.Name
+//             })
+//             localStorage.setItem("brokerAccList", JSON.stringify(this.brokerAccList))
+//             this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
           
-          }
+//           }
 
-          setTimeout(() => {
-            this.router.navigate(['/dashboard']).then(() => {
-                    this.router.navigate([{ outlets: { primary: null } }]); // Clear router state
-                    location.reload()
-                  });
+//           setTimeout(() => {
+//             this.router.navigate(['/dashboard']).then(() => {
+//                     this.router.navigate([{ outlets: { primary: null } }]); // Clear router state
+//                     location.reload()
+//                   });
           
-          },1000);
-        }
-        else{
+//           },1000);
+//         }
+//         else{
 
-        }
-     console.log("res",res)
+//         }
+//      console.log("res",res)
   
-      },
-      error: (err: any) => {
-        console.log(err);
-        // this.share.errorTester("Something went wrong")
-      },
-    });
-    return new Promise<void>((resolve) => setTimeout(resolve, 1000));
-  }
+//       },
+//       error: (err: any) => {
+//         console.log(err);
+//         // this.share.errorTester("Something went wrong")
+//       },
+//     });
+//     return new Promise<void>((resolve) => setTimeout(resolve, 1000));
+//   }
 
   // number only
 numericMessage:any
@@ -1777,98 +1999,98 @@ getSelectRow(index:any){
 }
 
 
-async  autoConnectLogin(){
-console.log("this.listOb dgeb ",this.listOb);
+// async  autoConnectLogin(){
+// console.log("this.listOb dgeb ",this.listOb);
 
-try {
-await this.autoLogin();
-// await this.getAutoMtInfo();
+// try {
+// await this.autoLogin();
+// // await this.getAutoMtInfo();
 
-} catch (error) {
- console.error("Error in sequential calls:", error);
+// } catch (error) {
+//  console.error("Error in sequential calls:", error);
 
-}
-}
+// }
+// }
 
 
 
-async getAutoMtInfo(){
+// async getAutoMtInfo(){
 
- let obj =
- {
-   "Key":"",
-   "Account":Number(this.listOb.account),
-   "BrokerID": 100
- }
- this.global.GET_MT_USER_INFO(obj).subscribe({
-   next: (res: any) => {
-     if (res != ""){
-       // this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
-       // let AccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
-       // const duplicateTrade = AccList.some((list: any) => list.account === Number(this.connectAccountForm.value.login));
+//  let obj =
+//  {
+//    "Key":"",
+//    "Account":Number(this.listOb.account),
+//    "BrokerID": 100
+//  }
+//  this.global.GET_MT_USER_INFO(obj).subscribe({
+//    next: (res: any) => {
+//      if (res != ""){
+//        // this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
+//        // let AccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
+//        // const duplicateTrade = AccList.some((list: any) => list.account === Number(this.connectAccountForm.value.login));
    
-       // if (!duplicateTrade) {
-       //   this.brokerAccList.push({
-       //     account:this.listOb.account,
-       //     password:this.listOb.password,
-       //     // brokerName:this.optionSelect,
-       //     Company:res.Company,
-       //     // brokeId:this.optionSelectObj.BrokerID,
-       //     Leverage:res.Leverage,
-       //     balance:res.Balance,
-       //     name:res.Name
-       //   })
-       //   localStorage.setItem("brokerAccList", JSON.stringify(this.brokerAccList))
-       //   this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
+//        // if (!duplicateTrade) {
+//        //   this.brokerAccList.push({
+//        //     account:this.listOb.account,
+//        //     password:this.listOb.password,
+//        //     // brokerName:this.optionSelect,
+//        //     Company:res.Company,
+//        //     // brokeId:this.optionSelectObj.BrokerID,
+//        //     Leverage:res.Leverage,
+//        //     balance:res.Balance,
+//        //     name:res.Name
+//        //   })
+//        //   localStorage.setItem("brokerAccList", JSON.stringify(this.brokerAccList))
+//        //   this.brokerAccList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
         
-       // }
-       setTimeout(() => {
+//        // }
+//        setTimeout(() => {
         
-         this.router.navigate(['/dashboard']).then(() => {
-                 this.router.navigate([{ outlets: { primary: null } }]); // Clear router state
-                 location.reload()
-               });
+//          this.router.navigate(['/dashboard']).then(() => {
+//                  this.router.navigate([{ outlets: { primary: null } }]); // Clear router state
+//                  location.reload()
+//                });
        
-       },1000);
-     }
-     else{
+//        },1000);
+//      }
+//      else{
 
-     }
-  console.log("res",res)
+//      }
+//   console.log("res",res)
 
-   },
-   error: (err: any) => {
-     console.log(err);
-     // this.share.errorTester("Something went wrong")
-   },
- });
- return new Promise<void>((resolve) => setTimeout(resolve, 1000));
-}
+//    },
+//    error: (err: any) => {
+//      console.log(err);
+//      // this.share.errorTester("Something went wrong")
+//    },
+//  });
+//  return new Promise<void>((resolve) => setTimeout(resolve, 1000));
+// }
 
 
-async autoLogin(){
- let obj ={
+// async autoLogin(){
+//  let obj ={
    
-   "Account":Number(this.listOb.account),
-   "Password":this.listOb.password,
-   "BrokerID":100     // wo jayegi jo hm varify manager mai bhejre h
+//    "Account":Number(this.listOb.account),
+//    "Password":this.listOb.password,
+//    "BrokerID":100     // wo jayegi jo hm varify manager mai bhejre h
 
-}
-this.global.LOGIN_USER_ACCOUNT(obj).subscribe({ next:(res:any)=>{
- console.log("res",res);
- if(res.Result == true){
-   localStorage.setItem('loginId',this.listOb.account)
-   location.reload()
+// }
+// this.global.LOGIN_USER_ACCOUNT(obj).subscribe({ next:(res:any)=>{
+//  console.log("res",res);
+//  if(res.Result == true){
+//    localStorage.setItem('loginId',this.listOb.account)
+//    location.reload()
   
   
   
- }
- else{
+//  }
+//  else{
 
- }
+//  }
   
-}})
-}
+// }})
+// }
 
 
 //cose order
@@ -1902,6 +2124,7 @@ sendingCloseOr(obj:any) {
 }
 
   sendingClOrder(obj :any){
+
     const buffer = new ArrayBuffer(73); // Total byte length based on specified lengths
     const view = new DataView(buffer);
     view.setUint16(0, obj.Login, true);
@@ -1911,12 +2134,13 @@ sendingCloseOr(obj:any) {
     for (let i = 0; i < symbolBytes.length && i < 15; i++) {
         view.setUint8(10 + i, symbolBytes[i]); // Symbol field limited to 15 bytes
     }
-      view.setUint32(25, obj.Ticket, true); // 8 bytes for Ticket
+     view.setUint16(25, obj.ordType, true); // 2 bytes for ordType
+      view.setUint32(27, obj.Ticket, true); // 8 bytes for Ticket
     
-      view.setFloat64(33, obj.Lot, true); // 8 bytes for Lot
-      view.setFloat64(41, obj.Price, true); // 8 bytes for Price
+      view.setFloat64(35, obj.Lot, true); // 8 bytes for Lot
+      view.setFloat64(43, obj.Price, true); // 8 bytes for Price
     
-      view.setUint16(49, obj.ordType, true); // 2 bytes for ordType
+    
       view.setUint16(51, obj.fillType, true); // 2 bytes for fillType
       
       // Convert Comment string to an array of UTF-8 encoded bytes
@@ -2157,14 +2381,18 @@ getStatusActivityClose(val:any){
               Update: Update,
               SL: SL.toFixed(5),
               TL: TP,
-              // Balance: Balance, // 8 bytes for Balance
-              // Margin: Margin, // 8 bytes for Margin
-              // FreeMargin: FreeMargin, // 8 bytes for FreeMargin
-              // ModifyType: "modify",
-              // TypeOfOration: "Modify position"
+              Balance: Balance, // 8 bytes for Balance
+              Margin: Margin, // 8 bytes for Margin
+              FreeMargin: FreeMargin, // 8 bytes for FreeMargin
+              ModifyType: "modify",
+              TypeOfOration: "Modify position"
           };
          console.log("modify",obj1);
-         this.getStatusActivityModify(obj1)
+        //  this.getStatusActivityModify(obj1)
+         this.share.updateAccountData({
+        balance: obj1.Balance,
+        margin: obj1.Margin
+      });
          this.share.msgForClientToModifyData(obj1)
         }
         else if (MsgID == 301){
@@ -2242,6 +2470,39 @@ getStatusActivityClose(val:any){
     navigate(){
 
     }
+
+     listOpenObj:any ={}
+listOpen:any =[]
+listPending:any=[]
+GET_OPENED1(){
+  this.listOpen =[]
+  let obj ={
+   
+    Account: Number(localStorage.getItem('loginId')),
+  }
+
+  this.api.GET_USER_OPEN_POS(obj).subscribe({next: (res:any)=>{
+    // this.startInterval()
+    this.listOpen = res.lstPos
+    if(this.listOpen){
+//       this.listOpen.forEach((pos:any) => {
+ 
+// });
+    }
+    this.listPending = res.lstPending
+      this.allGetTrade1 = res?.oAccount
+      this.allGetTrade = this.allGetTrade1
+      // this.share.livBalance(this.allGetTrade.Balance)
+    console.log("lstPos",res);
+    // this.GET_USER_TRADE_WD()
+  },
+  error: (err:any)=>{
+    console.log(err);
+    
+  }})
+}   
+        
+
 }
 
 

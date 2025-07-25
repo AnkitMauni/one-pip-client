@@ -41,7 +41,6 @@ export class AppComponent {
     })
 
     this.share.shareNavigatePopValue.subscribe((res:any)=>{
-      console.log("resresresresres", res)
     this.gethideData(res)
       if(res.flag == true){
         this.navigateNum = this.navigateNum + 1;
@@ -64,7 +63,6 @@ export class AppComponent {
         this.mainArea = 76
         this.subArea = 0
       }
-      console.log("this.navigateNum", this.navigateNum)
     })
 
 
@@ -103,7 +101,6 @@ this.appDataMargin=val
   connectionStatus:any
   startTimer() {
     this.timer = setTimeout(() => {
-      console.log('Timeout Completed!');
       this.logout();
     }, this.idleTimeout * 1000);
   }
@@ -112,7 +109,6 @@ this.appDataMargin=val
     this.router.navigate(['/login']).then(() => {
       this.router.navigate([{ outlets: { primary: null } }]); // Clear router state
       localStorage.removeItem('loginId');
-  console.log('loginId removed from localStorage');
       window.location.reload()
     });
 

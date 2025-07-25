@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GlobalService } from 'src/app/services/global.service';
 import { ShareService } from 'src/app/services/share.service';
+import { HeaderToFooterService } from 'src/app/services/headerToFooter.service';
 
 
 
@@ -35,6 +36,9 @@ export class FooterComponent implements OnInit {
   positionListData:any={}
   loc:any ={}
   accList:any
+  liveBalance: any;
+  liveMargin: any;
+  isPendingOrder: boolean = false;
   nvatabc(tab: any){
     this.currentTab = tab
     if(tab == "tab1"){
@@ -49,7 +53,7 @@ export class FooterComponent implements OnInit {
       this.GET_USER_HISTORY()
     }
   }
-  constructor(private datePipe: DatePipe,private http: HttpClient,private fb: FormBuilder,private share: ShareService, private api: GlobalService ,private modalService: NgbModal, config: NgbModalConfig,
+  constructor(private headertoFooterSer:HeaderToFooterService,private datePipe: DatePipe,private http: HttpClient,private fb: FormBuilder,private share: ShareService, private api: GlobalService ,private modalService: NgbModal, config: NgbModalConfig,
     private datepipe: DatePipe, private route:Router){
     
       const newDate = new Date()
@@ -62,7 +66,6 @@ export class FooterComponent implements OnInit {
     this.GET_OPENED1()
 
     this.share.changeSym$.subscribe((res:any)=>{
-      console.log("ress",res);
       if(!res){
         const sym = localStorage.getItem('changeSym')
         this.changeSymbolData(sym)
@@ -84,7 +87,9 @@ export class FooterComponent implements OnInit {
     //   }
     // })
 
-
+this.headertoFooterSer.data$.subscribe((flag:boolean)=>{
+      if(flag) this.GET_OPENED1();
+    })
     // new socket
     this.share.slUpdate$.subscribe(( res:any)=>{
       if(res == 0){
@@ -97,7 +102,7 @@ export class FooterComponent implements OnInit {
      
       if(res>0){
         this.positionListData = res
-        console.log("resss",res);
+        // console.log("resss",res);
         
       }
       else{
@@ -117,7 +122,7 @@ export class FooterComponent implements OnInit {
      
       if(res>0){
         this.positionListData = res
-        console.log("resss",res);
+        // console.log("resss",res);
         
       }
       else{
@@ -135,7 +140,7 @@ export class FooterComponent implements OnInit {
       }
       else{
         this.orderListData = JSON.parse(localStorage.getItem('orderListData') || '{}')
-        console.log("this.orderListData",this.orderListData);
+        // console.log("this.orderListData",this.orderListData);
         
       }
       
@@ -164,54 +169,59 @@ export class FooterComponent implements OnInit {
     this.getCalendarByDay('next-week')
 
     this.share.msgForClientToModify$.subscribe((data:any) => {
-      const positionListData = JSON.parse(localStorage.getItem('positionListData') || '[]');
+      // const positionListData = JSON.parse(localStorage.getItem('positionListData') || '[]');
     
       // Find the index of the item with the matching Ticket ID
-      const index = positionListData.findIndex((item: any) => item.Ticket === data.Ticket);
+      // const index = positionListData.findIndex((item: any) => item.Ticket === data.Ticket);
     
       // If a matching item is found, update its SL value
-      if (index !== -1) {
+      // if (index !== -1) {
         if(!data){
-          console.log('Received Data:', null);
+          // console.log('Received Data:', null);
           this.orderResData ={}
         }
         else{
           console.log('Received Data:', data);
        
-          if(this.data.MsgID== 300){
-          
+          if(data.MsgID== 300){
+         
           this.orderResData = data
           this.showMassage = 2
           this.showErroMass =1
-         
+         this.GET_OPENED1()
           }
           else  if( data.MsgID== 124){
-          
+         
             this.orderResData = data
             this.showMassage = 2
             this.showErroMass =1
-           
+           this.GET_OPENED1()
             }
-          else if(data.MsgID == 301 && data.ERR_MSG == "POSITION_NOT_EXISTS"){
-          this.deleteIFPossitionNotExists(this.orderResData.ticketId)
-
+          else if(data.MsgID == 301 ){
+          // this.deleteIFPossitionNotExists(this.orderResData.ticketId)
+          console.log("orderResData.error",data)
+          this.orderResData = data
+this.showMassage = 1
+ this.showErroMass =2
+ 
           }
-          else {
+          else{
             this.orderResData = data
-          
+         
             this.showMassage = 2  
             this.showErroMass =2
-        
+       
            
           }
-          
-        }
-      } else {
-        console.log('Ticket ID not found in positionListData.');
+         
+       
       }
-   
+    
     
     });
+    setInterval(() => {
+      this.calculateLiveMetrics();
+    }, 500);
 }
 
 trimTime(val: any): string {
@@ -224,6 +234,7 @@ trimTime(val: any): string {
 data1: any =[]
 data2: any =[]
 getCurrent(val:any,type:any){
+
   this.data1=   this.data.filter((item: any) => item?.oSymbolConfig?.Symbol === val);
   // console.log(this.data1[0]);
   if(this.data1[0] != undefined){
@@ -243,22 +254,22 @@ else{
 } 
 symbolMetaMap: { [symbol: string]: any } = {};
 
-getInitial(symbol: string) {
-  const obj = {
-    Key: "",
-    Symbol: symbol,
-  };
+// getInitial(symbol: string) {
+//   const obj = {
+//     Key: "",
+//     Symbol: symbol,
+//   };
 
-  this.api.GET_SYMBOL_INITIAL(obj).subscribe({
-    next: (res: any) => {
-      this.symbolMetaMap[symbol] = res;
-      setInterval(() => {
-  this.calculateLiveMetrics();
-}, 500); // Call calculation after metadata is available
-    },
-    error: (err) => console.error(err),
-  });
-}
+//   this.api.GET_SYMBOL_INITIAL(obj).subscribe({
+//     next: (res: any) => {
+//       this.symbolMetaMap[symbol] = res;
+//       setInterval(() => {
+//   this.calculateLiveMetrics();
+// }, 500); // Call calculation after metadata is available
+//     },
+//     error: (err) => console.error(err),
+//   });
+// }
 
 listOpenObj:any ={}
 listOpen:any =[]
@@ -275,22 +286,22 @@ GET_OPENED1(){
     this.listOpen = res.lstPos
 //     if(this.listOpen){
 //       this.listOpen.forEach((pos:any) => {
-//   // if (!this.symbolMetaMap[pos.Sy]) {
-//   //   this.getInitial(pos.Sy);
-//   // }
+//   if (!this.symbolMetaMap[pos.Sy]) {
+//     this.getInitial(pos.Sy);
+//   }
 // });
 //     }
     this.listPending = res.lstPending
       this.allGetTrade1 = res?.oAccount
       this.allGetTrade = this.allGetTrade1
+       this.share.updateAccountData({
+        balance:this.allGetTrade1?.Balance,
+        margin: this.allGetTrade1?.Margin
+      });
+      // this.liveMargin = this.allGetTrade1?.Margin
+      // this.liveBalance= this.allGetTrade1?.Balance
       this.share.livBalance(this.allGetTrade.Balance)
-      setInterval(() => {
-        this.calculateLiveMetrics();
-      }, 500); // Call calculation after metadata is available
-          
-    // Call calculation after metadata is available
-        
-    console.log("lstPos",res);
+    // console.log("lstPos",res);
     // this.GET_USER_TRADE_WD()
   },
   error: (err:any)=>{
@@ -303,44 +314,65 @@ usedMargin = 0;
 freeMargin = 0;
 marginLevel = 0;
 
-calculateLiveMetrics() {
-  let floatingPL = 0;
-  let usedMargin = this.allGetTrade.Margin;
+// calculateLiveMetrics() {
+//   let floatingPL = 0;
+//   let usedMargin = this.allGetTrade.Margin;
 
-  this.listOpen.forEach((pos:any) => {
-    const symbol = pos.Sy;
-    // const volumeLots = pos.V / 100; // Since V = 100 means 0.01 lot
-    // const symbolMeta = this.symbolMetaMap[symbol];
-    floatingPL += Number(this.getProfitUSD(symbol));
-    // if (!symbolMeta) return; // Wait for metadata
+//   this.listOpen.forEach((pos:any) => {
+//     const symbol = pos.Sy;
+//     // const volumeLots = pos.V / 100; // Since V = 100 means 0.01 lot
+//     // const symbolMeta = this.symbolMetaMap[symbol];
+//     floatingPL += Number(this.getProfitUSD(symbol));
+//     // if (!symbolMeta) return; // Wait for metadata
 
-    // const calcType = symbolMeta.Calculation;
-    // const contractSize = symbolMeta.ContractSize;
-    // const leverage = symbolMeta.INITIAL_MK_B || 1;
-    // const marketPrice = this.getCurrent(symbol, pos.BS); // Live price
+//     // const calcType = symbolMeta.Calculation;
+//     // const contractSize = symbolMeta.ContractSize;
+//     // const leverage = symbolMeta.INITIAL_MK_B || 1;
+//     // const marketPrice = this.getCurrent(symbol, pos.BS); // Live price
 
-    // // Margin Calculation
-    // let margin = 0;
-    // if (calcType === 'FOREX') {
-    //   margin = (volumeLots * contractSize) / leverage;
-    // } else if (calcType === 'CFD') {
-    //   margin = volumeLots * contractSize * marketPrice;
-    // } else if (calcType === 'CFDLEVERAGE') {
-    //   margin = (volumeLots * contractSize * marketPrice) / leverage;
-    // }
+//     // // Margin Calculation
+//     // let margin = 0;
+//     // if (calcType === 'FOREX') {
+//     //   margin = (volumeLots * contractSize) / leverage;
+//     // } else if (calcType === 'CFD') {
+//     //   margin = volumeLots * contractSize * marketPrice;
+//     // } else if (calcType === 'CFDLEVERAGE') {
+//     //   margin = (volumeLots * contractSize * marketPrice) / leverage;
+//     // }
 
-    // usedMargin += margin;
+//     // usedMargin += margin;
 
-    // Floating P/L
+//     // Floating P/L
    
-  });
-  // floatingPL += Number(this.getProfitUSD(pos));
-  const balance = Number(this.allGetTrade?.Balance || 0);
-  this.equity = balance + floatingPL;
-  this.usedMargin = usedMargin;
-  this.freeMargin = this.equity - usedMargin;
-  this.marginLevel = usedMargin > 0 ? (this.equity / usedMargin) * 100 : 0;
-}
+//   });
+//   // floatingPL += Number(this.getProfitUSD(pos));
+//   const balance = Number(this.allGetTrade?.Balance || 0);
+//   this.equity = balance + floatingPL;
+//   this.usedMargin = usedMargin;
+//   this.freeMargin = this.equity - usedMargin;
+//   this.marginLevel = usedMargin > 0 ? (this.equity / usedMargin) * 100 : 0;
+// }
+floatingPL = 0;
+calculateLiveMetrics() {
+ 
+    let usedMargin = this.allGetTrade.Margin;
+  this.floatingPL =0
+    this.listOpen.forEach((pos: any) => {
+      this.floatingPL += Number(this.getProfitUSD(pos));
+    });
+ 
+
+    let balance = Number(this.allGetTrade?.Balance || 0);
+    this.share.accountData$.subscribe((data:any)=>{
+      balance = data.balance;
+      this.liveBalance = data.balance;
+      this.liveMargin = data.margin;
+    })
+    this.equity = balance + this.floatingPL;
+    this.usedMargin = usedMargin;
+    this.freeMargin = this.equity - usedMargin;
+    this.marginLevel = usedMargin > 0 ? (this.equity / usedMargin) * 100 : 0;
+  }
 intervalId: any;
   counter = 0;
 
@@ -402,66 +434,33 @@ closeModel(){
   this.modref.close()
 }
 
-login(){
-  let val = this.loginForm.value
- let obj ={
-  "Key":"",
-  "AC": val.ac,
-  "PWD":val.pass
- }
- this.api.VERIFY_MANAGER(obj).subscribe({ next: (res:any)=>{
-console.log("ress",res);
-if(res.Result > -1){
-  this.toggleConnection('eff')
-  localStorage.setItem('loginId', val.ac);
-  localStorage.setItem('managerId', res.Result);
-  setTimeout(() => {
-    window.location.reload()
-  this.closeModel()
-  },1000);
 
-}
-else if(res.Result == -1){
-  localStorage.setItem('status', 'Disconnect');
-    this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
- 
-    window.location.reload()
-
-}
-
- },
- error: (err:any)=>{
-console.log(err);
-
- }
-})
-}
 
 navGateUrl()
 {
   this.route.navigateByUrl('dashboard')
 }
 collapsed = true;
-toggleConnection(ajsd:any) {
-  if (this.connectionStatus === 'Connect') {
-    this.connectionStatus = 'Disconnect';
-    localStorage.setItem('status', 'Connect');
-    this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
+// toggleConnection(ajsd:any) {
+//   if (this.connectionStatus === 'Connect') {
+//     this.connectionStatus = 'Disconnect';
+//     localStorage.setItem('status', 'Connect');
+//     this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
   
    
-  } else {
+//   } else {
    
-    this.connectionStatus = 'Connect';
-    localStorage.setItem('status', 'Disconnect');
-    this.route.navigate(['/dashboard']).then(() => {
-      this.route.navigate([{ outlets: { primary: null } }]); // Clear router state
-      window.location.reload()
-    });
-    this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
-    window.location.reload()
+//     this.connectionStatus = 'Connect';
+//     localStorage.setItem('status', 'Disconnect');
+//     this.route.navigate(['/dashboard']).then(() => {
+//       this.route.navigate([{ outlets: { primary: null } }]); // Clear router state
+//       window.location.reload()
+//     });
+//     this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
+//     window.location.reload()
 
-  }
-}
+//   }
+// }
 
 
 logout(){
@@ -510,7 +509,7 @@ this.http.get('https://www.fxempire.com/api/v1/en/economic-calendar?dateRange=cu
 
   //  this.calendars = [].concat(...signal.data);
   //  this.spinner.hide();
-   console.log(signal.calendar[0].events);
+  //  console.log(signal.calendar[0].events);
     this.calendars = signal.calendar[0].events;
 //  console.log(this.calendars);
     this.rangeValue = signal.range
@@ -579,7 +578,7 @@ if (!this.isStartDateSelected) {
 // Function to highlight dates between start and end dates
 highlightDatesInRange(startDate: any, endDate: any) {
 // Calculate the range of dates between start date and end date
-console.log("startDate33",startDate,"endDate33",endDate);
+// console.log("startDate33",startDate,"endDate33",endDate);
 
 const first = this.datepipe.transform(
   startDate.detail.value,
@@ -604,7 +603,7 @@ this.http.get(`https://www.fxempire.com/api/v1/en/economic-calendar?page=1&timez
 
 });
 
-console.log("first seond",first,seond);
+// console.log("first seond",first,seond);
 this.newStartDate = first
 this.newEndDate = seond
 
@@ -651,7 +650,7 @@ getAllSummry(){
     "ManagerIndex":Number(localStorage.getItem('managerId'))
 }
   this.api.GET_MGR_SUMMARY(obj).subscribe({next: (res:any)=>{
-   console.log("summery",res);
+  //  console.log("summery",res);
    this.getAllSumm = res
     
   },
@@ -669,7 +668,7 @@ getAllJournal(){
     "ManagerIndex":Number(localStorage.getItem('managerId'))
 }
   this.api.GET_MGR_JOURNEL(obj).subscribe({next: (res:any)=>{
-   console.log("journal",res);
+  //  console.log("journal",res);
    this.getAllJurn = res
     
   },
@@ -687,7 +686,7 @@ getAllExposure(){
     "ManagerIndex":Number(localStorage.getItem('managerId'))
 }
   this.api.GET_MGR_EXPOSURE(obj).subscribe({next: (res:any)=>{
-   console.log("exposure",res);
+  //  console.log("exposure",res);
    this.getAllExpos = res
     
   },
@@ -1219,6 +1218,7 @@ Modify(priceAsk:any, priceBid:any){
 okReturn(){
 this.showErroMass =1
 this.showMassage = 1
+ this.modref.close()
 // this.GET_OPENED1()
 }
 
@@ -1388,77 +1388,63 @@ this.orderFrom.patchValue({
 inputSl:any
 inputTPP:any
     addSll(val:any){
+  let value = parseFloat(val);
+  if (isNaN(value)) {
+    value = parseFloat(this.orderFrom.get('stopLoss')?.value) || this.currentPri || 0;
+  }
 
-      if(val == ""){
-        val = this.currentPri
+  const decimals = this.countDecimalDigits(value);
+  const updatedValue = (value + 1 / Math.pow(10, decimals)).toFixed(decimals);
+
+  this.inputSl = updatedValue;
+  this.orderFrom.patchValue({ stopLoss: updatedValue });
        }
-       const numberAsString = val.toString();
-       const decimalIndex = numberAsString.indexOf('.');
-       const decimalPartLength = decimalIndex === -1 ? 0 : numberAsString.length - decimalIndex - 1;
-   console.log("decimal",decimalPartLength);
    
-       this.inputSl = (parseFloat(val) + 1/Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
-       console.log("this.inputSl",this.inputSl);
-       this.orderFrom.patchValue({
-        stopLoss : this.inputSl
-       })
-    }
 
     // Subtract Sl 0.1 from the input value
     SubSll(val: any) {
-      if (!val) {
-        val = this.currentPri || 0; // Ensure default value
+  let value = parseFloat(val);
+  if (isNaN(value)) {
+    value = parseFloat(this.orderFrom.get('stopLoss')?.value) || this.currentPri || 0;
       }
     
-      let newSL = (parseFloat(val) - 1 / Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
+  const decimals = this.countDecimalDigits(value);
+  const updatedValue = (value - 1 / Math.pow(10, decimals)).toFixed(decimals);
     
-      // **Prevent negative stop loss**
-      if (parseFloat(newSL) < 0) {
-        newSL = '0';
-      }
-    
-      this.inputSl = newSL;
-    
-      this.orderFrom.patchValue({
-        stopLoss: this.inputSl
-      });
+  this.inputSl = updatedValue;
+  this.orderFrom.patchValue({ stopLoss: updatedValue });
     }
     
 
     // Add TP 0.1 to the input value
       addTP(val:any){
-  
-        if(val == ""){
-         val = this.inputTPP
+  let value = parseFloat(val);
+  if (isNaN(value)) {
+    value = parseFloat(this.orderFrom.get('takeProfit')?.value) || this.currentPri || 0;
         }
      
-        this.inputTPP = (parseFloat(val) + 1/Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
+  const decimals = this.countDecimalDigits(value);
+  const updatedValue = (value + 1 / Math.pow(10, decimals)).toFixed(decimals);
      
+  this.inputTPP = updatedValue;
+  this.orderFrom.patchValue({ takeProfit: updatedValue });
+}
      
-       this.orderFrom.patchValue({
-         takeProfit : this.inputTPP
-     })
-    }
      
     // Subtract TP 0.1 from the input value
     subTP(val:any){
-      if (!val) {
-        val = this.inputTPP || 0; // Ensure default value
+  let value = parseFloat(val);
+  if (isNaN(value)) {
+    value = parseFloat(this.orderFrom.get('takeProfit')?.value) || this.currentPri || 0;
       }
     
-      let newSL = (parseFloat(val) - 1 / Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
+  const decimals = this.countDecimalDigits(value);
+  const updatedValue = (value - 1 / Math.pow(10, decimals)).toFixed(decimals);
     
-      // **Prevent negative stop loss**
-      if (parseFloat(newSL) < 0) {
-        newSL = '0';
+  this.inputTPP = updatedValue;
+  this.orderFrom.patchValue({ takeProfit: updatedValue });
       }
     
-      this.inputTPP = newSL;
-    
-      this.orderFrom.patchValue({
-        takeProfit: this.inputTPP
-      });
-    }
 currVTP:any 
 
 
@@ -1478,43 +1464,53 @@ else if(val ==2){
 
 }
 
-countDecimalDigits(num: number): number {
-// Convert the number to a string
-const numStr: string = num.toString();
-
-// Find the index of the decimal point
-const decimalIndex: number = numStr.indexOf('.');
-
-// If the decimal point exists, count the length of the substring after it
-if (decimalIndex !== -1) {
-  return numStr.substring(decimalIndex + 1).length;
-} else {
-  // If there's no decimal point, return 0
+countDecimalDigits(num: number | string): number {
+  if (num === undefined || num === null || isNaN(Number(num))) {
   return 0;
 }
+
+  const numStr = Number(num).toString();
+  const decimalIndex = numStr.indexOf('.');
+  return decimalIndex !== -1 ? numStr.length - decimalIndex - 1 : 0;
 }
 
 modref2:any
 modelData:any ={}
 openXl2(content2: any,val:any) {
   this.modelData = val  
-  this.inputLotValue = this.modelData.Lot
+  this.inputLotValue = this.modelData.V/10000
+  this.isPendingOrder = this.modelData.BS >= 2 && this.modelData.BS <= 7;
   this.inputSl = this.modelData.SL
-  this.inputTPP = this.modelData.TL
+  this.inputTPP = this.modelData.TP
+  if(val.BS == 0 || val.BS == 1){
   this.orderFrom.patchValue({
-    takeProfit :this.modelData.TL
+    takeProfit :this.modelData.TP,
+    price:this.modelData?.PC
 })
 this.orderFrom.patchValue({
-  stopLoss : this.inputSl
+  stopLoss : this.modelData.SL
  })
+  }
+    if(val.BS >1){
+  this.orderFrom.patchValue({
+    takeProfit :this.modelData.TP,
+    price:this.modelData?.P
+})
+this.orderFrom.patchValue({
+  stopLoss : this.modelData.SL
+ })
+  }
+
   const initialDateEvent = { target: { value: new Date().toISOString().split('T')[0] } };
   this.onDateChange(initialDateEvent);
 this.navGateUrl()
-console.log("this.currentPri",this.currentPri);
+
 this.showMassage = 1
- this.orderFrom.patchValue({
-  price:this.currentPri
- })
+// this.currPrice = this.getCurrent(val?.Sy,val?.BS)
+// console.log("this.currentPri",this.currentPri);
+//  this.orderFrom.patchValue({
+//   price:this.currentPri
+//  })
   this.modref= this.modalService.open(content2, { size: 'md modalone', centered: true });
 }
 
@@ -1527,143 +1523,135 @@ refreshPosition(){
 
 // new data from socket
 
-randomNumber:any;
-generateRandomNumber() {
-  // Generate a random number between 10 and 99
-  this.randomNumber = Math.floor(Math.random() * 90) + 10;
-  console.log(" generateRandomNumber()",this.randomNumber);
+// randomNumber:any;
+// generateRandomNumber() {
+//   // Generate a random number between 10 and 99
+//   this.randomNumber = Math.floor(Math.random() * 90) + 10;
+//   console.log(" generateRandomNumber()",this.randomNumber);
   
-}
-positionsArray: { indexId: number; ticketId: number;statusId: number }[] = [];
-ordersArray: { indexId: number; ticketId: number;statusId: number}[] = [];
+// }
+// positionsArray: { indexId: number; ticketId: number;statusId: number }[] = [];
+// ordersArray: { indexId: number; ticketId: number;statusId: number}[] = [];
 
-savePositionData(index: number, ticketId: number, status: number) {
-  // Check if the ticketId already exists in the positionsArray
+// savePositionData(index: number, ticketId: number, status: number) {
+//   // Check if the ticketId already exists in the positionsArray
 
   
-  const exists = this.positionsArray.some(pos => pos.ticketId === ticketId);
-  if (!exists) {
-    this.positionsArray.push({ indexId: index, ticketId: ticketId,statusId: status});
-    localStorage.setItem('positions', JSON.stringify(this.positionsArray));
-    this.updatePositionListData()
-  }
-}
+//   const exists = this.positionsArray.some(pos => pos.ticketId === ticketId);
+//   if (!exists) {
+//     this.positionsArray.push({ indexId: index, ticketId: ticketId,statusId: status});
+//     localStorage.setItem('positions', JSON.stringify(this.positionsArray));
+//     this.updatePositionListData()
+//   }
+// }
 
-saveOrderData(index: number, ticketId: number,status: number) {
-  // Check if the ticketId already exists in the ordersArray
-  const exists = this.ordersArray.some(order => order.ticketId === ticketId);
-  if (!exists) {
-    this.ordersArray.push({ indexId: index, ticketId: ticketId ,statusId: status});
-    localStorage.setItem('orders', JSON.stringify(this.ordersArray));
+// saveOrderData(index: number, ticketId: number,status: number) {
+//   // Check if the ticketId already exists in the ordersArray
+//   const exists = this.ordersArray.some(order => order.ticketId === ticketId);
+//   if (!exists) {
+//     this.ordersArray.push({ indexId: index, ticketId: ticketId ,statusId: status});
+//     localStorage.setItem('orders', JSON.stringify(this.ordersArray));
 
     
-  }
-}
+//   }
+// }
 
 
 
-  // Function to filter positionListData based on positionsArray's ticketId
-  filterPositionListData(): void {
-    // Step 1: Create a Set of ticketIds from positionsArray for quick lookup
-    const validTickets = new Set(this.positionsArray.map(pos => pos.ticketId));
+  // // Function to filter positionListData based on positionsArray's ticketId
+  // filterPositionListData(): void {
+  //   // Step 1: Create a Set of ticketIds from positionsArray for quick lookup
+  //   const validTickets = new Set(this.positionsArray.map(pos => pos.ticketId));
 
-    // Step 2: Filter positionListData to only include items with a matching Ticket
-    this.positionListData = this.positionListData.filter((item:any) => validTickets.has(item.Ticket));
+  //   // Step 2: Filter positionListData to only include items with a matching Ticket
+  //   this.positionListData = this.positionListData.filter((item:any) => validTickets.has(item.Ticket));
 
-    // Optional: Log the filtered data to the console
-    console.log(this.positionListData);
-  }
+  //   // Optional: Log the filtered data to the console
+  //   console.log(this.positionListData);
+  // }
 
-  // Call this method to filter the data
-  updatePositionListData(): void {
-    this.filterPositionListData();
-  }
+  // // Call this method to filter the data
+  // updatePositionListData(): void {
+  //   this.filterPositionListData();
+  // }
 
 
   // close order
   currPrice:any
-  closeOrder(priceAsk:any, priceBid:any) {
-    // let obj ={
-  //   "Login":Number(localStorage.getItem('loginId')),
-  //   "Symbol": this.modelData.Sy,
-  //   "Ticket":Number(this.modelData.Pos),         // After open a trade we are getting the ticket number
-  //   "Lot":Number(this.inputLotValue),
-  //   "Price":(this.modelData.PC),
-  //   "ordType":Number(this.modelData.BS),                //Buy = 0,Sell = 1,BuyLimit = 2,SellLimit = 3,BuyStop = 4,SellStop = 5,BuyStopLimit = 6,SellStopLimit = 7
-  //   "fillType":0,              ////FillOrKill = 0,ImmediateOrCancel = 1,FlashFill = 2,Any = 3
-  //   "Comment":(this.orderFrom.value.comment)
-  // }
 
-  if(this.modelData.oBuySell == 0 || 2|| 4||6){
-    this.currPrice = this.data[0]?.oInitial?.Bid
+
+  /// working code 
+  closeOrder(Sy:any, BS:any) {
+
+   const marketPrice = this.getCurrent(Sy,BS);
+
+   if(this.inputLotValue > (this.modelData?.V)/10000){
+    return
+   }else{
    
-  }
-  else if(this.modelData.oBuySell == 1 || 3|| 5|| 7 ){
-    this.currPrice = this.data[0]?.oInitial?.Ask
-   
-  }
 
     let obj = {
       Login: 108,
       accID: Number(localStorage.getItem('loginId')),
-      Symbol: this.modelData.Symbol,
-      Ticket: Number(this.modelData.Ticket),
+      Symbol: this.modelData.Sy,
+      Ticket: Number(this.modelData.Pos),
       Lot: Number(this.inputLotValue),
-      Price: (this.modelData.Price),
-      ordType: Number(this.modelData.oBuySell),
+      Price: this.orderFrom.value.price,
+      ordType: Number(this.modelData.BS),
       fillType: 0,
       Comment:(this.orderFrom.value.comment)
     };
   
     this.share.sendCloseOrderbyData(obj);
     // this.closeOrderReq(obj)
+  }}
+ deleteOrder(Sy:any, BS:any) {
+
+   const marketPrice = this.getCurrent(Sy,BS);
+ 
+   
+
+
+    let obj = {
+      Login: 108,
+      accID: Number(localStorage.getItem('loginId')),
+      Symbol: this.modelData.Sy,
+      Ticket: Number(this.modelData.Ord),
+      Lot: Number(this.inputLotValue),
+      Price: marketPrice,
+      ordType: Number(this.modelData.BS),
+      fillType: 0,
+      Comment:(this.orderFrom.value.comment),
+      PL:this.modelData.TP
+    };
+  
+    this.share.sendCloseOrderbyData(obj);
+    // this.closeOrderReq(obj)
   }
-
-  // closeOrderReq(obj:any) {
-  //   console.log(obj);
-    
-  //      this.step = 1
-  //      this.jsonBytes = []
-  //      this.jsonBytes = this.deleteReq(obj);
-   
-   
-     
-  //      this.bufferArray = new Uint8Array(this.jsonBytes);
-  //      if (this.socket2 && this.socket2.readyState === WebSocket.OPEN) {
-  //        // Convert the hexadecimal string to bytes before sending
-  //        // const byteArray = this.hexToBytes(data);
-       
-  //        console.log("this.jsonBytes1111", this.jsonBytes)
-  //        this.socket2.send(this.bufferArray);
-  //        console.log("this.jsonBytes", this.jsonBytes.buffer)
-   
-  //      } else {
-  //        console.error('WebSocket connection is not open.');
-  //      }
-   
-   
-   
-   
-  // }
+ 
 
 
-  modefyOrder() {
+modefyOrder() {
 
     let obj = {
       Login: 106,
       accID: Number(localStorage.getItem('loginId')),
-      Symbol: this.modelData.Symbol,
-      Ticket: this.modelData.Ticket,
-      Lot:Number(this.inputLotValue),
-      Price: Number(this.modelData.Price),
+      Symbol: this.modelData.Sy,
+      Ticket: this.modelData.Pos,
+      Lot:this.modelData.V/10000,
+      Price: Number(this.modelData.PC),
       SL:  Number(this.orderFrom.value.stopLoss),
       // SL:  Number(this.inputSl),
       PL:Number(this.orderFrom.value.takeProfit),
-      ordType: Number(this.modelData.oBuySell),
+      ordType: Number(this.modelData.BS),
       StopLimit: "",
       Expiry: "",
       ExpTime: "",
       Comment: ""
+
+
+
+      
     };
   
     this.share.sendModefyData(obj)
@@ -1671,53 +1659,5 @@ saveOrderData(index: number, ticketId: number,status: number) {
   }
 
 
-deleteIFPossitionNotExists(val:any){
 
-}
-
-deletePositions(ticketId:any){
-  // Retrieve the current data from localStorage
-  const storedData1 = localStorage.getItem('positions');
-  if (storedData1) {
-    // Parse the data into a JSON array
-    const positions = JSON.parse(storedData1);
-    // Filter out the item with the matching Ticket ID
-  
-    const updatedData1 = positions.filter((item: any) => item.ticketId == ticketId);
-    if (updatedData1.length !== positions.length) {
-      // Save the updated array back to localStorage
-      localStorage.setItem('positions', JSON.stringify(updatedData1));
-      console.log(`Deleted item with Ticket ID ${ticketId}`);
-      this.share.UpToDate(0)
-    } else {
-      console.log(`No item found with Ticket ID ${ticketId}`);
-    }
-  } else {
-    console.log('No data found in localStorage for key "positionListData"');
-  }
-    }
-
-
-    // number and dot only
-    numberOnly2(event: any): boolean {
-      const charCode = event.which ? event.which : event.keyCode;
-    
-      // Reference to the input element
-      const input = event.target as HTMLInputElement;
-    
-      // Allow digits (0-9) and dot (.)
-      if ((charCode < 48 || charCode > 57) && charCode !== 46) {
-        this.numericMessage = true;
-        return false;
-      }
-    
-      // Check if the input already contains a dot
-      if (charCode === 46 && input.value.includes('.')) {
-        this.numericMessage = true;
-        return false;
-      }
-    
-      this.numericMessage = false;
-      return true;
-    }
 }

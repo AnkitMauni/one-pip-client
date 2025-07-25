@@ -43,7 +43,6 @@ export class LoginComponent implements OnInit{
     this.api.GET_MT_BROKERS().subscribe((data:any)=>{
       this.brokersList= data
       //  this.brokersList = [...]; // however you are populating it
-
   if (this.brokersList && this.brokersList.length > 0) {
     const firstBrokerId = this.brokersList[0].BrokerID;
     this.connectAccountForm.patchValue({ server: firstBrokerId });
