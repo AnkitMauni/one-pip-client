@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, HostListener, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router, Event } from '@angular/router';
 import { ShareService } from './services/share.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ export class AppComponent {
   nvatabc (tab: any){
     this.currentTab = tab
   }
+  isLoginRoute: boolean = false;
   isLoggedIn:any
   mainArea:any =88
   subArea :any= 12
@@ -64,7 +66,24 @@ export class AppComponent {
         this.subArea = 0
       }
     })
-
+    this.router.events
+    .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
+    .subscribe((event: NavigationEnd) => {
+      const currentUrl = event.urlAfterRedirects || event.url;
+   
+      this.isLoginRoute = currentUrl.includes('/login');
+      this.isLoggedIn = !!localStorage.getItem('loginId');
+   
+      if (this.isLoginRoute && this.isLoggedIn) {
+        // User typed /login manually or landed here somehow — clear storage
+        localStorage.clear();
+        sessionStorage.clear();
+        this.isLoggedIn = false;
+        // this.libuysellTab = 'tab1';
+      }
+   
+      this.cdr.detectChanges();
+    });
 
    
   }

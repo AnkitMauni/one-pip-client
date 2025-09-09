@@ -5,6 +5,7 @@
                 <div class="xheader">
                     <p *ngIf="libuysellTab== 'tab1'" style="color:#fff">Connect to account: {{brokersList[0]?.Broker}}</p>
                     <p *ngIf="libuysellTab== 'tab2'" style="color:#fff">Open Demo account: {{brokersList[0]?.Broker}}</p>
+                    <p *ngIf="libuysellTab== 'tab9'" style="color:#fff">Demo Account Details: {{brokersList[0]?.Broker}}</p>
                 </div>
                 <div class="xbody">
                     <div class="row">
@@ -112,8 +113,20 @@
                                     <div class="row align-items-center mb-3">
                                       <div class="col-md-2"><p class="xlbl">Password</p></div>
                                       <div class="col-md-5">
-                                        <div class="width100">
-                                          <input type="password" class="width100 c-input" readonly onfocus="this.removeAttribute('readonly');" formControlName="password">
+                                        <div class="width100" style="position: relative;">
+                                          <input 
+    [type]="showPassword ? 'text' : 'password'" 
+    class="width100 c-input pe-5" 
+    readonly 
+    onfocus="this.removeAttribute('readonly');" 
+    formControlName="password">
+
+  <!-- Eye icon inside input -->
+  <i class="fa" 
+     [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" 
+     (click)="togglePasswordVisibility()"
+     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;">
+  </i>
                                         <div class="text-danger" *ngIf="connectAccountForm.get('password')?.touched && connectAccountForm.get('password')?.invalid">
                                        <span *ngIf="connectAccountForm.get('password')?.errors?.['required']">Password is required.</span>
                                        <span *ngIf="connectAccountForm.get('password')?.errors?.['minlength']">Minimum 8 characters required.</span>
@@ -159,12 +172,13 @@
                                       <div class="col-md-7"><p class="xlbl"></p></div>
                                      
                                       <div class="col-md-12 mb-3" style="text-align: end;">
-                                          
-                                        <button class="btn btn-success" (click)="loginSend()" [disabled]="connectAccountForm.invalid">Connect to account</button>
-                                       
+                                        <button class="btn btn-success" (click)="loginSend()" [disabled]="loginDisable()" style="cursor: pointer;">
+                                          <span *ngIf="isConnectLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                          {{isConnectLoading ? 'Connecting...' : 'Connect to account'}}
+                                        </button>
                                       </div>
                                        <div class="col-md-12 text-center">
-                                          <a (click)="libuysell('tab2')" style="color: #007bff; font-size: 12px;">
+                                          <a (click)="libuysell('tab2')" style="color: #007bff; font-size: 12px; cursor: pointer;">
                                          Open Demo Account
                                        </a>
                                         </div>
@@ -207,12 +221,26 @@
                                             <div class="col-md-3"><p class="xlbl">Your Name</p></div>
                                             <div class="col-md-5">
                                               <div class="width100">
-                                                <input type="text" class="width100 c-input" formControlName="firstName">
+                                                <input type="text" class="width100 c-input" formControlName="firstName" (keypress)="onNameKeyPress($event)" placeholder="First Name">
+                                                <div class="text-danger" *ngIf="openDemoAccountForm.get('firstName')?.touched && openDemoAccountForm.get('firstName')?.invalid">
+                                                  <span *ngIf="openDemoAccountForm.get('firstName')?.errors?.['required']">First name is required.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('firstName')?.errors?.['emptyName']">Name cannot be empty.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('firstName')?.errors?.['extraSpaces']">Remove extra spaces at beginning or end.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('firstName')?.errors?.['multipleSpaces']">Remove multiple consecutive spaces.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('firstName')?.errors?.['numbersNotAllowed']">Numbers are not allowed.</span>
+                                                </div>
                                               </div>
                                             </div>
                                             <div class="col-md-4">
                                               <div class="width100">
-                                                <input type="text" class="width100 c-input" formControlName="lastName">
+                                                <input type="text" class="width100 c-input" formControlName="lastName" (keypress)="onNameKeyPress($event)" placeholder="Last Name">
+                                                <div class="text-danger" *ngIf="openDemoAccountForm.get('lastName')?.touched && openDemoAccountForm.get('lastName')?.invalid">
+                                                  <span *ngIf="openDemoAccountForm.get('lastName')?.errors?.['required']">Last name is required.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('lastName')?.errors?.['emptyName']">Name cannot be empty.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('lastName')?.errors?.['extraSpaces']">Remove extra spaces at beginning or end.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('lastName')?.errors?.['multipleSpaces']">Remove multiple consecutive spaces.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('lastName')?.errors?.['numbersNotAllowed']">Numbers are not allowed.</span>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
@@ -220,7 +248,18 @@
                                             <div class="col-md-3"><p class="xlbl">Email</p></div>
                                             <div class="col-md-5">
                                               <div class="width100">
-                                                <input type="email" class="width100 c-input" formControlName="email">
+                                                <input type="email" class="width100 c-input" formControlName="email" placeholder="example@domain.com">
+                                                <div class="text-danger" *ngIf="openDemoAccountForm.get('email')?.touched && openDemoAccountForm.get('email')?.invalid">
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['required']">Email is required.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['dotAtStart']">Email cannot start with a dot.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['hyphenNotAllowed']">Hyphens are not allowed in email.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['underscoreNotAllowed']">Underscores are not allowed in email.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['plusNotAllowed']">Plus signs are not allowed in email.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['consecutiveDots']">Consecutive dots are not allowed.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['multipleSubdomains']">Multiple subdomains are not allowed.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['noDomain']">Domain is required after @.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('email')?.errors?.['invalidEmailFormat']">Please enter a valid email format.</span>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
@@ -228,7 +267,19 @@
                                             <div class="col-md-3"><p class="xlbl">Mobile phone</p></div>
                                             <div class="col-md-5">
                                               <div class="width100">
-                                                <input type="text" class="width100 c-input" formControlName="phone">
+                                                <input type="text" class="width100 c-input" formControlName="phone" 
+                                                       placeholder="1234567890" 
+                                                       (input)="onPhoneInput($event)"
+                                                       (keypress)="onPhoneKeyPress($event)">
+                                                <div class="text-danger" *ngIf="openDemoAccountForm.get('phone')?.touched && openDemoAccountForm.get('phone')?.invalid">
+                                                  <span *ngIf="openDemoAccountForm.get('phone')?.errors?.['required']">Phone number is required.</span>
+                                                  <span *ngIf="openDemoAccountForm.get('phone')?.errors?.['invalidCharacters']">Only numbers are allowed. No hyphens, dots, commas, or spaces.</span>
+                                                  <!-- <span *ngIf="openDemoAccountForm.get('phone')?.errors?.['minLength']">Phone number must be at least 10 digits.</span> -->
+                                                  <span *ngIf="openDemoAccountForm.get('phone')?.errors?.['invalidPhone']">
+                                                    Phone number must be 4–16 digits only.
+                                                  </span>
+                                                  
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
@@ -286,10 +337,14 @@
                                         <div class="row">
                                             <div class="col-md-7"><p class="xlbl"></p></div>
                                             <div class="col-md-5" style="text-align: end;">
-                                                <button class="btn btn-success"  (click)="openDemoAccount()" [disabled]="openDemoAccountForm.invalid">Open Demo account</button>
+                                                <button class="btn btn-success" (click)="openDemoAccount()" 
+                                                [disabled]="loginDemoDisable()" style="cursor: pointer;">
+                                                  <span *ngIf="isDemoLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                  {{isDemoLoading ? 'Creating...' : 'Open Demo account'}}
+                                                </button>
                                             </div>
                                              <div class="col-md-12 text-center">
-                                          <a (click)="libuysell('tab1')" style="color: #007bff; font-size: 12px;">
+                                          <a (click)="libuysell('tab1')" style="color: #007bff; font-size: 12px; cursor: pointer;">
                                          Connect to Account
                                        </a>
                                         </div>
@@ -300,9 +355,13 @@
                             </div>
                             <div>
                                <div class="row" style="padding-right: 20px;" *ngIf="libuysellTab == 'tab9'">
-                                    <div class="col-md-12">
+                                    <!-- <div class="col-md-12">
                                         <p><b>Demo Account Details</b></p>
                                     </div>
+                                    <div class="xheader">
+                                      <p style="color:#fff">Demo Account Details</p>
+                                    </div> -->
+                                    
                                     <div class="col-md-12">
                                         <div class="row align-items-center mb-3">
                                             <div class="col-md-3"><p class="xlbl">Account</p></div>

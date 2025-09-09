@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import {  NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as cc from 'currency-codes';
 import { ApiService } from 'src/app/services/api.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl  } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GlobalService } from 'src/app/services/global.service';
 import { ShareService } from 'src/app/services/share.service';
@@ -148,9 +148,13 @@ this.headertoFooterSer.data$.subscribe((flag:boolean)=>{
     
   }
 
-
+liveMarketData:any=[]
 
   ngOnInit(){
+      this.share.allMarketLiveData$.subscribe((res: any) => {
+    this.liveMarketData = res;
+    // optionally, force Angular to detect changes if needed
+  });
     this.connectionStatus = localStorage.getItem('status') === 'Connect' ? 'Disconnect' : 'Connect';
     this.loginForm = this.fb.group({
       ac:[''],
@@ -158,9 +162,10 @@ this.headertoFooterSer.data$.subscribe((flag:boolean)=>{
     })
     this.orderFrom = this.fb.group({
       // volume: [''],  
-      price:[''] ,   // Control for the Volume input
-      stopLoss: [''],    // Control for the Stop Loss input
-      takeProfit: [''],  // Control for the Take Profit input
+      price:['',[this.decimalValidator.bind(this)]] ,   // Control for the Volume input
+      stopLimitPrice:['',[this.decimalValidator.bind(this)]] ,   // Control for the Volume input
+      stopLoss: ['',[this.decimalValidator.bind(this)]],    // Control for the Stop Loss input
+      takeProfit: ['',this.decimalValidator.bind(this)],  // Control for the Take Profit input
       comment: ['']      // Control for the Comment input
     });
 
@@ -201,7 +206,7 @@ this.headertoFooterSer.data$.subscribe((flag:boolean)=>{
           // this.deleteIFPossitionNotExists(this.orderResData.ticketId)
           console.log("orderResData.error",data)
           this.orderResData = data
-this.showMassage = 1
+this.showMassage = 0
  this.showErroMass =2
  
           }
@@ -223,6 +228,56 @@ this.showMassage = 1
       this.calculateLiveMetrics();
     }, 500);
 }
+  getStepFromPrice1(): number {
+    const price = parseFloat(this.orderFrom.get('price')?.value) || 0;
+    const digits = this.countDecimalDigits(price || 0.0001);
+    return 1 / Math.pow(10, digits);
+  }
+addSll1() {
+      const slControl = this.orderFrom.get('stopLimitPrice');
+      const currentSL = parseFloat(slControl?.value) || parseFloat(this.orderFrom.get('price')?.value) || 0;
+      const step = this.getStepFromPrice1();
+    
+      const newSL = (currentSL + step).toFixed(this.countDecimalDigits(step));
+      slControl?.setValue(Number(newSL));
+    }
+    
+    SubSll1() {
+      const slControl = this.orderFrom.get('stopLimitPrice');
+      const currentSL = parseFloat(slControl?.value) || parseFloat(this.orderFrom.get('price')?.value) || 0;
+      const step = this.getStepFromPrice1();
+    
+      let newSL = currentSL - step;
+      if (newSL < 0) newSL = 0;
+    
+      const formatted = newSL.toFixed(this.countDecimalDigits(step));
+
+      slControl?.setValue(Number(formatted));
+    }
+
+numberOnly2(event: any): boolean {
+      const charCode = event.which ? event.which : event.keyCode;
+    
+      // Reference to the input element
+      const input = event.target as HTMLInputElement;
+    
+      // Allow digits (0-9) and dot (.)
+      if ((charCode < 48 || charCode > 57) && charCode !== 46) {
+        this.numericMessage = true;
+        return false;
+      }
+    
+      // Check if the input already contains a dot
+      if (charCode === 46 && input.value.includes('.')) {
+        this.numericMessage = true;
+        return false;
+      }
+    
+      this.numericMessage = false;
+      return true;
+    }
+
+
 
 trimTime(val: any): string {
   if (!val) return ''; // or return 'N/A', or just val
@@ -234,7 +289,6 @@ trimTime(val: any): string {
 data1: any =[]
 data2: any =[]
 getCurrent(val:any,type:any){
-
   this.data1=   this.data.filter((item: any) => item?.oSymbolConfig?.Symbol === val);
   // console.log(this.data1[0]);
   if(this.data1[0] != undefined){
@@ -369,7 +423,7 @@ calculateLiveMetrics() {
       this.liveMargin = data.margin;
     })
     this.equity = balance + this.floatingPL;
-    this.usedMargin = usedMargin;
+    this.usedMargin = this.liveMargin;
     this.freeMargin = this.equity - usedMargin;
     this.marginLevel = usedMargin > 0 ? (this.equity / usedMargin) * 100 : 0;
   }
@@ -398,6 +452,9 @@ intervalId: any;
   // Ensure the interval is cleared on component destruction
   ngOnDestroy() {
     this.stopInterval();
+    if (this.modref) {
+      this.modref.close();   // or this.modref.dismiss();
+    }
   }
 allGetTrade: any ={}
 allGetTrade1: any ={}
@@ -1388,62 +1445,139 @@ this.orderFrom.patchValue({
 inputSl:any
 inputTPP:any
     addSll(val:any){
+      if (this.modelData?.BS === 0 || this.modelData?.BS === 1) return;
   let value = parseFloat(val);
   if (isNaN(value)) {
-    value = parseFloat(this.orderFrom.get('stopLoss')?.value) || this.currentPri || 0;
+    value = parseFloat(this.orderFrom.get('price')?.value) || this.currentPri || 0;
   }
-
-  const decimals = this.countDecimalDigits(value);
+const step = this.getStepFromPrice(value);
+  const decimals = this.countDecimalDigits(step);
   const updatedValue = (value + 1 / Math.pow(10, decimals)).toFixed(decimals);
 
   this.inputSl = updatedValue;
-  this.orderFrom.patchValue({ stopLoss: updatedValue });
+  this.orderFrom.patchValue({ price: updatedValue });
        }
    
 
     // Subtract Sl 0.1 from the input value
     SubSll(val: any) {
+      if (this.modelData?.BS === 0 || this.modelData?.BS === 1) return;
   let value = parseFloat(val);
   if (isNaN(value)) {
-    value = parseFloat(this.orderFrom.get('stopLoss')?.value) || this.currentPri || 0;
+    value = parseFloat(this.orderFrom.get('price')?.value) || this.currentPri || 0;
       }
     
-  const decimals = this.countDecimalDigits(value);
+const step = this.getStepFromPrice(value);
+  const decimals = this.countDecimalDigits(step);
   const updatedValue = (value - 1 / Math.pow(10, decimals)).toFixed(decimals);
     
   this.inputSl = updatedValue;
-  this.orderFrom.patchValue({ stopLoss: updatedValue });
+  this.orderFrom.patchValue({ price: updatedValue });
     }
+ getStepFromPrice(current: any): number {
+  const price = parseFloat(current) || 0;
+  const digits = this.pricePrecision || 0.0001;
+  return 1 / Math.pow(10, digits);
+}
+
+addSllSLTP() {
+  const slControl = this.orderFrom.get('stopLoss');
+
+  // Get base value: first time from 'price', otherwise from 'stopLoss'
+  let baseValue: number;
+
+  if (slControl?.value !== null && slControl?.value !== undefined && slControl.value !== 0) {
+    baseValue = +slControl.value;
+  } else {
+    baseValue = +this.orderFrom.get('price')?.value || 0;
+  }
+
+  console.log("Base for SL:", baseValue);
+
+  const step = +this.getStepFromPrice(baseValue);
+  const precision = this.countDecimalDigits(step);
+  const newSL = (baseValue + step).toFixed(precision);
+
+  this.inputSl = newSL;
+
+  // Set only 'stopLoss', do NOT touch 'price'
+  slControl?.setValue(Number(newSL));
+}
+
+
+
     
+   SubSllSLTP() {
+  const slControl = this.orderFrom.get('stopLoss');
+
+  // Use stopLoss if set, otherwise fall back to price
+  let baseValue: number;
+
+  if (slControl?.value !== null && slControl?.value !== undefined && slControl.value !== 0) {
+    baseValue = +slControl.value;
+  } else {
+    baseValue = +this.orderFrom.get('price')?.value || 0;
+  }
+
+  console.log("Base for SL (subtract):", baseValue);
+
+  const step = +this.getStepFromPrice(baseValue);
+  let newSL = baseValue - step;
+  if (newSL < 0) newSL = 0;
+
+  const precision = this.countDecimalDigits(step);
+  const formatted = newSL.toFixed(precision);
+
+  this.inputSl = formatted;
+  slControl?.setValue(Number(formatted)); // Only update stopLoss, not price
+}
+
 
     // Add TP 0.1 to the input value
-      addTP(val:any){
-  let value = parseFloat(val);
-  if (isNaN(value)) {
-    value = parseFloat(this.orderFrom.get('takeProfit')?.value) || this.currentPri || 0;
-        }
-     
-  const decimals = this.countDecimalDigits(value);
-  const updatedValue = (value + 1 / Math.pow(10, decimals)).toFixed(decimals);
-     
+addTP() {
+  const tpControl = this.orderFrom.get('takeProfit');
+
+  // Use takeProfit if set, else start from price
+  let baseValue: number;
+  if (tpControl?.value !== null && tpControl?.value !== undefined&& tpControl.value !== 0) {
+    baseValue = +tpControl.value;
+  } else {
+    baseValue = +this.orderFrom.get('price')?.value || 0;
+  }
+
+  const step = +this.getStepFromPrice(baseValue);
+  const precision = this.countDecimalDigits(step);
+  const updatedValue = (baseValue + step).toFixed(precision);
+
   this.inputTPP = updatedValue;
-  this.orderFrom.patchValue({ takeProfit: updatedValue });
+  tpControl?.setValue(Number(updatedValue)); // Only update takeProfit
 }
+
      
      
     // Subtract TP 0.1 from the input value
-    subTP(val:any){
-  let value = parseFloat(val);
-  if (isNaN(value)) {
-    value = parseFloat(this.orderFrom.get('takeProfit')?.value) || this.currentPri || 0;
-      }
-    
-  const decimals = this.countDecimalDigits(value);
-  const updatedValue = (value - 1 / Math.pow(10, decimals)).toFixed(decimals);
-    
-  this.inputTPP = updatedValue;
-  this.orderFrom.patchValue({ takeProfit: updatedValue });
-      }
+   subTP() {
+  const tpControl = this.orderFrom.get('takeProfit');
+
+  // Use takeProfit if set, else start from price
+  let baseValue: number;
+  if (tpControl?.value !== null && tpControl?.value !== undefined&& tpControl.value !== 0) {
+    baseValue = +tpControl.value;
+  } else {
+    baseValue = +this.orderFrom.get('price')?.value || 0;
+  }
+
+  const step = +this.getStepFromPrice(baseValue);
+  let newTP = baseValue - step;
+  if (newTP < 0) newTP = 0;
+
+  const precision = this.countDecimalDigits(step);
+  const formatted = newTP.toFixed(precision);
+
+  this.inputTPP = formatted;
+  tpControl?.setValue(Number(formatted)); // Only update takeProfit
+}
+
     
 currVTP:any 
 
@@ -1473,10 +1607,46 @@ countDecimalDigits(num: number | string): number {
   const decimalIndex = numStr.indexOf('.');
   return decimalIndex !== -1 ? numStr.length - decimalIndex - 1 : 0;
 }
-
+decimalValidator(control: AbstractControl): { [key: string]: any } | null {
+  if (control.value == null || control.value === '') return null;
+  // console.error("con",control.value);
+  const value = this.currentPri?.toString()?? "0.00000";
+  const precision = this.pricePrecision ?? 2; // fallback
+  // console.error("this.pricePrecision",this.pricePrecision);
+  const regex = new RegExp(`^\\d+(\\.\\d{0,${precision}})?$`);
+  // console.error("regex.test(value)",regex.test(value));
+  return regex.test(value) ? null : { invalidDecimal: true };
+}
+public minLot:number = 0;
+public MaxLot:number = 0;
+public stepVol:number = 0;
+pricePrecision =2;
 modref2:any
 modelData:any ={}
 openXl2(content2: any,val:any) {
+  console.log("vallllue", val);
+  this.orderFrom.controls['stopLimitPrice'].setValue(val.PTr)
+  const obj ={
+    "Key": "",
+    "Symbol": val.Sy
+  }
+//  this.share.allMarketLiveData$.subscribe((res: any) => {
+//       // console.log("allMarketLiveData",res);
+//       this.data = res.filter((item: any) => item?.oSymbolConfig?.Symbol === val.Sy);
+//       // console.log("dddaata[0]", this.data[0]);
+//       this.currentPri = this.data[0]?.oInitial?.Ask
+//       console.log("this.currentPri2", this.currentPri);
+//       // localStorage.setItem('changeSym',this.data[0]?.oSymbolConfig?.Symbol)
+//     })
+  this.api.GET_SYMBOL_PROP(obj).subscribe({ // Ensure api service and method name are correct
+      next: (res: any) => {
+        this.pricePrecision = res.Digit;
+        this.minLot  = res.MinVol/10000;
+            this.MaxLot  = val.V/10000;
+            this.stepVol = res.Vol_Step/10000;
+        // console.log(`Fetched initial data for dialog display (${symbol}):`, res);
+      }
+    })
   this.modelData = val  
   this.inputLotValue = this.modelData.V/10000
   this.isPendingOrder = this.modelData.BS >= 2 && this.modelData.BS <= 7;
@@ -1607,7 +1777,7 @@ refreshPosition(){
   }}
  deleteOrder(Sy:any, BS:any) {
 
-   const marketPrice = this.getCurrent(Sy,BS);
+  //  const marketPrice = this.getCurrent(Sy,BS);
  
    
 
@@ -1618,7 +1788,7 @@ refreshPosition(){
       Symbol: this.modelData.Sy,
       Ticket: Number(this.modelData.Ord),
       Lot: Number(this.inputLotValue),
-      Price: marketPrice,
+      Price: BS,
       ordType: Number(this.modelData.BS),
       fillType: 0,
       Comment:(this.orderFrom.value.comment),
@@ -1637,27 +1807,224 @@ modefyOrder() {
       Login: 106,
       accID: Number(localStorage.getItem('loginId')),
       Symbol: this.modelData.Sy,
-      Ticket: this.modelData.Pos,
+      Ticket: !this.modelData.Pos && this.modelData.Pos !==0 ? this.modelData?.Ord : this.modelData.Pos,
       Lot:this.modelData.V/10000,
-      Price: Number(this.modelData.PC),
+      Price: Number(this.orderFrom.value.price),
       SL:  Number(this.orderFrom.value.stopLoss),
       // SL:  Number(this.inputSl),
       PL:Number(this.orderFrom.value.takeProfit),
       ordType: Number(this.modelData.BS),
-      StopLimit: "",
+      StopLimit: Number(this.orderFrom.value.stopLimitPrice),
       Expiry: "",
       ExpTime: "",
       Comment: ""
 
-
-
-      
     };
   
     this.share.sendModefyData(obj)
   
   }
+// Modifydisble(modify: any) {
+//   let livePrice:any;
+//   if(modify?.Ord){
+//     // console.log("modelData?.Ord",modify);
+//       this.share.allMarketLiveData$.subscribe((res: any) => {
+//               livePrice = res.filter((item: any) => item?.oSymbolConfig?.Symbol === modify?.Sy);
+//               livePrice = livePrice[0].oInitial?.Ask;
+//       // console.log("dddaata[0]", livePrice[0].oInitial?.Ask);
+//     // this.data = res
+//     // console.log("marketliveSocket", res)
+//   })
+//   }
+//   const stopLoss = this.orderFrom.controls['stopLoss'].value;
+//   const takeProfit = this.orderFrom.controls['takeProfit'].value;
+//   const price = this.orderFrom.controls['price'].value;
+//   const condition = modify.BS;
+//   const hasStopLoss = stopLoss > 0;
+//   const hasTakeProfit = takeProfit > 0;
+//   if(condition == 0) {
+//   if (!hasStopLoss && !hasTakeProfit) return true;
 
+//   // If only stopLoss filled, validate it
+//   if (hasStopLoss && !hasTakeProfit) return stopLoss < price;
 
+//   // If only takeProfit filled, validate it
+//   if (!hasStopLoss && hasTakeProfit) return takeProfit > price;
+
+//   // If both filled, both must be valid
+//   return stopLoss < price && takeProfit > price;
+// }
+// if(condition == 1)
+//   {
+//    if (!hasStopLoss && !hasTakeProfit) return true;
+
+//   // If only stopLoss filled, validate it
+//   if (hasStopLoss && !hasTakeProfit) return stopLoss > price;
+
+//   // If only takeProfit filled, validate it
+//   if (!hasStopLoss && hasTakeProfit) return takeProfit < price;
+
+//   // If both filled, both must be valid
+//   return stopLoss > price && takeProfit < price;
+// }
+// if(condition == 2 || condition == 4 || condition == 6){
+// if (!hasStopLoss && !hasTakeProfit) return true;
+
+//   // If only stopLoss filled, validate it
+//   if (hasStopLoss && !hasTakeProfit) return stopLoss < price;
+
+//   // If only takeProfit filled, validate it
+//   if (!hasStopLoss && hasTakeProfit) return takeProfit > price;
+
+//   // If both filled, both must be valid
+//   return stopLoss < price && takeProfit > price;
+// }
+
+// if(condition == 3 || condition == 5 || condition == 7){
+// //   if (!hasStopLoss && !hasTakeProfit) return true;
+
+// //   // If only stopLoss filled, validate it
+// //   if (hasStopLoss && !hasTakeProfit) return stopLoss < price;
+
+// //   // If only takeProfit filled, validate it
+// //   if (!hasStopLoss && hasTakeProfit) return takeProfit > price;
+
+// //   // If both filled, both must be valid
+// //   return stopLoss < price && takeProfit > price;
+//   return true;
+// }
+// return false;
+// }
+getCurrentMarketPriceAsk(symbol: string): number | undefined {
+  const found = this.liveMarketData.find((item:any) => item?.oSymbolConfig?.Symbol === symbol);
+  return found?.oInitial?.Ask;
+}
+getCurrentMarketPriceBid(symbol: string): number | undefined {
+  const found = this.liveMarketData.find((item:any) => item?.oSymbolConfig?.Symbol === symbol);
+  return found?.oInitial?.Bid;
+}
+Modifydisble(modify: any): boolean {
+  // Get livePrice synchronously
+  const BS = modify.BS;
+ if (!modify) return false;
+ let livePrice:any;
+ if(BS==0||BS==2||BS==4||BS==6){
+   livePrice = this.getCurrentMarketPriceBid(modify.Sy);
+ }
+ if(BS==1||BS==3||BS==5||BS==7){
+   livePrice = this.getCurrentMarketPriceAsk(modify.Sy);
+ }
+  if (livePrice === undefined) {
+    // Can't get price, disable button
+    return false;
+  }
+
+ 
+
+  const stopLoss = Number(this.orderFrom.controls['stopLoss'].value) || 0;
+  const takeProfit = Number(this.orderFrom.controls['takeProfit'].value) || 0;
+  const price = Number(this.orderFrom.controls['price'].value) || 0;
+  const stopLimitPrice = Number(this.orderFrom.controls['stopLimitPrice']?.value) || 0;
+
+  
+
+  // Utility checks: SL & TP either 0 or positive
+  const hasSL = stopLoss > 0;
+  const hasTP = takeProfit > 0;
+
+  // --- Rules for Open positions (BS 0 and 1) ---
+  if (BS === 0) { // Buy open
+    if (!hasSL && !hasTP) return true;
+    if (hasSL && !hasTP) return stopLoss < price;
+    if (!hasSL && hasTP) return takeProfit > price;
+    return stopLoss < price && takeProfit > price;
+  }
+  if (BS === 1) { // Sell open
+    if (!hasSL && !hasTP) return true;
+    if (hasSL && !hasTP) return stopLoss > price;
+    if (!hasSL && hasTP) return takeProfit < price;
+    return stopLoss > price && takeProfit < price;
+  }
+
+  // --- Rules for Pending Positions ---
+ if (BS === 2) { // Buy Limit
+  // P <= MP AND SL < P AND TP > P (SL & TP optional)
+  if (price > livePrice) return false;             // P > MP disallowed
+  if (hasSL && stopLoss >= price) return false;    // SL must be less than P
+  if (hasTP && takeProfit <= price) return false;  // TP must be greater than P
+  return true;
+}
+
+  if (BS === 3) { // Sell Limit
+  // P >= MP AND SL > P AND TP < P (SL & TP optional)
+  if (price < livePrice) return false;           // P < MP disallowed
+  if (hasSL && stopLoss <= price) return false;  // SL must be > P
+  if (hasTP && takeProfit >= price) return false;// TP must be < P
+  return true;
+}
+  if (BS === 4) { // Buy Stop
+    // P >= MP AND SL < P AND TP > P (SL & TP optional)
+    if (price < livePrice) return false;
+    if (hasSL && stopLoss >= price) return false;
+    if (hasTP && takeProfit <= price) return false;
+    return true;
+  }
+
+  if (BS === 5) { // Sell Stop
+    // P <= MP AND SL > P AND TP < P
+    if (price > livePrice) return false;
+    if (hasSL && stopLoss <= price) return false;
+    if (hasTP && takeProfit >= price) return false;
+    return true;
+  }
+
+  if (BS === 6) { // Buy Stop Limit
+    // P >= MP AND SLP < P AND SL < SLP AND TP > SLP
+    if (price < livePrice) return false;
+    if (stopLimitPrice === 0) return false; // stopLimitPrice mandatory here for logic
+    if (stopLimitPrice >= price) return false;
+    if (hasSL && stopLoss >= stopLimitPrice) return false;
+    if (hasTP && takeProfit <= stopLimitPrice) return false;
+    return true;
+  }
+
+  if (BS === 7) { // Sell Stop Limit
+    // P <= MP AND SLP > P AND SL > SLP AND TP < SLP
+    if (price > livePrice) return false;
+    if (stopLimitPrice === 0) return false;
+    if (stopLimitPrice <= price) return false;
+    if (hasSL && stopLoss <= stopLimitPrice) return false;
+    if (hasTP && takeProfit >= stopLimitPrice) return false;
+    return true;
+  }
+
+  // Default disable for other BS types or unknown
+  return false;
+}
+
+onLotInputChange() {
+  if (this.inputLotValue < this.minLot) {
+    this.inputLotValue = this.minLot;
+  } else if (this.inputLotValue > this.MaxLot) {
+    this.inputLotValue = this.MaxLot;
+  }
+}
+
+addVol() {
+  console.log("this.inputLotValue",this.inputLotValue);
+  console.log("this.stepVol",this.stepVol);
+  console.log("this.pricePrecision",this.pricePrecision);
+  const newVal = +(this.inputLotValue + this.stepVol).toFixed(this.pricePrecision??2); // Fixed to 4 decimal to avoid floating point issues
+  if (newVal <= this.MaxLot) {
+    this.inputLotValue = newVal;
+  }
+}
+
+SubVol() {
+  const newVal = +(this.inputLotValue - this.stepVol).toFixed(this.pricePrecision??2);
+  if (newVal >= this.minLot) {
+    this.inputLotValue = newVal;
+  }
+}
 
 }

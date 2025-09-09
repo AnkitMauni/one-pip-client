@@ -32,7 +32,7 @@ export class ShareService {
     shareNaviValue = this.shareNavi.asObservable();
 
 
-    private changeSym: BehaviorSubject<any> = new BehaviorSubject<any>('AUDUSD.c_5200');
+    public changeSym: BehaviorSubject<any> = new BehaviorSubject<any>('');
     changeSym$: Observable<any> = this.changeSym.asObservable();
 
 private getSymbols: Subject<any> = new Subject<any>();
@@ -86,6 +86,7 @@ livMargin(margin: number) {
   //     this.changeSym.next(data)
   // }
   getSubscribedSymbol(data:any){
+    console.log("subscribed Symbol", data);
     this.getSymbols.next(data)
   }
   loader(data: any) {

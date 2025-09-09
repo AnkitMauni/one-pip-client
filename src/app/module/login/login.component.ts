@@ -22,6 +22,8 @@ export class LoginComponent implements OnInit{
     accountList:any =[]
     accountActiveList:any =[]
     accountUnActiList:any =[]
+    isConnectLoading: boolean = false;
+    isDemoLoading: boolean = false;
     constructor( private toaster: ToastrService,private el: ElementRef, private renderer: Renderer2,private share:ShareService,private datePipe: DatePipe,private modalService: NgbModal,private fb: FormBuilder, config: NgbModalConfig, private router:Router,private api: GlobalService) {
       this.accountList = JSON.parse(localStorage.getItem('brokerAccList') || '[]')
       this.accountActiveList=  this.accountList.filter((list:any) => list.account === Number(localStorage.getItem('loginId')))
@@ -54,9 +56,13 @@ export class LoginComponent implements OnInit{
   }
     })
   }
-    libuysell(tab: any) {
-      this.libuysellTab = tab
-    }
+   libuysell(tab: string) {
+  this.libuysellTab = tab;
+  if (tab === 'tab2') {
+    this.openDemoAccountForm.reset();
+  }
+}
+
 
     createForm() {
      this.connectAccountForm = this.fb.group({
@@ -77,11 +83,11 @@ export class LoginComponent implements OnInit{
 });
 
       this.openDemoAccountForm = this.fb.group({
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        phone: ['', Validators.required],
-        accountType: ['Trade MT5 USD', Validators.required],
+        firstName: ['', [Validators.required, this.nameValidator]],
+        lastName: ['', [Validators.required, this.nameValidator]],
+        email: ['', [Validators.required, this.customEmailValidator]],
+        phone: ['', [Validators.required, this.phoneValidator]],
+        // accountType: ['Trade MT5 USD', Validators.required],
         deposit: ['5000', Validators.required],
         leverage: ['5000', Validators.required],
         agreeTerms: [false, Validators.requiredTrue],
@@ -90,56 +96,202 @@ export class LoginComponent implements OnInit{
     }
   
   invalidSelectValidator: ValidatorFn = (control: AbstractControl) => {
-  return control.value == '0' ? { invalidSelect: true } : null;
-};
+    return control.value == '0' ? { invalidSelect: true } : null;
+  };
+
+  nameValidator: ValidatorFn = (control: AbstractControl) => {
+    if (!control.value) return null;
+    
+    const value = control.value.trim();
+    
+    // Check for empty after trim
+    if (!value) return { emptyName: true };
+    
+    // Check for leading/trailing spaces
+    if (control.value !== value) return { extraSpaces: true };
+    
+    // Check for multiple consecutive spaces
+    if (/\s{2,}/.test(control.value)) return { multipleSpaces: true };
+    
+    // Check for spaces at beginning or end of words
+    if (/^\s|\s$/.test(control.value)) return { invalidSpaces: true };
+
+    if (/\d/.test(value)) {
+      return { numbersNotAllowed: true };
+    }
+    return null;
+  };
+  onNameKeyPress(event: KeyboardEvent) {
+    if (/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+  phoneValidator: ValidatorFn = (control: AbstractControl) => {
+    if (!control.value) return null;
+    
+    // Remove any non-digit characters for validation
+    const cleanPhone = control.value.replace(/\D/g, '');
+    
+    // Check if original contains invalid characters
+    if (/[-.,\s]/.test(control.value)) return { invalidCharacters: true };
+    
+    // Check minimum length
+    // if (cleanPhone.length > 3) return { minLength: true };
+    if (!/^[0-9]{4,16}$/.test(control.value)) {
+      return { invalidPhone: true };
+    }
+    return null;
+  };
+
+  // customEmailValidator: ValidatorFn = (control: AbstractControl) => {
+  //   if (!control.value) return null;
+    
+  //   const email = control.value.toLowerCase();
+    
+  //   // Check for dot at start
+  //   if (email.startsWith('.')) return { dotAtStart: true };
+    
+  //   // Check for hyphens
+  //   if (email.includes('-')) return { hyphenNotAllowed: true };
+    
+  //   // Check for underscores
+  //   if (email.includes('_')) return { underscoreNotAllowed: true };
+    
+  //   // Check for plus signs
+  //   if (email.includes('+')) return { plusNotAllowed: true };
+    
+  //   // Check for consecutive dots
+  //   if (/\.{2,}/.test(email)) return { consecutiveDots: true };
+    
+  //   // Check domain part
+  //   const parts = email.split('@');
+  //   if (parts.length !== 2) return { invalidFormat: true };
+    
+  //   const [localPart, domainPart] = parts;
+    
+  //   // Check for multiple dots in domain
+  //   if ((domainPart.match(/\./g) || []).length > 1) return { multipleSubdomains: true };
+    
+  //   // Check for domain presence
+  //   if (!domainPart || domainPart.length === 0) return { noDomain: true };
+    
+  //   // Basic email format validation
+  //   const emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/;
+  //   if (!emailRegex.test(email)) return { invalidEmailFormat: true };
+    
+  //   return null;
+  // };
+  customEmailValidator: ValidatorFn = (control: AbstractControl) => {
+    if (!control.value) return null;
+  
+    const email = control.value.toLowerCase();
+  
+    // Rule 1: Cannot start with dot
+    if (email.startsWith('.')) return { dotAtStart: true };
+  
+    // Rule 2: Disallow hyphens, underscores, plus
+    if (email.includes('-')) return { hyphenNotAllowed: true };
+    if (email.includes('_')) return { underscoreNotAllowed: true };
+    if (email.includes('+')) return { plusNotAllowed: true };
+  
+    // Rule 3: Consecutive dots not allowed
+    if (/\.{2,}/.test(email)) return { consecutiveDots: true };
+  
+    // Rule 4: Split into local + domain
+    const parts = email.split('@');
+    if (parts.length !== 2) return { invalidFormat: true };
+  
+    const [localPart, domainPart] = parts;
+  
+    // Rule 5: Local part validation (letters + optional single dots inside)
+    const localRegex = /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*$/;
+    if (!localRegex.test(localPart)) return { invalidLocalPart: true };
+  
+    // Rule 6: Domain must have at least one dot
+    if (!domainPart || !domainPart.includes('.')) return { noDomain: true };
+  
+    // Rule 7: Only allow one main dot + optional subdomain (gmail.com / domain.co.uk)
+    const domainRegex = /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+$/;
+    if (!domainRegex.test(domainPart)) return { invalidDomain: true };
+  
+    return null;
+  };
+  
     loginId :any = 771227
     loginDetails:any={}
     login(){
-
       if (this.connectAccountForm.valid) {
+        this.isConnectLoading = true;
         console.log(this.connectAccountForm.value);
-        // Handle login logic here
+        
         let obj ={
-      
           "Account":Number(this.connectAccountForm.value.login),
           "Password":this.connectAccountForm.value.password,
           "BrokerID":this.connectAccountForm.value.server     
-          // wo jayegi jo hm varify manager mai bhejre h
-      
-      }
-      this.api.LOGIN_USER_ACCOUNT(obj).subscribe({ next:(res:any)=>{
-        console.log("res",res);
-        if(res.oResult.Result == true){
+        }
         
-          this.loginDetails = res
-          const updatedData = { ...this.loginDetails, BrokerURL: '' }; // Merge BrokerURL into data
-          
-          this.share.setLoginData(updatedData);
-          localStorage.setItem("Sock_Quote", this.loginDetails.Sock_Quote)
-          localStorage.setItem("Sock_Trade", this.loginDetails.Sock_Trade)
-          localStorage.setItem("PkgId", this.loginDetails.PkgId)
-          localStorage.setItem("admin", JSON.stringify(updatedData))
-          localStorage.setItem('loginId',this.connectAccountForm.value.login)
-          this.toaster.success("Login successfully", "Success");
-          setTimeout(() => {
-            this.router.navigate(['/dashboard']).then(() => {
-                    this.router.navigate([{ outlets: { primary: null } }]); // Clear router state
-                    location.reload()
-          });
-          
-          },1000);
-         
-        }
-        if(res.oResult.Result == false){
-          this.toaster.error(res.oResult.ADM_MSG, "Error");
-        }
-         
-      }})
+        this.api.LOGIN_USER_ACCOUNT(obj).subscribe({ 
+          next:(res:any)=>{
+            console.log("res",res);
+            
+            if(res.oResult.Result == true){
+              this.loginDetails = res
+              const updatedData = { ...this.loginDetails, BrokerURL: '' };
+              
+              this.share.setLoginData(updatedData);
+              localStorage.setItem("Sock_Quote", this.loginDetails.Sock_Quote)
+              localStorage.setItem("Sock_Trade", this.loginDetails.Sock_Trade)
+              localStorage.setItem("PkgId", this.loginDetails.PkgId)
+              localStorage.setItem("admin", JSON.stringify(updatedData))
+              localStorage.setItem('loginId',this.connectAccountForm.value.login)
+              this.toaster.success("Login successfully", "Success");
+              
+              setTimeout(() => {
+                this.isConnectLoading = false;
+                this.router.navigate(['/dashboard']).then(() => {
+                  location.reload()
+                });
+              },1000);
+            }
+            
+            if(res.oResult.Result == false){
+              this.toaster.error(res.oResult.ADM_MSG, "Error");
+            }
+          },
+          error:(err:any)=>{
+            this.isConnectLoading = false;
+            this.toaster.error("Connection failed. Please try again.", "Error");
+            console.error("Login error:", err);
+          }
+        })
       } else {
         console.log('Form is invalid');
-        
+        this.markFormGroupTouched(this.connectAccountForm);
       }
+    }
+
+    loginDisable(): boolean {
+      return this.connectAccountForm.invalid || this.isConnectLoading;
+    }
+    showPassword: boolean = false;
+
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    }
+    loginDemoDisable(): boolean {
+      return (
+        this.openDemoAccountForm.invalid ||
+        !this.openDemoAccountForm.get('agreeTerms')?.value ||
+        this.isDemoLoading
+      );
+    }
     
+
+    markFormGroupTouched(formGroup: FormGroup) {
+      Object.keys(formGroup.controls).forEach(field => {
+        const control = formGroup.get(field);
+        control?.markAsTouched({ onlySelf: true });
+      });
     }
 
 async  loginSend(){
@@ -224,6 +376,42 @@ async  loginSend(){
      return true;
    }
 
+   // Phone number input handler
+   onPhoneInput(event: any): void {
+     const input = event.target;
+     const value = input.value;
+     
+     // Remove any non-digit characters
+     const cleanValue = value.replace(/[^0-9]/g, '');
+     
+     // Update the form control with clean value
+     this.openDemoAccountForm.patchValue({ phone: cleanValue });
+   }
+
+   // Prevent invalid characters in phone input
+   onPhoneKeyPress(event: KeyboardEvent): boolean {
+     const charCode = event.which || event.keyCode;
+     const char = String.fromCharCode(charCode);
+     
+     // Allow only digits, backspace, delete, tab, escape, enter
+     if ([8, 9, 27, 13, 46].indexOf(charCode) !== -1 ||
+         // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+         (charCode === 65 && event.ctrlKey) ||
+         (charCode === 67 && event.ctrlKey) ||
+         (charCode === 86 && event.ctrlKey) ||
+         (charCode === 88 && event.ctrlKey)) {
+       return true;
+     }
+     
+     // Ensure that it is a number and stop the keypress
+     if (!/[0-9]/.test(char)) {
+       event.preventDefault();
+       return false;
+     }
+     
+     return true;
+   }
+
    listOb:any={}
    showListAccount(val:any){
     this.listOb = val
@@ -234,31 +422,43 @@ demoAccount:any
 demoPass:any
    openDemoAccount() {
     if (this.openDemoAccountForm.valid) {
-    
-      let obj = {
       
+      let obj = {
         "Key": "",
-        "First": this.openDemoAccountForm.value.firstName,
-        "Last": this.openDemoAccountForm.value.lastName,
-        "Mobile": this.openDemoAccountForm.value.phone,
-        "Email": this.openDemoAccountForm.value.email,
-        "BrokerID": 100,
+        "First": this.openDemoAccountForm.value.firstName.trim(),
+        "Last": this.openDemoAccountForm.value.lastName.trim(),
+        "Mobile": this.openDemoAccountForm.value.phone.replace(/\D/g, ''),
+        "Email": this.openDemoAccountForm.value.email.toLowerCase().trim(),
+        "BrokerID": this.openDemoAccountForm.value.server,
         "Leverage":this.selectedLeverageValue,
         "Deposit": this.selectedDepositValue,
-        // "ERR_CODE": 1
-
-       
-    }
-    console.log(this.openDemoAccountForm.value,obj);
-    this.api.OPEN_ACCOUNT_PB(obj).subscribe({ next:(res:any)=>{
-      console.log("res",res);
-      this.demoAccount = res.Account
-      this.demoPass = res.Password
-      this.libuysellTab = 'tab9'
+      }
       
-    }})
+      console.log(this.openDemoAccountForm.value,obj);
+      this.isDemoLoading = true;
+      this.api.OPEN_ACCOUNT_PB(obj).subscribe({ 
+        next:(res:any)=>{
+          console.log("res",res);
+          
+          if(res.Account && res.Password) {
+            this.demoAccount = res.Account
+            this.demoPass = res.Password
+            this.libuysellTab = 'tab9'
+            this.isDemoLoading = false;
+            this.toaster.success("Demo account created successfully!", "Success");
+          } else {
+            this.toaster.error("Failed to create demo account. Please try again.", "Error");
+          }
+        },
+        error:(err:any)=>{
+          this.isDemoLoading = false;
+          this.toaster.error("Server error. Please try again later.", "Error");
+          console.error("Demo account creation error:", err);
+        }
+      })
     } else {
       console.log('Form is invalid');
+      this.markFormGroupTouched(this.openDemoAccountForm);
     }
   }
 

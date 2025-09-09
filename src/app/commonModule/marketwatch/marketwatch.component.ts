@@ -191,8 +191,7 @@ bufferArray: any = Uint8Array;
 
 qoutesUrll:any 
   ngOnInit(){
-  //   this.element = this.el.nativeElement.querySelector('#yourElementId');
-   
+  //   this.element = this.el.nativeElement.querySelector('#yourElementId');  
   //     if (this.element) {
   //   this.renderer.listen(this.element, 'contextmenu', this.onRightClick.bind(this));
   // }
@@ -200,15 +199,12 @@ qoutesUrll:any
       if (data) {
        console.log("dataa",data);
        this.qoutes =(data.Sock_Quote).replace(/\\/g, "//")
-       this.trades =(data.Sock_Trade).replace(/\\/g, "//")
-       
+       this.trades =(data.Sock_Trade).replace(/\\/g, "//")       
       }
-      else{
-       
+      else{      
         const storedQuote = localStorage.getItem('Sock_Quote');
         this.qoutes = storedQuote ? storedQuote.replace(/\\/g, "//") : "";
-        console.log(this.qoutes);
-        
+        console.log(this.qoutes);       
         const storedTrade = localStorage.getItem('Sock_Trade');
         this.trades = storedTrade ? storedTrade.replace(/\\/g, "//") : "";
         console.log(this.trades);
@@ -431,13 +427,13 @@ decode(byteArray: Uint8Array) {
       Bid === 0 && Ask === 0 && Vol === 0 && Last === 0 &&
       Time === "00:00:00"
     ) {
-      console.warn("⚠️ Skipping zeroed-out packet");
+      console.warn(`⚠️ Skipping zeroed-out packet | Symbol: "${Symbol}" | Time: ${TimeString}`);
       skippedPackets++;
       continue;
     }
 
     if (!Symbol || Symbol.trim() === "") {
-      console.warn("⚠️ Skipping packet with empty symbol");
+      console.warn(`⚠️ Skipping packet with empty symbol | Raw Symbol: "${Symbol}"`);
       continue;
     }
 
@@ -651,6 +647,7 @@ deleteRow() {
           this.removeSymbolFromTable(symbolToDelete);
           this.isMenuVisible = false;
           this.GET_USER_ALL_SYMBOLS_v2();
+          this.get_Mk()
         },
         error: (err) => {
           console.error('Error deleting symbol:', err);
@@ -723,7 +720,9 @@ get_Mk() {
   this.api.GET_USER_SUBSCRIBE_MK_v2(obj).subscribe({
     next: (res: any) => {
       this.data = res.lstSymbols
-      
+      console.log("Datata", this.data);
+      this.share.changeSym.next(this.data[0].oSymbolConfig.Symbol);
+      localStorage.setItem('changeSym',this.data[0].oSymbolConfig.Symbol);
       // this.getVal(this.data[0])
       this.share.getSubscribedSymbol(this.data)
       // this.share.getSymData("NoData")
@@ -1291,7 +1290,6 @@ filterData(): any[] {
 filteredSymbolData: any[] = [];
 convertToUpperCase(): void {
   if (!this.searchSymbData) {
-    this.showData = false;
     this.filteredSymbolData = this.data2; // default sorted list
   } else {
     this.searchSymbData = this.searchSymbData.toUpperCase();

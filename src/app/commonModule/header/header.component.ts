@@ -1,4 +1,4 @@
-import { Component,Input } from '@angular/core';
+import { Component,ElementRef,HostListener,Input } from '@angular/core';
 import { GlobalService } from '../../services/global.service';
 import { NgbDropdownModule, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators, AbstractControl  } from '@angular/forms';
@@ -41,6 +41,7 @@ export class HeaderComponent {
   private socket: any = WebSocketSubject;
   bufferArray: any = Uint8Array;
   dropdownOptions: { label: string, value: number }[] = [];
+  ExpirationdropdownOptions: { label: string, value: number }[] = [];
   subscribedSymbols:any
   allGetTrade: any;
   allGetTrade1: any;
@@ -57,7 +58,7 @@ export class HeaderComponent {
     public minLot:number = 0;
     public MaxLot:number = 0;
     public stepVol:number = 0;
-  constructor(private headertoFooterSer:HeaderToFooterService,private toaster: ToastrService,private fb: FormBuilder,private share:ShareService ,private location: Location,private modalService: NgbModal, config: NgbModalConfig,private global: GlobalService,private router: Router, private api:GlobalService) {
+  constructor(private eRef: ElementRef,private headertoFooterSer:HeaderToFooterService,private toaster: ToastrService,private fb: FormBuilder,private share:ShareService ,private location: Location,private modalService: NgbModal, config: NgbModalConfig,private global: GlobalService,private router: Router, private api:GlobalService) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.previousUrl = event.url;
@@ -75,9 +76,9 @@ export class HeaderComponent {
     })
 
 
-     this.share.orderFlags$.subscribe((flags: number[]) => {
-    this.buildDropdownOptions(flags);
-  });
+    this.share.orderFlags$.subscribe((flags: number[]) => {
+      this.buildDropdownOptions(flags);
+    });
 
   this.share.getSymbols$.subscribe((res:any)=>{
     this.subscribedSymbols = res
@@ -162,6 +163,9 @@ share.sendModefy$.subscribe((data:any) => {
       // this.renderer.listen(this.element, 'contextmenu',null);
     }
     this.subscriptions.unsubscribe();
+    if (this.modref) {
+      this.modref.close();   // or this.modref.dismiss();
+    }
   }
 symbolMenu: any[] = [];
 menu2: any;
@@ -235,7 +239,8 @@ private toNode(node: any): any {
   return copy;
 }
 
-toggleDropdown2() {
+toggleDropdown2(event: Event) {
+  event?.stopPropagation(); // ⛔ stop it from reaching document:click
   this.isDropdownOpen2 = !this.isDropdownOpen2;
 }
 
@@ -272,6 +277,7 @@ selectNode2(node: any) {
     this.currentPri = this.dialogDisplayData?.oInitial?.Bid;
     localStorage.setItem('changeSym',symbolCode)
     this.share.getSymData(symbolCode)
+    this.orderty1=0;
     this.orderFrom.patchValue({
       price: this.currentPri, // Or this.currentPri if that's the desired default price context
       stopLoss: '', // Or this.currentPri if that's the desired default price context
@@ -284,7 +290,10 @@ selectNode2(node: any) {
   // Do NOT emit globally unless intended
   // this.share.changeSym$.next(symbolCode);
 
-  this.toggleDropdown2(); // Close the dropdown after selection
+  this.closeDropdown2(); // Close the dropdown after selection
+}
+closeDropdown2() {
+  this.isDropdownOpen2 = false;
 }
 getSymInfo(val: any) {
   this.selectedRowIndex = null;
@@ -345,6 +354,7 @@ private getInitialForDialogDisplay(symbol: string) {
         this.inputLotValue = this.minLot;
             this.MaxLot  = res.MaxVol/10000;
             this.stepVol    = res.vol_step/1000;
+        console.log("GET_SYMBOL_PROP response for dialog display:", this.inputLotValue, res );
         console.log(`Fetched initial data for dialog display (${symbol}):`, res);
         if (this.dialogDisplayData && this.dialogDisplayData.oSymbolConfig?.Symbol === symbol) {
           let initialDataToUpdate = null;
@@ -407,7 +417,7 @@ private getInitialForDialogDisplay(symbol: string) {
     this.share.allMarketLiveData$.subscribe((res: any) => {
       // console.log("allMarketLiveData",res);
       this.data = res.filter((item: any) => item?.oSymbolConfig?.Symbol === val);
-      // console.log("dddaata[0]", this.data);
+      // console.log("dddaata[0]", this.data[0]);
       this.currentPri = this.data[0]?.oInitial?.Ask
       // localStorage.setItem('changeSym',this.data[0]?.oSymbolConfig?.Symbol)
     })}
@@ -451,6 +461,8 @@ getInitial(val: any) {
             this.inputLotValue = this.minLot;
             this.MaxLot  = res.MaxVol/10000;
             this.stepVol    = res.Vol_Step/10000;
+        console.log("GET_SYMBOL_PROP response for dialog display:", this.inputLotValue, res );
+
             // Update the primary data array used by the component (often for display/order context)
             // Assuming it expects an array of symbol objects with oInitial
             if (Array.isArray(res)) {
@@ -498,6 +510,15 @@ buildDropdownOptions(flags: number[]) {
   }
 
   this.dropdownOptions = options;
+}
+ExiprationDropdownOptions() {
+  const options = [];
+    options.push({ label: 'GTC', value: 1 }); // Always mapped to 0
+    options.push({ label: 'Today', value: 2 });
+    options.push({ label: 'Specified', value: 3 });
+    options.push({ label: 'SpecifiedDay', value: 4 });
+
+  this.ExpirationdropdownOptions = options;
 }
 Margin:any
   private handleMessage(event: MessageEvent) {
@@ -687,7 +708,7 @@ Margin:any
 decimalValidator(control: AbstractControl): { [key: string]: any } | null {
   if (control.value == null || control.value === '') return null;
   console.error("con",control.value);
-  const value = control.value.toString();
+  const value = this.currentPri.toString();
   const precision = this.pricePrecision ?? 2; // fallback
   console.error("this.pricePrecision",this.pricePrecision);
   const regex = new RegExp(`^\\d+(\\.\\d{0,${precision}})?$`);
@@ -706,20 +727,23 @@ pricePrecision =2;
       pass:['', [
     Validators.required,
     Validators.minLength(8),
-    Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%!*\-?&^])[A-Za-z\d@#$%!*\-?&^]{8,}$/)
+    Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%!*\-?&^])[A-Za-z\d@#$%!*\-?&^]{8,}$/),
     // One uppercase, one lowercase, one digit, one special char
-  ]]
+  ]],
     })
     this.createForm();
     this.onDepositChange()
     this.onLeverageChange()
-
+    this.ExiprationDropdownOptions()
     this.orderFrom = this.fb.group({
       // volume: ['',[this.decimalValidator.bind(this)]],  
       price:['',[this.decimalValidator.bind(this)]] ,   // Control for the Volume input
       stopLoss: ['',[this.decimalValidator.bind(this)]],    // Control for the Stop Loss input
       takeProfit: ['',this.decimalValidator.bind(this)],  // Control for the Take Profit input
-      comment: ['']      // Control for the Comment input
+      comment: [''],      // Control for the Comment input
+      stopLimitPrice: ['',this.decimalValidator.bind(this)], // Add control for Stop Limit Price
+      expirationType: [1], // Add control for Expiration Type (maps to Expiry field)
+      expirationDate: [''], // Add control for Expiration Date (maps to ExpTime field)
     });
   
 this.NaviGteMargin("Margin")
@@ -813,10 +837,12 @@ this.api.MAKE_CHANGE_PASSWORD(payload)
 
   
 logout(){
+  localStorage.clear();
+  sessionStorage.clear();
+  
+  // THEN navigate and reload
   this.router.navigate(['/login']).then(() => {
     window.location.reload();
-    localStorage.clear();
-    sessionStorage.clear();
   });
 }
 
@@ -879,6 +905,16 @@ logout(){
     // })
    
   }
+  Expirationorderty1:any = 1
+  ExpirationOrdertype1(ev:any){
+    const selectElement = ev.target as HTMLSelectElement;
+    this.Expirationorderty1 = selectElement.value
+    console.log("this.Expirationorderty1", this.Expirationorderty1);
+    // this.tradeForm.patchValue({
+    //   ordType: selectElement.value
+    // })
+   
+  }
 
   priceTrade:any =0
 orderResData:any ={}
@@ -896,12 +932,12 @@ onDateChange(event: any) {
   
   // You can now use epochTimestamp as needed
 }
-
+isResponseFromSocket:boolean=false;
 MAKE_NEW_ORDER_Market(val: any, price: any) {
   // Ensure 'data' array has the correct symbol context for market orders
   // This context is primarily set by the global changeSym$ subscription
   const symbolForOrder = this.data[0]?.oSymbolConfig?.Symbol || localStorage.getItem('changeSym');
-
+console.log("MAKE_NEW_ORDER_Market",price)
   if (!symbolForOrder) {
      console.error("Cannot place market order: No symbol determined.");
      // Handle error (e.g., show message)
@@ -917,7 +953,7 @@ MAKE_NEW_ORDER_Market(val: any, price: any) {
     Lot: Number(this.inputLotValue),
     Price: Number(price), // Price passed from button click (from 'data')
     SL: Number(this.orderFrom.value.stopLoss),
-    PL: 0,
+    PL: this.orderFrom.get('takeProfit')?.value,
     ordType: val,
     fillType: 1,
     trdType: 3,
@@ -954,6 +990,7 @@ sendOrder1(obj:any) {
    
      console.log("this.jsonBytes1111", this.jsonBytes)
      this.socket.send(this.bufferArray);
+     this.isResponseFromSocket = true; // Set flag to indicate response from socket
      console.log("Buffer as Array:", Array.from(this.bufferArray));
      console.log("this.jsonBytes", this.jsonBytes.buffer)
      this.headertoFooterSer.sendData(true);    
@@ -1014,12 +1051,12 @@ sendNewOrder(obj:any) {
 }
 
 
-orderRes(byteArray: Uint8Array): any {
+   orderRes(byteArray: Uint8Array): any {
     localStorage.setItem('trade_Blance','')
     localStorage.setItem('trade_Margin','')
     localStorage.setItem('trade_FreeMargin','')
     const view = new DataView(byteArray.buffer);
-
+    this.isResponseFromSocket = true; // Set flag to indicate response from socket
     const MsgID = view.getUint16(0, true); // 2 bytes for MsgID
     if(MsgID == 302){
     const Login = Number((view as any).getBigUint64(2, true)); // Convert BigInt to number for Login
@@ -1098,7 +1135,7 @@ orderRes(byteArray: Uint8Array): any {
       }
     
 
-
+      this.isResponseFromSocket = false; 
     }
 
  if (MsgID == 301) {
@@ -1152,6 +1189,7 @@ orderRes(byteArray: Uint8Array): any {
   this.orderResData = obj;
   this.showMassage = 2;
   this.showErroMass = 2;
+  this.isResponseFromSocket = false;
 }
 
 if (MsgID == 120) {
@@ -1192,6 +1230,7 @@ if (MsgID == 120) {
 
   console.log("ORDER RES 120", obj);
   this.share.addPositon(obj);
+  this.isResponseFromSocket = false;
    }
 
 
@@ -1485,11 +1524,23 @@ errorRes(byteArray: Uint8Array): any {
 
   
 MAKE_NEW_ORDER(val:any){
- 
+  let expirationTimestamp = 0; // Default value if not set or invalid
+  const expirationDateString = this.orderFrom.value.expirationDate; // Get string from form control
+  if (expirationDateString) {
+    const expirationDateObj = new Date(expirationDateString);
+    // Check if the date is valid
+    if (!isNaN(expirationDateObj.getTime())) {
+      // Convert to Unix Timestamp (seconds since epoch)
+      expirationTimestamp = Math.floor(expirationDateObj.getTime() / 1000);
+    } else {
+      console.warn("Invalid expiration date selected:", expirationDateString);
+      // Handle invalid date if necessary (e.g., show error, use default)
+    }
+  }
 let obj = {
   Login: 105,
   accID: Number(localStorage.getItem('loginId')),
-  Symbol: this.chnagevalueinsideNode[0].oSymbolConfig.Symbol,
+  Symbol:  this.dialogDisplaySymbol || this.symShow,
   Lot: Number(this.inputLotValue),
   Price: Number(this.orderFrom.value.price),
   SL:  Number(this.orderFrom.value.stopLoss),
@@ -1498,9 +1549,9 @@ let obj = {
   ordType: val,
   fillType: 1,
   trdType: 2,
-  StopLimit: "",
-  Expiry: "",
-  ExpTime: "",
+  StopLimit: Number(this.orderFrom.value.stopLimitPrice),
+  Expiry: this.Expirationorderty1,
+  ExpTime: expirationTimestamp,
   Comment: ""
 };
 console.log("New order ",obj);
@@ -1524,114 +1575,118 @@ inputLotValuew: any = 0.1;
 
   dd:any
   currVal:any
-  addSl(val:any){
-    this.currVal = val
+//   addSl(val:any){
+//     this.currVal = val
 
-    this.orderFrom.patchValue({
-      stopLoss : this.currVal
-  })
+//     this.orderFrom.patchValue({
+//       stopLoss : this.currVal
+//   })
  
 
-  this.orderFrom.patchValue({
-    takeProfit : this.currVal
-})
-    const curre =   Number((parseFloat(this.inputLotValue) + 1/Math.pow(10, this.countDecimalDigits(this.inputLotValuew))).toFixed(this.countDecimalDigits(this.inputLotValue)));
+//   this.orderFrom.patchValue({
+//     takeProfit : this.currVal
+// })
+//     const curre =   Number((parseFloat(this.inputLotValue) + 1/Math.pow(10, this.countDecimalDigits(this.inputLotValuew))).toFixed(this.countDecimalDigits(this.inputLotValue)));
  
-   this.dd = this.addValue(curre)
-       this.orderFrom.patchValue({
-        stopLoss :  this.dd
-    })
+//    this.dd = this.addValue(curre)
+//        this.orderFrom.patchValue({
+//         stopLoss :  this.dd
+//     })
    
-  }
+  // }
 
-  SubSl(val:any){
-    if(val == ""){
+  // SubSl(val:any){
+  //   if(val == ""){
      
-       this.currVal =val
-     }
+  //      this.currVal =val
+  //    }
 
-     this.currVal = (parseFloat(val) - 1/Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
-     this.orderFrom.patchValue({
-      stopLoss : this.currVal
-  })
+  //    this.currVal = (parseFloat(val) - 1/Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
+  //    this.orderFrom.patchValue({
+  //     stopLoss : this.currVal
+  // })
   
-    }
+  //   }
 
     inputSl: any = 0; // Initialize to prevent undefined errors
 
-    addSll(val: any) {
-      if (!val) {
-        val = this.currentPri || 0; // Ensure default value
-      }
+    addSll() {
+      const slControl = this.orderFrom.get('stopLoss');
+      const currentSL = parseFloat(slControl?.value) || parseFloat(this.orderFrom.get('price')?.value) || 0;
+      const step = this.getStepFromPrice();
     
-      const numberAsString = val.toString();
-      const decimalIndex = numberAsString.indexOf('.');
-      const decimalPartLength = decimalIndex === -1 ? 0 : numberAsString.length - decimalIndex - 1;
-    
-      this.inputSl = (parseFloat(val) + 1 / Math.pow(10, decimalPartLength)).toFixed(this.countDecimalDigits(val));
-    
-      this.orderFrom.patchValue({
-        stopLoss: this.inputSl
-      });
-    }
-    
-    SubSll(val: any) {
-      if (!val) {
-        val = this.currentPri || 0; // Ensure default value
-      }
-    
-      let newSL = (parseFloat(val) - 1 / Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
-    
-      // **Prevent negative stop loss**
-      if (parseFloat(newSL) < 0) {
-        newSL = '0';
-      }
-    
+      const newSL = (currentSL + step).toFixed(this.countDecimalDigits(step));
       this.inputSl = newSL;
-    
-      this.orderFrom.patchValue({
-        stopLoss: this.inputSl
-      });
+      slControl?.setValue(Number(newSL));
     }
+    
+    SubSll() {
+      const slControl = this.orderFrom.get('stopLoss');
+      const currentSL = parseFloat(slControl?.value) || parseFloat(this.orderFrom.get('price')?.value) || 0;
+      const step = this.getStepFromPrice();
+    
+      let newSL = currentSL - step;
+      if (newSL < 0) newSL = 0;
+    
+      const formatted = newSL.toFixed(this.countDecimalDigits(step));
+      this.inputSl = formatted;
+      slControl?.setValue(Number(formatted));
+    }
+    
     
   currVTP:any 
-  addTP(val:any){
+  addTP() {
+    const tpControl = this.orderFrom.get('takeProfit');
+    const currentTP = parseFloat(tpControl?.value) || parseFloat(this.orderFrom.get('price')?.value) || 0;
+    const step = this.getStepFromPrice();
   
-   if(val == ""){
-    val = this.inputTPP
-   }
-
-   this.inputTPP = (parseFloat(val) + 1/Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
-
-
-  this.orderFrom.patchValue({
-    takeProfit : this.inputTPP
-})
-   
+    const newTP = (currentTP + step).toFixed(this.countDecimalDigits(step));
+    this.inputTPP = newTP;
+    tpControl?.setValue(Number(newTP));
   }
-
-  subTP(val:any){
-    if (!val) {
-      val = this.inputTPP || 0; // Ensure default value
-    }
   
-    let newSL = (parseFloat(val) - 1 / Math.pow(10, this.countDecimalDigits(val))).toFixed(this.countDecimalDigits(val));
+  subTP() {
+    const tpControl = this.orderFrom.get('takeProfit');
+    const currentTP = parseFloat(tpControl?.value) || parseFloat(this.orderFrom.get('price')?.value) || 0;
+    const step = this.getStepFromPrice();
   
-    // **Prevent negative stop loss**
-    if (parseFloat(newSL) < 0) {
-      newSL = '0';
-    }
+    let newTP = currentTP - step;
+    if (newTP < 0) newTP = 0;
   
-    this.inputTPP = newSL;
-  
-    this.orderFrom.patchValue({
-      takeProfit: this.inputTPP
-    });
+    const formatted = newTP.toFixed(this.countDecimalDigits(step));
+    this.inputTPP = formatted;
+    tpControl?.setValue(Number(formatted));
   }
+  
    addValues(val1: number): number {
     return val1 + this.currVal;
   }
-
+  getStepFromPrice(): number {
+    const price = parseFloat(this.orderFrom.get('price')?.value) || 0;
+    const digits = this.countDecimalDigits(price || 0.0001);
+    return 1 / Math.pow(10, digits);
+  }
+  
+  addSll1() {
+    const slControl = this.orderFrom.get('stopLimitPrice');
+    let currentSl = parseFloat(slControl?.value) || 0;
+  
+    const step = this.getStepFromPrice();
+    const newSl = currentSl === 0 ? parseFloat(this.orderFrom.get('price')?.value) + step : currentSl + step;
+  
+    slControl?.setValue(Number(newSl.toFixed(this.countDecimalDigits(step))));
+  }
+  
+  subSll1() {
+    const slControl = this.orderFrom.get('stopLimitPrice');
+    let currentSl = parseFloat(slControl?.value) || 0;
+  
+    const step = this.getStepFromPrice();
+    const newSl = Math.max(0, currentSl - step); // Do not go below 0
+  
+    slControl?.setValue(Number(newSl.toFixed(this.countDecimalDigits(step))));
+  }
+  
   addPricee(val: any) {
     if (!val) {
       val = this.currentAddP || 0; // Ensure default value
@@ -1666,19 +1721,19 @@ inputLotValuew: any = 0.1;
       price: this.currentAddP
     });
   }
+  
+// subtractValue(val:any) { 
+//   if(val ==1){
+//     this.inputLotValue = (parseFloat(this.inputLotValue) - 1/Math.pow(10, this.countDecimalDigits(this.inputLotValue))).toFixed(this.countDecimalDigits(this.inputLotValue));
 
-subtractValue(val:any) { 
-  if(val ==1){
-    this.inputLotValue = (parseFloat(this.inputLotValue) - 1/Math.pow(10, this.countDecimalDigits(this.inputLotValue))).toFixed(this.countDecimalDigits(this.inputLotValue));
+//   }
+//   else if(val ==2){
+//     this.inputLotValue = (parseFloat(this.inputLotValue) - 1/Math.pow(10, this.countDecimalDigits(this.inputLotValuew))).toFixed(this.countDecimalDigits(this.inputLotValue));
 
-  }
-  else if(val ==2){
-    this.inputLotValue = (parseFloat(this.inputLotValue) - 1/Math.pow(10, this.countDecimalDigits(this.inputLotValuew))).toFixed(this.countDecimalDigits(this.inputLotValue));
-
-  }
+//   }
  
-}
-onDecimalInputKeyPress(event: KeyboardEvent, field: 'price' | 'stopLoss' | 'takeProfit') {
+// }
+onDecimalInputKeyPress(event: KeyboardEvent, field: 'price' | 'stopLoss' | 'takeProfit'| 'stopLimitPrice') {
   const inputChar = event.key;
 
   // Allow navigation and control keys
@@ -1744,20 +1799,14 @@ countDecimalDigits(num: number): number {
 isPlaceButtonDisabled(): boolean {
   const orderType = Number(this.orderty1); // 2 = Buy Limit, 3 = Sell Limit
   const price = parseFloat(this.orderFrom.get('price')?.value || '0');
-  const sl = parseFloat(this.orderFrom.get('stopLoss')?.value || '0');
-  const tp = parseFloat(this.orderFrom.get('takeProfit')?.value || '0');
+  const sl = parseFloat(this.orderFrom.get('stopLoss')?.value );
+  const tp = parseFloat(this.orderFrom.get('takeProfit')?.value );
 
   const slFilled = this.orderFrom.get('stopLoss')?.value !== '';
   const tpFilled = this.orderFrom.get('takeProfit')?.value !== '';
 
-  let marketPrice = 0;
-  console.log("market", this.currentPri);
+  let marketPrice = this.currentPri;
 
-  if (orderType === 2) {
-    marketPrice = parseFloat(this.currentPri || '0'); // Buy Limit uses Ask
-  } else if (orderType === 3) {
-    marketPrice = parseFloat(this.currentPri || '0'); // Sell Limit uses Bid
-  }
 
   if (!price || !marketPrice) return true;
 
@@ -1846,7 +1895,7 @@ if (orderType === 5) {
 // ✅ BUY STOP LIMIT CONDITIONS
 if (orderType === 6) {
   const stopLimitPrice = parseFloat(this.orderFrom.get('stopLimitPrice')?.value || '0');
-  const lot = parseFloat(this.orderFrom.get('lotSize')?.value || '0');
+  const lot = parseFloat(this.inputLotValue);
 
   if (!price || !stopLimitPrice || !lot || lot <= 0 || price <= marketPrice) return true;
 
@@ -1876,7 +1925,7 @@ if (orderType === 6) {
 // ✅ SELL STOP LIMIT CONDITIONS
 if (orderType === 7) {
   const stopLimitPrice = parseFloat(this.orderFrom.get('stopLimitPrice')?.value || '0');
-  const lot = parseFloat(this.orderFrom.get('lotSize')?.value || '0');
+  const lot = parseFloat(this.inputLotValue);
 
   // Price should be < market price
   if (!price || price >= marketPrice) return true;
@@ -1945,6 +1994,7 @@ if (orderType === 7) {
     if (existingFormPrice === null || existingFormPrice === undefined || existingFormPrice === '') {
         if (this.currentPri !== null && this.currentPri !== undefined) {
             this.orderFrom.patchValue({ price: this.currentPri });
+            ; // Initialize lot size input if needed
             console.log("Patched order form price with initialized currentPri:", this.currentPri);
         } else {
             console.log("currentPri is null, order form price not patched automatically.");
@@ -1955,7 +2005,9 @@ if (orderType === 7) {
 
     this.inputSl = this.currentPri; // Initialize SL/TP inputs if needed
     this.inputTPP = this.currentPri;
-
+    // console.log("Initialized inputLotValue:Pre", this.inputLotValue);
+    // this.inputLotValue = this.inputLotValue
+    // console.log("Initialized inputLotValue:", this.inputLotValue);
     // --- Initialize currentAddP and sync with form ---
     const initialFormPrice = this.orderFrom.get('price')?.value;
     if (initialFormPrice !== null && initialFormPrice !== undefined && initialFormPrice !== '') {
@@ -2040,11 +2092,13 @@ private resetModalData() {
           takeProfit: null,
           price: null,
           lotSize: null,
-          stopLimitPrice: null
+          stopLimitPrice: null, // Reset Stop Limit Price
+          expirationType: null, // Reset Expiration Type
+          expirationDate: null,  // Reset Expiration Date
       });
   }
 
-  this.inputLotValue = null;
+  this.inputLotValue = this.minLot;
   this.inputSl = null;
   this.inputTPP = null;
   this.orderty1 = 0;
@@ -2853,7 +2907,15 @@ GET_OPENED1(){
     
   }})
 }   
-        
+@HostListener('document:click', ['$event'])
+handleOutsideClick(event: Event) {
+  if (
+    this.isDropdownOpen2 &&
+    !this.eRef.nativeElement.contains(event.target)
+  ) {
+    this.isDropdownOpen2 = false;
+  }
+}
 
 }
 

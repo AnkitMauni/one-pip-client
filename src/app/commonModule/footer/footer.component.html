@@ -545,7 +545,7 @@
 <ng-template #content2 let-modal>
  
   <div class="modal-header">
-      <h4 class="modal-title">#{{modelData.Pos}}
+      <h4 class="modal-title">#{{!modelData.Pos && modelData.Pos !==0 ? modelData?.Ord : modelData.Pos}}
         <span *ngIf="modelData?.BS == 0">buy </span>
         <span *ngIf="modelData?.BS == 1">sell </span>
         <span *ngIf="modelData?.BS == 2">buy limit </span>
@@ -553,7 +553,8 @@
         <span *ngIf="modelData?.BS == 4">buy stop </span>
         <span *ngIf="modelData?.BS == 5">sell stop </span>
         <span *ngIf="modelData?.BS == 6">buy stop limit </span>
-        <span *ngIf="modelData?.BS == 7">sell stop limit </span> <span>{{modelData.V/10000}} </span> <span>{{modelData?.Sy}} </span> at 
+        <span *ngIf="modelData?.BS == 7">sell stop limit </span>
+         <span>{{modelData.V/10000}} </span> <span>{{modelData?.Sy}} </span> at 
         <span *ngIf="modelData.BS== 0 || modelData.BS ==1 ">{{modelData?.PC}}
        </span>
          <span *ngIf="modelData.BS >1">{{modelData?.P}}
@@ -568,33 +569,30 @@
          
              <div class="row align-items-center">
               <div class="col-md-12 mb-3">
-                <!-- /  <p class="text-primary">#48490455 buy 0.01 XAUUSD at 2470.94</p> -->
-                  <!-- <div class="width100">
-                      <select  class="width100 c-input" (change)="Ordertype1($event)">
-                        <option value="0">Market Execution</option>
-                        <option value="2">Buy Limit</option>
-                        <option value="3">Sell Limit</option>
-                        <option value="4">Buy Stop</option>
-                        <option value="5">Sell Stop</option>
-                       
-                      </select>
-                    </div> -->
+
               </div>
                   <div class="col-md-12 mb-3">
                       <div style="display: flex; justify-content: space-between;">
                           <p class="mb-0">Volume</p>
                           <!-- <p class="mb-0">50.00 SILVER</p> -->
                       </div>
-                      <div class="width100">
+                      <div class="input-group">
+                              <button class="btn btn-outline-secondary llbtn" (click)="SubVol()">-</button>
+                              <input type="text" class="form-control"  [(ngModel)]="inputLotValue" [min]="0" [max]="modelData.V/10000" [readOnly]="modelData?.BS > 1"
+                              [step]="stepVol"  (change)="onLotInputChange()" placeholder="" aria-label="Example text with button addon" >
+                              <button class="btn btn-outline-secondary rrbtn" (click)="addVol()">+</button>  
+                            </div>
+                      <!-- <div class="width100">
                           <div class="input-group">
                              <button class="btn btn-outline-secondary llbtn" (click)="subtractValue(1)" >-</button>
                              <input type="text" class="form-control" [(ngModel)]="inputLotValue"  [readOnly]="modelData?.BS > 1"/>
                              <button class="btn btn-outline-secondary rrbtn" (click)="addValue(1)" >+</button>
                           </div>
-                      </div>
+                      </div> -->
                   </div>
              
                   <div class="row" [formGroup]="orderFrom">
+                    <!-- {{modelData?.BS |json}} -->
                      <div class="col-md-12 mb-3">
                         <p class="mb-0">Price</p>
                         <div class="width100">
@@ -605,14 +603,24 @@
                           </div>
                         </div>
                       </div>
-                     
+                      <div class="col-md-12 mb-3" *ngIf="modelData?.BS == 6 || modelData?.BS == 7">
+  <p class="mb-0">Stop Limit Price</p>
+  <div class="width100">
+    <div class="input-group">
+      <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('stopLimitPrice')?.value <= 0" (click)="SubSll1()">-</button>
+      <input type="text" class="form-control" (keypress)="numberOnly2($event)" formControlName="stopLimitPrice" aria-label="Stop Loss input">
+      <button class="btn btn-outline-secondary rrbtn" (click)="addSll1()">+</button>
+    </div>
+  </div>
+</div>
+
                       <div class="col-md-6 mb-3">
                         <p class="mb-0">Stop Loss</p>
                         <div class="width100">
                           <div class="input-group">
-                            <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('stopLoss')?.value <= 0" (click)="SubSll(orderFrom.get('stopLoss')?.value)">-</button>
+                            <button class="btn btn-outline-secondary llbtn" (click)="SubSllSLTP()">-</button>
                             <input type="text" class="form-control" formControlName="stopLoss" aria-label="Stop Loss input" >
-                            <button class="btn btn-outline-secondary rrbtn" (click)="addSll(orderFrom.get('stopLoss')?.value)">+</button>
+                            <button class="btn btn-outline-secondary rrbtn" (click)="addSllSLTP()">+</button>
                           </div>
                         </div>
                       </div>
@@ -621,9 +629,9 @@
                         <p class="mb-0">Take Profit</p>
                         <div class="width100">
                           <div class="input-group">
-                            <button class="btn btn-outline-secondary llbtn" [disabled]="orderFrom.get('takeProfit')?.value <= 0"  (click)="subTP(orderFrom.get('takeProfit')?.value)" >-</button>
+                            <button class="btn btn-outline-secondary llbtn"  (click)="subTP()" >-</button>
                             <input type="text" class="form-control" formControlName="takeProfit" aria-label="Take Profit input">
-                            <button class="btn btn-outline-secondary rrbtn" (click)="addTP(orderFrom.get('takeProfit')?.value)">+</button>
+                            <button class="btn btn-outline-secondary rrbtn" (click)="addTP()">+</button>
                           </div>
                         </div>
                       </div>
@@ -642,7 +650,7 @@
               <div class="col-md-6 pt-2"><p class=" mb-1">{{data[0]?.oInitial?.Ask }}</p></div>
            </div> -->
            <div class="row" >
-            <div class="col-md-12"><button  class="btn btn-primary btn-sm w-100 mb-2" (click)="modefyOrder()">Modify</button></div>
+            <div class="col-md-12"><button [disabled]="!Modifydisble(modelData)" class="btn btn-primary btn-sm w-100 mb-2" (click)="modefyOrder()">Modify</button></div>
               <div class="col-md-12 mb-3" *ngIf="modelData?.BS == 0 || modelData?.BS == 1"><button  class="btn btn-danger btn-sm w-100"  (click)="closeOrder(modelData?.Sy,modelData?.BS)">
                Close #{{modelData.Pos}}
                   <span *ngIf="modelData?.BS == 0">buy </span>
@@ -658,7 +666,7 @@
               </button>
              
             </div>
-            <div class="col-md-12 mb-3" *ngIf="modelData?.BS > 1"><button  class="btn btn-danger btn-sm w-100"  (click)="deleteOrder(modelData?.Sy,modelData?.BS)">
+            <div class="col-md-12 mb-3" *ngIf="modelData?.BS > 1"><button  class="btn btn-danger btn-sm w-100"  (click)="deleteOrder(modelData?.Sy,orderFrom.value.price)">
                Delete
                  
               </button>
@@ -673,7 +681,7 @@
   <div class="row" *ngIf="showMassage == 2 && showErroMass == 1">
       <div style="min-height: 498px; display: flex; align-items: center; justify-content: center;" class="col-md-12" >
         <div>
-            <button class="btn mb-3"  (click)="okReturn()"><i class="fa-solid fa-arrow-left"></i></button>
+            <!-- <button class="btn mb-3"  (click)="okReturn()"><i class="fa-solid fa-arrow-left"></i></button> -->
         <div class="text-center">
            
             <p class="mb-1" style="font-size: 16px;"><b>#{{orderResData?.Ticket}}
@@ -688,7 +696,13 @@
                 <span>{{orderResData?.Lot}} </span> <span>{{modelData?.Sy}}
  
                 </span> at <span>{{orderResData?.Price}} </span></b></p>
-              <p class="mb-1" style="font-size: 16px;"><b>sl:{{orderResData.SL}}, tp: {{orderResData.TL}}</b></p>
+                <p *ngIf="orderResData.SL>0" class="mb-1" style="font-size: 16px;">
+                    <b>sl:{{orderResData.SL}},</b>
+                    </p>
+                    <p *ngIf="orderResData.TL>0" class="mb-1" style="font-size: 16px;">
+                    <b>tp: {{orderResData.TL}}</b>
+                    </p>
+              <!-- <p class="mb-1" style="font-size: 16px;"><b>sl:{{orderResData.SL}}, tp: {{orderResData.TL}}</b></p> -->
               <p class="mb-1" style="font-size: 16px; color:rgb(16, 134, 16)"><b>Done</b></p>
               <button class="btn btn-primary btn-sm ps-4 pe-4" (click)="okReturn()">Ok</button>
         </div>

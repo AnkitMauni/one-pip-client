@@ -20,7 +20,8 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
   private shareService: ShareService;
   private marketDataSubscription?: Subscription;
   private latestListenerGuid: string | null = null;
-  private currentSymbol: string = 'AUDUSD.c_5200';
+  public mySelectedSymbol:any=''; 
+  private currentSymbol: string = localStorage.getItem('changeSym') as string || this.mySelectedSymbol;
   constructor(
     datafeedURL: string,
     updateFrequency: number = 10 * 1000,
@@ -40,7 +41,7 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
     this.shareService.changeSym$?.subscribe((symbolName: string) => {
       console.log("UDFCompatibleDatafeed: Received symbol update:", symbolName);
       if (symbolName) {
-          this.currentSymbol = symbolName;
+          this.mySelectedSymbol = symbolName;
       }
   });
   }
@@ -115,8 +116,8 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
               return;
             }
  
-            console.log('✅ Emitting bar for:', symbol, bar);
             onRealtimeCallback(bar);
+            // console.log('✅ Emitting bar for:', symbol, bar);
           } catch (error) {
             console.error('❌ Error processing live data tick:', error, tick);
           }
@@ -140,6 +141,7 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
   ): void {
     const symbol = symbolInfo.ticker;
     const to = periodParams.to;
+    console.log("tooooooooo", to);
     const fiveDaysAgo = to - 3 * 24 * 60 * 60;
     const from = periodParams.from;
     const serverResolution = this.convertResolution(resolution);
@@ -215,35 +217,79 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
     // Return a resolved promise with the static configuration
     return Promise.resolve(staticConfig);
   }
+  // override resolveSymbol(
+  //   symbolName: string,
+  //   onResolve: ResolveCallback,
+  //   onError: ErrorCallback,
+  //   extension?: import("./datafeed-api").SymbolResolveExtension | undefined
+  // ): void {
+  //   const symbolToResolve = localStorage.getItem('changeSym') as string || this.mySelectedSymbol; // Or use symbolName if that's the intent
+  //   console.log("symbol", symbolToResolve);
+  //   const resolvedSymbolInfo: LibrarySymbolInfo = {
+  //     name: symbolToResolve,
+  //     description: symbolToResolve,
+  //     type: 'stock', // Or 'forex', 'crypto', etc.
+  //     session: '24x7',
+  //     timezone: 'Etc/UTC',
+  //     minmov: 1,
+  //     minmove2: 10, // Often minmov * 10, but check your data
+  //     fractional: false,
+  //     // pointvalue: 1,
+  //     has_intraday: true,
+  //     supported_resolutions: ['1' as ResolutionString, '5' as ResolutionString, '15' as ResolutionString], // Match your config/static data
+  //     visible_plots_set: 'ohlcv',
+  //     pricescale: 10000, // Dynamically set based on symbol
+  //     ticker: symbolToResolve,
+  //     full_name: '',
+  //     exchange: '',
+  //     listed_exchange: '',
+  //     format: 'price'
+  //   };
+  //   onResolve(resolvedSymbolInfo);
+  // }
   override resolveSymbol(
     symbolName: string,
     onResolve: ResolveCallback,
     onError: ErrorCallback,
-    extension?: import("./datafeed-api").SymbolResolveExtension | undefined
+    extension?: import("./datafeed-api").SymbolResolveExtension
   ): void {
-    const symbolToResolve = this.currentSymbol; // Or use symbolName if that's the intent
+    // Prefer value from localStorage, otherwise use incoming symbolName
+    const storedSymbol = localStorage.getItem('changeSym');
+    const symbolToResolve = storedSymbol ? storedSymbol : symbolName || this.mySelectedSymbol;
+  
+    console.log("Resolved symbol:", symbolToResolve);
+  
     const resolvedSymbolInfo: LibrarySymbolInfo = {
       name: symbolToResolve,
       description: symbolToResolve,
-      type: 'stock', // Or 'forex', 'crypto', etc.
+      type: 'stock',   // adjust as per your feed
       session: '24x7',
       timezone: 'Etc/UTC',
       minmov: 1,
-      minmove2: 10, // Often minmov * 10, but check your data
+      minmove2: 10,
       fractional: false,
-      // pointvalue: 1,
       has_intraday: true,
-      supported_resolutions: ['1' as ResolutionString, '5' as ResolutionString, '15' as ResolutionString], // Match your config/static data
+      supported_resolutions: ['1' as ResolutionString, '5' as ResolutionString, '15' as ResolutionString],
       visible_plots_set: 'ohlcv',
-      pricescale: 10000, // Dynamically set based on symbol
+      pricescale: 10000,
       ticker: symbolToResolve,
-      full_name: '',
+      full_name: symbolToResolve,
       exchange: '',
       listed_exchange: '',
       format: 'price'
     };
+  
     onResolve(resolvedSymbolInfo);
   }
+  
+  // override getServerTime(callback: (serverTime: number) => void): void {
+  //   // Use current local time as "server time"
+  //   // Or adjust with known offset if needed
+  //   const serverTime = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
+  
+  //   console.log('UDFCompatibleDatafeed: Providing local time as server time:', serverTime);
+  //   callback(serverTime);
+  // }
 }
  
  

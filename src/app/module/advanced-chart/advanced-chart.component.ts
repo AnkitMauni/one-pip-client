@@ -13,6 +13,7 @@ import { UDFCompatibleDatafeed } from '../advanced-chart/datafeed/udf-compatible
 import { ShareService } from 'src/app/services/share.service';
 import { Subscription } from 'rxjs';
 import { Timezone } from './datafeed/datafeed-api';
+import { GlobalService } from 'src/app/services/global.service';
 // import {
 //     widget,
 //     IChartingLibraryWidget,
@@ -41,6 +42,7 @@ export interface LimitedResponseConfiguration {
   imports: [],
 })
 export class AdvancedChartComponent implements OnInit, OnDestroy {
+
   private _symbol: ChartingLibraryWidgetOptions['symbol'] = localStorage.getItem('changeSym') as string;
   private _interval: ChartingLibraryWidgetOptions['interval'] =
     'M' as ResolutionString;
@@ -64,13 +66,17 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
     'tv_chart_container';
   private _tvWidget: IChartingLibraryWidget | null = null;
   private symbolSub!: Subscription;
-
-  constructor(
-    private share: ShareService,
-  ) {}
+  public myCurrentSymbol:any='';
+  public data: any[] = [];
+  constructor(private share: ShareService, private api: GlobalService) {
+    this.share.changeSym$.subscribe((data: any) => {
+      this.myCurrentSymbol = data;
+      console.log('this.current', this.myCurrentSymbol);
+    });
+  }
   @Input()
   set symbol(symbol: ChartingLibraryWidgetOptions['symbol']) {
-    this._symbol = symbol || this._symbol;
+    this._symbol = symbol || this._symbol || this.myCurrentSymbol;
 
     // ✅ Correct usage: update symbol with interval
     if (this._tvWidget && this._tvWidget.chart()) {
@@ -137,38 +143,197 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
   set containerId(containerId: ChartingLibraryWidgetOptions['container_id']) {
     this._containerId = containerId || this._containerId;
   }
+  // get_Mk(): Promise<string> {
+  //   return new Promise((resolve, reject) => {
+  //     const obj = {
+  //       Key: "",
+  //       Account: Number(localStorage.getItem('loginId')),
+  //       PkgID: Number(localStorage.getItem('PkgId'))
+  //     };
+
+  //     this.api.GET_USER_SUBSCRIBE_MK_v2(obj).subscribe({
+  //       next: (res: any) => {
+  //         this.data = res.lstSymbols;
+  //         const initialSymbol = this.data[0]?.oSymbolConfig?.Symbol;
+  //         if (initialSymbol) {
+  //           this.share.changeSym.next(initialSymbol);
+  //           localStorage.setItem('changeSym', initialSymbol);
+  //           this.share.getSubscribedSymbol(this.data);
+  //           resolve(initialSymbol);
+  //         } else {
+  //           reject("No symbol found from API");
+  //         }
+  //       },
+  //       error: (err: any) => {
+  //         console.error(err);
+  //         reject(err);
+  //       }
+  //     });
+  //   });
+  // }
+  // ngOnInit() {
+  //   this.get_Mk().then((initialSymbol: string) => {
+  //   console.log("✅ Initial symbol from API:", initialSymbol);
+  //   this._symbol = initialSymbol;  // set symbol
+  //   localStorage.setItem('changeSym', initialSymbol);
+
+  //   // now create the widget
+  //   this.initTradingView();
+  // });
+  //   function getLanguageFromURL(): LanguageCode | null {
+  //     const regex = new RegExp('[\\?&]lang=([^&#]*)');
+  //     const results = regex.exec(location.search);
+
+  //     return results === null
+  //       ? null
+  //       : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode);
+  //   }
+  //   const config: LimitedResponseConfiguration = {
+  //     maxResponseLength: 1000,
+  //     expectedOrder: 'latestFirst',
+  //   };
+  //   const widgetOptions: ChartingLibraryWidgetOptions = {
+  //     symbol: this._symbol,
+  //     datafeed: new UDFCompatibleDatafeed(
+  //       this._datafeedUrl,
+  //       1000,
+  //       config,
+  //       this.share
+  //     ),
+  //     interval: this._interval,
+  //     container: this._containerId,
+  //     library_path: this._libraryPath,
+  //     locale: getLanguageFromURL() || 'en',
+  //     // disabled_features: ['use_localstorage_for_settings'],
+  //     disabled_features: [
+  //       'use_localstorage_for_settings',
+  //       'header_compare',
+  //       'header_symbol_search',
+  //     ],
+  //     enabled_features: ['study_templates'],
+  //     charts_storage_url: this._chartsStorageUrl,
+  //     charts_storage_api_version: this._chartsStorageApiVersion,
+  //     client_id: this._clientId,
+  //     user_id: this._userId,
+  //     fullscreen: this._fullscreen,
+  //     autosize: this._autosize,
+  //     timezone: 'Europe/Berlin', // Use configured timezone
+  //   };
+
+  //   const tvWidget = new widget(widgetOptions);
+  //   this._tvWidget = tvWidget;
+
+  //   tvWidget.onChartReady(() => {
+  //     tvWidget.headerReady().then(() => {
+  //       const button = tvWidget.createButton();
+  //       button.setAttribute('title', 'Click to show a notification popup');
+  //       button.classList.add('apply-common-tooltip');
+  //       button.addEventListener('click', () =>
+  //         tvWidget.showNoticeDialog({
+  //           title: 'Notification',
+  //           body: 'TradingView Charting Library API works correctly',
+  //           callback: () => {
+  //             console.log('Noticed!');
+  //           },
+  //         })
+  //       );
+  //       button.innerHTML = 'Check API';
+  //     });
+  //   });
+
+  //   // 👇 Listen to symbol updates
+  //   this.share.changeSym$.subscribe((newSymbol) => {
+  //     console.log('📈 Symbol received:', newSymbol);
+  //     this._symbol = newSymbol;
+    
+  //     if (this._tvWidget) {
+  //       this._tvWidget.onChartReady(() => {
+  //         this._tvWidget?.chart().setSymbol(newSymbol);
+  //         this._tvWidget?.chart().setResolution(this._interval!);
+  //       });
+  //     } else {
+  //       console.warn('⚠️ Widget not ready. Symbol will be applied after init.');
+  //     }
+  //   });
+    
+  // }    
+  get_Mk(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const obj = {
+        Key: '',
+        Account: Number(localStorage.getItem('loginId')),
+        PkgID: Number(localStorage.getItem('PkgId')),
+      };
+
+      this.api.GET_USER_SUBSCRIBE_MK_v2(obj).subscribe({
+        next: (res: any) => {
+          this.data = res.lstSymbols || [];
+          const initialSymbol = this.data[0]?.oSymbolConfig?.Symbol;
+          if (initialSymbol) {
+            this.share.changeSym.next(initialSymbol);
+            localStorage.setItem('changeSym', initialSymbol);
+            this.share.getSubscribedSymbol(this.data);
+            resolve(initialSymbol);
+          } else {
+            reject('No symbol found from API');
+          }
+        },
+        error: (err: any) => {
+          console.error(err);
+          reject(err);
+        },
+      });
+    });
+  }
 
   ngOnInit() {
+    this.get_Mk()
+      .then((initialSymbol: string) => {
+        console.log('✅ Initial symbol from API:', initialSymbol);
+        this._symbol = initialSymbol;
+        this.initTradingView();
+      })
+      .catch((err) => {
+        console.error('⚠️ Failed to fetch initial symbol, falling back', err);
+        this._symbol = this.myCurrentSymbol || 'EURUSD'; // fallback
+        this.initTradingView();
+      });
+
+    // Listen to symbol updates after init
+    this.symbolSub = this.share.changeSym$.subscribe((newSymbol) => {
+      console.log('📈 Symbol received:', newSymbol);
+      this._symbol = newSymbol;
+      // if (this._tvWidget) {
+      //   this._tvWidget.chart().setSymbol(newSymbol, this._interval!);
+      // }
+      if (this._tvWidget) {
+              this._tvWidget.onChartReady(() => {
+                this._tvWidget?.chart().setSymbol(newSymbol);
+                this._tvWidget?.chart().setResolution(this._interval!);
+              });
+            }
+    });
+  }
+  private initTradingView() {
     function getLanguageFromURL(): LanguageCode | null {
       const regex = new RegExp('[\\?&]lang=([^&#]*)');
       const results = regex.exec(location.search);
-
-      return results === null
-        ? null
-        : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode);
+      return results === null ? null : (decodeURIComponent(results[1].replace(/\+/g, ' ')) as LanguageCode);
     }
+
     const config: LimitedResponseConfiguration = {
       maxResponseLength: 1000,
       expectedOrder: 'latestFirst',
     };
+
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: this._symbol,
-      datafeed: new UDFCompatibleDatafeed(
-        this._datafeedUrl,
-        1000,
-        config,
-        this.share
-      ),
+      symbol: this._symbol!,
+      datafeed: new UDFCompatibleDatafeed(this._datafeedUrl, 1000, config, this.share),
       interval: this._interval,
       container: this._containerId,
       library_path: this._libraryPath,
       locale: getLanguageFromURL() || 'en',
-      // disabled_features: ['use_localstorage_for_settings'],
-      disabled_features: [
-        'use_localstorage_for_settings',
-        'header_compare',
-        'header_symbol_search',
-      ],
+      disabled_features: ['use_localstorage_for_settings', 'header_compare', 'header_symbol_search'],
       enabled_features: ['study_templates'],
       charts_storage_url: this._chartsStorageUrl,
       charts_storage_api_version: this._chartsStorageApiVersion,
@@ -176,47 +341,16 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
       user_id: this._userId,
       fullscreen: this._fullscreen,
       autosize: this._autosize,
-      timezone: 'Europe/Berlin', // Use configured timezone
+      timezone: 'Europe/Berlin',
     };
 
     const tvWidget = new widget(widgetOptions);
     this._tvWidget = tvWidget;
 
     tvWidget.onChartReady(() => {
-      tvWidget.headerReady().then(() => {
-        const button = tvWidget.createButton();
-        button.setAttribute('title', 'Click to show a notification popup');
-        button.classList.add('apply-common-tooltip');
-        button.addEventListener('click', () =>
-          tvWidget.showNoticeDialog({
-            title: 'Notification',
-            body: 'TradingView Charting Library API works correctly',
-            callback: () => {
-              console.log('Noticed!');
-            },
-          })
-        );
-        button.innerHTML = 'Check API';
-      });
+      console.log('📊 TradingView ready with symbol:', this._symbol);
     });
-
-    // 👇 Listen to symbol updates
-    this.share.changeSym$.subscribe((newSymbol) => {
-      console.log('📈 Symbol received:', newSymbol);
-      this._symbol = newSymbol;
-    
-      if (this._tvWidget) {
-        this._tvWidget.onChartReady(() => {
-          this._tvWidget?.chart().setSymbol(newSymbol);
-          this._tvWidget?.chart().setResolution(this._interval!);
-        });
-      } else {
-        console.warn('⚠️ Widget not ready. Symbol will be applied after init.');
-      }
-    });
-    
-  }    
-
+  }
   ngOnDestroy() {
     if (this._tvWidget !== null) {
       this._tvWidget.remove();
