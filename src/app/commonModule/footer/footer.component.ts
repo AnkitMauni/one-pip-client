@@ -42,16 +42,26 @@ export class FooterComponent implements OnInit {
   nvatabc(tab: any){
     this.currentTab = tab
     if(tab == "tab1"){
+      this.isResponseFromSocket = false;
       this.GET_OPENED1()
       // this.startInterval()
     }
     else if(tab == "tab2"){
+
       this.stopInterval()
       this.getAllExposure()
     }
     else if(tab == "tab3"){
+      this.isResponseFromSocket = false;
       this.GET_USER_HISTORY()
+
     }
+    else if(tab == "tab12"){
+      this.isResponseFromSocket = false;
+      this.getAllJournal()
+
+    }
+
   }
   constructor(private headertoFooterSer:HeaderToFooterService,private datePipe: DatePipe,private http: HttpClient,private fb: FormBuilder,private share: ShareService, private api: GlobalService ,private modalService: NgbModal, config: NgbModalConfig,
     private datepipe: DatePipe, private route:Router){
@@ -145,6 +155,18 @@ this.headertoFooterSer.data$.subscribe((flag:boolean)=>{
       }
       
     })
+    // const obj ={
+    //   "Key": "",
+    //   "Symbol": localStorage.getItem('changeSym')
+    // }
+    // this.api.GET_SYMBOL_PROP(obj).subscribe({ // Ensure api service and method name are correct
+    //   next: (res: any) => {
+    //     // this.minLot  = res.MinVol/10000;
+    //     //     this.MaxLot  = val.V/10000;
+    //     //     this.stepVol = res.Vol_Step/10000;
+    //     // console.log(`Fetched initial data for dialog display (${symbol}):`, res);
+    //   }
+    // })
     
   }
 
@@ -357,9 +379,12 @@ GET_OPENED1(){
       this.share.livBalance(this.allGetTrade.Balance)
     // console.log("lstPos",res);
     // this.GET_USER_TRADE_WD()
+   this.isResponseFromSocket = true;
+
   },
   error: (err:any)=>{
     console.log(err);
+   this.isResponseFromSocket = true;
     
   }})
 }
@@ -722,11 +747,12 @@ getAllJournal(){
   let obj ={
     "Key":"",
     "Account":Number(localStorage.getItem('loginId')),   // ManagerID
-    "ManagerIndex":Number(localStorage.getItem('managerId'))
+    "ManagerIndex":Number(localStorage.getItem('managerId')),
+    "lstTm":0
 }
   this.api.GET_MGR_JOURNEL(obj).subscribe({next: (res:any)=>{
-  //  console.log("journal",res);
-   this.getAllJurn = res
+   console.log("journal",res);
+   this.getAllJurn = Array.isArray(res) ? res : [];
     
   },
   error: (err:any)=>{
@@ -1289,80 +1315,154 @@ formatIndianTime(timestamp: number): Date {
 
 positionHitory:any =[]
 historyRow:any
-GET_USER_HISTORY(){
-  const currentDate = new Date();
+isResponseFromSocket: boolean = false;
+customFrom: string = '';
+customTo: string = '';
 
-    // Set dtFrom to the current date and time
-    const formattedDtFrom = this.datePipe.transform(currentDate, 'yyyy-MM-dd 23:59:59', 'GMT');
-  
-    // Set dtTo to three days from now
-    const dtTo = new Date(currentDate);
-    dtTo.setMonth(dtTo.getMonth() - 3);
-  
-    // Format the dtTo date
-    const formattedDtTo = this.datePipe.transform(dtTo, 'yyyy-MM-dd 00:00:01', 'GMT');
-    
+onRangeSelect(event: Event) {
+  const value = (event.target as HTMLSelectElement).value;
 
-    let obj ={
-      // "Key":"",
-      "Account": Number(localStorage.getItem('loginId')),
-      "dtFrom":formattedDtTo,
-      "dtTo":formattedDtFrom
+  const now = new Date();
+  let from: Date;
+
+  switch (value) {
+    case '1w':
+      from = new Date();
+      from.setDate(now.getDate() - 7);
+      break;
+    case '1m':
+      from = new Date();
+      from.setMonth(now.getMonth() - 1);
+      break;
+    case '1y':
+      from = new Date();
+      from.setFullYear(now.getFullYear() - 1);
+      break;
+    default:
+      return;
   }
-    this.api.GET_USER_HISTORY(obj).subscribe({
-      next: (res: any) => {
+
+  this.GET_USER_HISTORY({
+    dtFrom: this.datePipe.transform(from, 'yyyy-MM-dd 00:00:01', 'GMT') as string,
+    dtTo: this.datePipe.transform(now, 'yyyy-MM-dd 23:59:59', 'GMT') as string,
+  });
+}
+
+
+applyCustomRange() {
+  if (!this.customFrom || !this.customTo) return;
+
+  this.GET_USER_HISTORY({
+    dtFrom: this.customFrom + ' 00:00:01',
+    dtTo: this.customTo + ' 23:59:59',
+  });
+}
+GET_USER_HISTORY(params?: { dtFrom: string, dtTo: string }) {
+  const now = new Date();
+
+  const obj = {
+    Account: Number(localStorage.getItem('loginId')),
+    dtFrom: params?.dtFrom || this.datePipe.transform(now, 'yyyy-MM-dd 00:00:01', 'GMT'),
+    dtTo: params?.dtTo || this.datePipe.transform(now, 'yyyy-MM-dd 23:59:59', 'GMT'),
+  };
+
+  this.api.GET_USER_HISTORY(obj).subscribe({
+    next: (res: any) => {
+      this.positionHitory = res?.lstPos || [];
+      this.historyRow = res?.oAccount;
+      this.isResponseFromSocket = true;
+    },
+    error: () => (this.isResponseFromSocket = true),
+  });
+}
+
+// GET_USER_HISTORY(){
+  
+
+//   // const currentDate = new Date();
+
+//   //   // Set dtFrom to the current date and time
+//   //   const formattedDtFrom = this.datePipe.transform(currentDate, 'yyyy-MM-dd 23:59:59', 'GMT');
+  
+//   //   // Set dtTo to three days from now
+//   //   const dtTo = new Date(currentDate);
+//   //   dtTo.setMonth(dtTo.getMonth() - 3);
+  
+//   //   // Format the dtTo date
+//   //   const formattedDtTo = this.datePipe.transform(dtTo, 'yyyy-MM-dd 00:00:01', 'GMT');
+//     const currentDate = new Date();
+
+// // Format To as current date with 23:59:59
+// const formattedDtTo = this.datePipe.transform(currentDate, 'yyyy-MM-dd 23:59:59', 'GMT');
+
+// // From should always be 1970-01-01 00:00:01
+// const formattedDtFrom = '1970-01-01 00:00:01';
+
+//   //   let obj ={
+//   //     // "Key":"",
+//   //     "Account": Number(localStorage.getItem('loginId')),
+//   //     "dtFrom":formattedDtTo,
+//   //     "dtTo":formattedDtFrom
+//   // }
+//   let obj = {
+//     Account: Number(localStorage.getItem('loginId')),
+//     dtFrom: formattedDtFrom,
+//     dtTo: formattedDtTo
+//   };
+//     this.api.GET_USER_HISTORY(obj).subscribe({
+//       next: (res: any) => {
     
         
        
-        //  closePrice
-        // "ProfitePrice":this.showProfitePrice,
+//         //  closePrice
+//         // "ProfitePrice":this.showProfitePrice,
 
-         this.positionHitory = res?.lstPos
-         console.log("this.positionHitory",this.positionHitory);
-         this.historyRow = res?.oAccount
+//          this.positionHitory = res?.lstPos
+//          console.log("this.positionHitory",this.positionHitory);
+//          this.historyRow = res?.oAccount
         
-        //  this.positionHitory.forEach((element:any , index:any) => {
-        //    this.positionHitory[index].Symbol = element.Sy;
-        //    delete this.positionHitory[index].Sy;
-        //    this.positionHitory[index].closePrice = element.CL;
-        //    delete this.positionHitory[index].CL;
-        //    this.positionHitory[index].ProfitePrice = element.PL;
-        //    delete this.positionHitory[index].PL;
-        //    this.positionHitory[index].oBuySell = element.BS;
-        //    delete this.positionHitory[index].BS;
-        //    this.positionHitory[index].Price = element.OP;
-        //    delete this.positionHitory[index].OP;  
-        //    const indianDateTime = this.formatIndianTime(element.C);
+//         //  this.positionHitory.forEach((element:any , index:any) => {
+//         //    this.positionHitory[index].Symbol = element.Sy;
+//         //    delete this.positionHitory[index].Sy;
+//         //    this.positionHitory[index].closePrice = element.CL;
+//         //    delete this.positionHitory[index].CL;
+//         //    this.positionHitory[index].ProfitePrice = element.PL;
+//         //    delete this.positionHitory[index].PL;
+//         //    this.positionHitory[index].oBuySell = element.BS;
+//         //    delete this.positionHitory[index].BS;
+//         //    this.positionHitory[index].Price = element.OP;
+//         //    delete this.positionHitory[index].OP;  
+//         //    const indianDateTime = this.formatIndianTime(element.C);
            
-        //    const germanyDateTime = this.formatGermanyTime(indianDateTime)
+//         //    const germanyDateTime = this.formatGermanyTime(indianDateTime)
           
-        //    this.positionHitory[index].Close_Timestamp = germanyDateTime;
-        //    delete this.positionHitory[index].C;
-        //    const indianDateTime1 = this.formatIndianTime(element.O);
-        //    const germanyDateTime1 = this.formatGermanyTime(indianDateTime1)
-        //    this.positionHitory[index].Open_Timestamp = germanyDateTime1;
-        //    delete this.positionHitory[index].O;
-        //    this.positionHitory[index].Ticket = element.PID;
-        //    delete this.positionHitory[index].PID;
-        //    this.positionHitory[index].Lot = this.getValue2(element.LT);
-        //    delete this.positionHitory[index].LT;
-        //    this.positionHitory[index].Swap = element.Sw;
-        //    delete this.positionHitory[index].Sw;
-        //    this.positionHitory[index].filterDate = this.formatGermanyTime1(indianDateTime);
+//         //    this.positionHitory[index].Close_Timestamp = germanyDateTime;
+//         //    delete this.positionHitory[index].C;
+//         //    const indianDateTime1 = this.formatIndianTime(element.O);
+//         //    const germanyDateTime1 = this.formatGermanyTime(indianDateTime1)
+//         //    this.positionHitory[index].Open_Timestamp = germanyDateTime1;
+//         //    delete this.positionHitory[index].O;
+//         //    this.positionHitory[index].Ticket = element.PID;
+//         //    delete this.positionHitory[index].PID;
+//         //    this.positionHitory[index].Lot = this.getValue2(element.LT);
+//         //    delete this.positionHitory[index].LT;
+//         //    this.positionHitory[index].Swap = element.Sw;
+//         //    delete this.positionHitory[index].Sw;
+//         //    this.positionHitory[index].filterDate = this.formatGermanyTime1(indianDateTime);
          
           
-        // });
+//         // });
 
+//         this.isResponseFromSocket = true;
 
-       
-      },
-      error: (err: any) => {
-        console.log(err);
-        
-      },
-    });
-    return new Promise<void>((resolve) => setTimeout(resolve, 1500));
-  }
+//       },
+//       error: (err: any) => {
+//         console.log(err);
+//         this.isResponseFromSocket = true;
+//       },
+//     });
+//     return new Promise<void>((resolve) => setTimeout(resolve, 1500));
+//   }
 
 
 MAKE_NEW_ORDER(val:any){
@@ -1814,7 +1914,7 @@ modefyOrder() {
       // SL:  Number(this.inputSl),
       PL:Number(this.orderFrom.value.takeProfit),
       ordType: Number(this.modelData.BS),
-      StopLimit: Number(this.orderFrom.value.stopLimitPrice),
+      StopLimit: Number(this.orderFrom.value.stopLimitPrice)||'',
       Expiry: "",
       ExpTime: "",
       Comment: ""
@@ -2026,5 +2126,8 @@ SubVol() {
     this.inputLotValue = newVal;
   }
 }
-
+formatPrice(value: number | null | undefined): string {
+  if (value == null) return '';
+  return value.toFixed(this.pricePrecision ?? 2);
+}
 }

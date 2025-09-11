@@ -217,12 +217,12 @@ GET_MGR_SUMMARY(obj:any){
 
 GET_MGR_JOURNEL(obj:any){
  
-  return this.http.post(`${this.domain}GET_MGR_JOURNEL`,obj);
+  return this.http.post(`${this.domain}GET_USR_LOGS `,obj);
 }
 
 GET_MGR_EXPOSURE(obj:any){
  
-  return this.http.post(`${this.domain}GET_MGR_EXPOSURE`,obj);
+  return this.http.post(`${this.domain}GET_MQ_USER_EXPOS`,obj);
 }
 
 ENABLE_TRADING(obj:any){
@@ -345,7 +345,10 @@ GET_MT_BROKERS(){
   return this.http.get(`https://connectapi.onepip.app/api/GET_MT_BROKERS`);
 }
 GET_SYMBOL_INITIAL(obj: any){
-  return this.http.post(this.domain + 'GET_SYMBOL_PROP', obj);
+  return this.http.post(this.domain + 'GET_GRP_SYMBOL_PROP', {
+    ...obj,
+    Grp: this.AdmindetailGroup()
+  });
 }
 
 SUBSCRIBE_SYMBOL(obj: any){
@@ -356,8 +359,23 @@ SUBSCRIBE_SYMBOL(obj: any){
 GET_USER_ALL_SYMBOLS_v21(obj:any){
   return this.http.post(this.domain + 'GET_USER_ALL_SYMBOLS_v2', obj);
 }
-GET_SYMBOL_PROP(obj:any){
-  return this.http.post(this.domain + 'GET_SYMBOL_PROP', obj);
+GET_SYMBOL_PROP(obj: any) {
+  return this.http.post(this.domain + 'GET_GRP_SYMBOL_PROP', {
+    ...obj,
+    Grp: this.AdmindetailGroup()
+  });
+}
+
+AdmindetailGroup(): string {
+  const raw = localStorage.getItem("admin");
+  if (!raw) return '';
+  try {
+    const obj = JSON.parse(raw);
+    return obj.Group || '';
+  } catch (e) {
+    console.error("Invalid admin JSON:", e);
+    return '';
+  }
 }
 
 }

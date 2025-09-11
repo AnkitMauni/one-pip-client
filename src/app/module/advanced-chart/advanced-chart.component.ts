@@ -322,7 +322,7 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
     }
 
     const config: LimitedResponseConfiguration = {
-      maxResponseLength: 1000,
+      maxResponseLength: 10000,
       expectedOrder: 'latestFirst',
     };
 
@@ -341,7 +341,7 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
       user_id: this._userId,
       fullscreen: this._fullscreen,
       autosize: this._autosize,
-      timezone: 'Europe/Berlin',
+      timezone: 'Europe/Athens',
     };
 
     const tvWidget = new widget(widgetOptions);

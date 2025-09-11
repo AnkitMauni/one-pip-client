@@ -111,7 +111,7 @@
               </ng-container>
             </div>
           </div> -->
-        <table class="table table-bordered" *ngIf="!showData">
+        <table class="table table-bordered mb-5" *ngIf="!showData">
           <thead>
             <tr>
               <th>Symbol</th>
@@ -140,7 +140,7 @@
       </div>
   </div>
    </section>
- <div *ngIf="isMenuVisible" [ngStyle]="{ 'top.px': menuPosition.y, 'left.px': 40 }" class="context-menu" style="z-index: 9999;">
+ <div *ngIf="isMenuVisible" [ngStyle]="{ 'top.px': menuPosition.y, 'left.px': 40,  }" class="context-menu" style="z-index: 9999;">
  
   <ul>
     <li (click)="deleteRow()">🗑 Delete</li>

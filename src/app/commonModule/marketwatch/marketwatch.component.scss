@@ -328,3 +328,16 @@ i{
 tr.active td{
   background-color: #d4e9ff !important;
 }
+
+.table thead th {
+  position: sticky;
+  top: 27.9px;
+  background: #f8f9fa; /* or white */
+  z-index: 2;
+}
+.lefttitle-search {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa; /* or white */
+  z-index: 2;
+}

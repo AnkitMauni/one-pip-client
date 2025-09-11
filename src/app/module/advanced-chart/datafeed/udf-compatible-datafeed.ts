@@ -117,7 +117,7 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
             }
  
             onRealtimeCallback(bar);
-            // console.log('✅ Emitting bar for:', symbol, bar);
+            console.log('✅ Emitting bar for:', symbol, bar);
           } catch (error) {
             console.error('❌ Error processing live data tick:', error, tick);
           }
@@ -256,7 +256,7 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
     // Prefer value from localStorage, otherwise use incoming symbolName
     const storedSymbol = localStorage.getItem('changeSym');
     const symbolToResolve = storedSymbol ? storedSymbol : symbolName || this.mySelectedSymbol;
-  
+  const precison = Number(localStorage.getItem('Precision'));
     console.log("Resolved symbol:", symbolToResolve);
   
     const resolvedSymbolInfo: LibrarySymbolInfo = {
@@ -264,14 +264,14 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
       description: symbolToResolve,
       type: 'stock',   // adjust as per your feed
       session: '24x7',
-      timezone: 'Etc/UTC',
+      timezone: 'Europe/Athens',
       minmov: 1,
       minmove2: 10,
       fractional: false,
       has_intraday: true,
       supported_resolutions: ['1' as ResolutionString, '5' as ResolutionString, '15' as ResolutionString],
       visible_plots_set: 'ohlcv',
-      pricescale: 10000,
+      pricescale: 100000,
       ticker: symbolToResolve,
       full_name: symbolToResolve,
       exchange: '',

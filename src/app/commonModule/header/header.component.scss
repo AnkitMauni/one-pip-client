@@ -375,3 +375,14 @@ li{
 
 
 
+.custom-close-btn {
+    background-color: #f8d7da;  /* light red background */
+    border-radius: 50%;
+    opacity: 1; /* override bootstrap’s default faded look */
+  }
+  
+  .custom-close-btn:hover {
+    background-color: #dc3545;  /* Bootstrap danger red */
+    opacity: 1;
+  }
+  

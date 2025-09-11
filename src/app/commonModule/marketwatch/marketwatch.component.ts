@@ -538,10 +538,10 @@ onRightClick(event: MouseEvent, item: any) {
 
   this.getMouseOverItemData = item;
   this.activeRow = item;
-
+  console.log("activeEvevnt", event)
   this.menuPosition = {
     x: event.clientX,
-    y: event.clientY
+    y: event.clientY - 31
   };
 
   this.isMenuVisible = true;
@@ -1108,6 +1108,7 @@ getInitial(val:any) {
   this.api.GET_SYMBOL_INITIAL(obj).subscribe({
     next: (res: any) => {
       console.log("Ress", res);
+      localStorage.setItem("Precision",res.Digit)
       if (res?.ordFlag) {
         this.share.setOrderFlags(res.ordFlag);
       }
