@@ -176,25 +176,36 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
  
  
  
-  private convertResolution(resolution: ResolutionString): string {
-    const resolutionMap: { [key: string]: string } = {
-      '1': '1',
-      '5': '5',
-      '15': '15',
-      '30': '30',
-      '60': '60',
-      '240': '240',
-      '1D': '1D',
-      '1W': '1W',
-      '1M': '1M',
-    };
+  // private convertResolution(resolution: ResolutionString): string {
+  //   const resolutionMap: { [key: string]: string } = {
+  //     '1': '1',
+  //     '5': '5',
+  //     '15': '15',
+  //     '30': '30',
+  //     '60': '60',
+  //     '240': '240',
+  //     '1D': '1D',
+  //     '1W': '1W',
+  //     '1M': '1M',
+  //   };
  
-    return resolutionMap[resolution] || '1';
+  //   return resolutionMap[resolution] || '1';
+  // }
+  private convertResolution(resolution: ResolutionString): string {
+    const supportedResolutions = ['1', '15', '60'];
+    return supportedResolutions.includes(resolution) ? resolution : '1';
   }
+  
   protected override _requestConfiguration(): Promise<import("./udf-compatible-datafeed-base").UdfCompatibleConfiguration | null> {
     // Define your static configuration object
     const staticConfig: import("./udf-compatible-datafeed-base").UdfCompatibleConfiguration = {
-        supported_resolutions: ['1' as ResolutionString, '5' as ResolutionString, '15' as ResolutionString],
+        supported_resolutions: 
+        [
+          '1' as ResolutionString, 
+          '15' as ResolutionString, 
+          '60' as ResolutionString,
+          '1D' as ResolutionString
+        ],
         supports_group_request: false,
         supports_search: true,
         supports_marks: true,
@@ -256,30 +267,42 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
     // Prefer value from localStorage, otherwise use incoming symbolName
     const storedSymbol = localStorage.getItem('changeSym');
     const symbolToResolve = storedSymbol ? storedSymbol : symbolName || this.mySelectedSymbol;
-  const precison = Number(localStorage.getItem('Precision'));
-    console.log("Resolved symbol:", symbolToResolve);
   
-    const resolvedSymbolInfo: LibrarySymbolInfo = {
+    const precision = this.shareService.currentPrecision;  // ✅ always latest
+    const priceScale = Math.pow(10, precision);
+  
+    console.log("Resolved symbol:", symbolToResolve, "Precision:", precision, "PriceScale:", priceScale);
+  
+    const resolvedSymbolInfo: MySymbolInfo  = {
       name: symbolToResolve,
       description: symbolToResolve,
       type: 'stock',   // adjust as per your feed
       session: '24x7',
       timezone: 'Europe/Athens',
       minmov: 1,
-      minmove2: 10,
       fractional: false,
       has_intraday: true,
-      supported_resolutions: ['1' as ResolutionString, '5' as ResolutionString, '15' as ResolutionString],
+      supported_resolutions: 
+        [
+          '1' as ResolutionString, 
+          '15' as ResolutionString, 
+          '60' as ResolutionString,
+          // '1D' as ResolutionString
+        ],
       visible_plots_set: 'ohlcv',
-      pricescale: 100000,
+      pricescale: priceScale,   // ✅ dynamic from precision
       ticker: symbolToResolve,
       full_name: symbolToResolve,
       exchange: '',
       listed_exchange: '',
-      format: 'price'
+      format: 'price',
+      // Optionally: pass precision too (TradingView will format decimals properly)
+      // this property is used in some versions of TV Charting Library
+      precision : precision
     };
   
     onResolve(resolvedSymbolInfo);
+    
   }
   
   // override getServerTime(callback: (serverTime: number) => void): void {
@@ -292,4 +315,6 @@ export class UDFCompatibleDatafeed extends UDFCompatibleDatafeedBase {
   // }
 }
  
- 
+interface MySymbolInfo extends LibrarySymbolInfo {
+  precision?: number;
+}

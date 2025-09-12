@@ -10,7 +10,23 @@ export class ShareService {
 
   private loaderValue = new Subject<any>();
     selectedloaderValue = this.loaderValue.asObservable();
-    constructor(public rout:Router) {}
+    constructor(public rout:Router) {
+      const stored = localStorage.getItem('Precision');
+    if (stored) {
+      this.precisionSubject.next(Number(stored));
+    }
+    }
+    private precisionSubject = new BehaviorSubject<number>(2); // default 2
+    precision$ = this.precisionSubject.asObservable();
+
+    setPrecision(val: number) {
+      this.precisionSubject.next(val);
+      localStorage.setItem('Precision', val.toString());
+    }
+  
+    get currentPrecision(): number {
+      return this.precisionSubject.value;
+    }
 
     private ConectionLogin = new Subject<any>();
     conectionLoginValue = this.ConectionLogin.asObservable();
@@ -329,5 +345,6 @@ livMargin(margin: number) {
   
     this.msgForClientToModify.next(data);
   }
+  
 
 }

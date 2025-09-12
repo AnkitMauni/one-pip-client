@@ -1109,6 +1109,7 @@ getInitial(val:any) {
     next: (res: any) => {
       console.log("Ress", res);
       localStorage.setItem("Precision",res.Digit)
+      this.share.setPrecision(res.Digit);
       if (res?.ordFlag) {
         this.share.setOrderFlags(res.ordFlag);
       }

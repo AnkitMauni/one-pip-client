@@ -1,3 +1,4 @@
+import { LegendMode } from './../../../assets/charting_library/charting_library.d';
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 
 import { OnDestroy } from '@angular/core';
@@ -309,10 +310,31 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
       if (this._tvWidget) {
               this._tvWidget.onChartReady(() => {
                 this._tvWidget?.chart().setSymbol(newSymbol);
+                this._tvWidget?.chart().priceFormatter()
                 this._tvWidget?.chart().setResolution(this._interval!);
               });
             }
     });
+    // this.share.precision$.subscribe((newPrecision) => {
+    //   console.log("📐 Precision changed:", newPrecision);
+    //   if (this._tvWidget) {
+    //     this._tvWidget.onChartReady(() => {
+    //       this._tvWidget?.chart().setSymbol(this._symbol!);
+    //       this._tvWidget?.chart().priceFormatter()
+    //       this._tvWidget?.chart().setResolution(this._interval!);
+    //     });
+    //   }
+    // });
+    
+    // this.share.precision$.subscribe(newPrecision => {
+    //   console.log("🔄 Updating chart with new precision:", newPrecision);
+    //   if (this._tvWidget) {
+    //     this._tvWidget.onChartReady(() => {
+    //       this._tvWidget?.chart().setSymbol(this._symbol!); // forces re-resolve → new pricescale
+    //     });
+    //   }
+    // });
+    
   }
   private initTradingView() {
     function getLanguageFromURL(): LanguageCode | null {
@@ -333,7 +355,7 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
       container: this._containerId,
       library_path: this._libraryPath,
       locale: getLanguageFromURL() || 'en',
-      disabled_features: ['use_localstorage_for_settings', 'header_compare', 'header_symbol_search'],
+      disabled_features: ['use_localstorage_for_settings','show_hide_button_in_legend', 'header_compare', 'header_symbol_search'],
       enabled_features: ['study_templates'],
       charts_storage_url: this._chartsStorageUrl,
       charts_storage_api_version: this._chartsStorageApiVersion,
@@ -342,6 +364,56 @@ export class AdvancedChartComponent implements OnInit, OnDestroy {
       fullscreen: this._fullscreen,
       autosize: this._autosize,
       timezone: 'Europe/Athens',
+      custom_formatters: {
+        timeFormatter: {
+          format: (date: Date) => {
+            // UTC hh:mm
+            return `${date.getUTCHours()}:${date.getUTCMinutes().toString().padStart(2, '0')}`;
+          },
+          formatLocal: (date: Date) => {
+            // Local hh:mm
+            return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+          }
+        },
+        dateFormatter: {
+          format: (date: Date) => {
+            // UTC YYYY/MM/DD
+            return `${date.getUTCFullYear()}/${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+          },
+          formatLocal: (date: Date) => {
+            // Local YYYY/MM/DD
+            return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+          }
+        },
+        tickMarkFormatter: (date: Date, tickMarkType: string) => {
+          switch (tickMarkType) {
+            case 'Year': return 'Y' + date.getUTCFullYear();
+            case 'Month': return 'M' + (date.getUTCMonth() + 1);
+            case 'DayOfMonth': return 'D' + date.getUTCDate();
+            case 'Time': return 'T' + date.getUTCHours() + ':' + date.getUTCMinutes();
+            case 'TimeWithSeconds': return 'S' + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds();
+          }
+          return ''; // fallback
+        },
+        priceFormatterFactory: (symbolInfo, minTick) => {
+          return {
+            format: (price: number) => {
+              const precision = this.share.currentPrecision ?? 5;  // 👈 your dynamic precision
+              return price.toFixed(precision);
+            }
+          };
+        },
+        studyFormatterFactory: (format, symbolInfo) => {
+          if (format.type === 'volume') {
+            return {
+              format: (value: number) => (value / 1e6).toFixed(2) + 'M'
+            };
+          }
+          return null; // use default otherwise
+        }
+      }
+      
+      
     };
 
     const tvWidget = new widget(widgetOptions);

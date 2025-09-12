@@ -659,6 +659,7 @@ export class HeaderComponent {
         next: (res: any) => {
           console.log('GET_SYMBOL_PROP response for main data:', res);
           localStorage.setItem("Precision",res.Digit)
+          this.share.setPrecision(res.Digit);
           this.pricePrecision = res.Digit;
           this.minLot = res.MinVol / 10000;
           this.inputLotValue = this.minLot;
